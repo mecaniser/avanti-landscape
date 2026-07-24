@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <clipPath id="circleClip">
+      <circle cx="100" cy="100" r="94"/>
+    </clipPath>
+  </defs>
+
+  <!-- outer dark green ring -->
+  <circle cx="100" cy="100" r="97" fill="#3B5A2A"/>
+  <!-- olive ring -->
+  <circle cx="100" cy="100" r="88" fill="#93B23C"/>
+  <!-- cream face -->
+  <circle cx="100" cy="100" r="80" fill="#FBFAF3"/>
+
+  <g clip-path="url(#circleClip)">
+    <!-- sun -->
+    <circle cx="132" cy="62" r="18" fill="#F2BE3D"/>
+
+    <!-- rolling hill (dark green) -->
+    <path d="M -10 138 C 40 100, 90 96, 130 112 C 165 126, 190 118, 220 100 L 220 220 L -10 220 Z" fill="#3B5A2A"/>
+    <!-- hill highlight strip (olive) -->
+    <path d="M -10 132 C 40 94, 90 90, 130 106 C 165 120, 190 112, 220 94 L 220 104 C 190 122, 165 130, 130 116 C 90 100, 40 104, -10 142 Z" fill="#93B23C"/>
+
+    <!-- grass blades -->
+    <g fill="#93B23C">
+      <path d="M18 145 C 10 110, 22 70, 46 42 C 34 78, 34 112, 44 145 Z"/>
+      <path d="M40 145 C 36 108, 46 74, 66 50 C 56 82, 58 114, 62 145 Z"/>
+      <path d="M60 145 C 58 112, 66 84, 82 64 C 74 90, 76 118, 78 145 Z"/>
+      <path d="M78 145 C 78 118, 84 96, 96 80 C 90 100, 92 122, 92 145 Z"/>
+    </g>
+  </g>
+
+  <!-- outline ring on top for crispness -->
+  <circle cx="100" cy="100" r="94" fill="none" stroke="#3B5A2A" stroke-width="0"/>
+</svg>

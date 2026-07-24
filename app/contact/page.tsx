@@ -1,0 +1,76 @@
+import Link from "next/link";
+import SiteHeader from "@/components/SiteHeader";
+import SiteFooter from "@/components/SiteFooter";
+import ContactForm from "@/components/ContactForm";
+import { getContent, getGlobalContent } from "@/lib/content";
+
+export const dynamic = "force-dynamic";
+
+export default async function ContactPage() {
+  const [c, g] = await Promise.all([getContent("contact"), getGlobalContent()]);
+  const phone = g.phone ?? "980-328-7141";
+  const phoneTel = g.phone_tel ?? "9803287141";
+  const email = g.email ?? "avantilandscaping1@gmail.com";
+  const hours = g.hours ?? "Monday – Saturday, 8am – 6pm";
+
+  return (
+    <>
+      <SiteHeader active="contact" />
+      <main>
+        <section className="page-hero">
+          <div className="container">
+            <div className="breadcrumb"><Link href="/" style={{ color: "inherit" }}>Home</Link> / Contact</div>
+            <h1>Get a Free Quote</h1>
+            <p>{c.hero_paragraph}</p>
+          </div>
+        </section>
+
+        <section className="section">
+          <div className="container contact-grid">
+            <div>
+              <h2 style={{ marginBottom: 20 }}>Send Us a Message</h2>
+              <ContactForm />
+            </div>
+
+            <div>
+              <div className="contact-info-card">
+                <div className="contact-info-row">
+                  <div className="ico">📞</div>
+                  <div><strong>Call or Text</strong><span><a href={`tel:${phoneTel}`}>{phone}</a></span></div>
+                </div>
+                <div className="contact-info-row">
+                  <div className="ico">✉️</div>
+                  <div><strong>Email</strong><span><a href={`mailto:${email}`}>{email}</a></span></div>
+                </div>
+                <div className="contact-info-row">
+                  <div className="ico">📍</div>
+                  <div><strong>Based In</strong><span>Waxhaw, NC</span></div>
+                </div>
+                <div className="contact-info-row">
+                  <div className="ico">🕐</div>
+                  <div><strong>Hours</strong><span>{hours}</span></div>
+                </div>
+                <div className="contact-info-row">
+                  <div className="ico">🌐</div>
+                  <div>
+                    <strong>Follow Us</strong>
+                    <span>
+                      <a href={g.facebook_url} target="_blank" rel="noopener">Facebook</a> ·{" "}
+                      <a href={g.instagram_url} target="_blank" rel="noopener">Instagram</a>
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ marginTop: 26 }}>
+                <h3 style={{ marginBottom: 10 }}>Where We Work</h3>
+                <p style={{ fontSize: "0.92rem" }}>Waxhaw, Marvin, Weddington, Wesley Chapel, Matthews, Stallings, Pineville, Indian Land, and Ballantyne.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+      <SiteFooter />
+    </>
+  );
+}

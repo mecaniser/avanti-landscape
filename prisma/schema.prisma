@@ -1,0 +1,89 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+}
+
+enum CustomerStatus {
+  lead
+  active
+  inactive
+}
+
+model Customer {
+  id          String         @id @default(cuid())
+  name        String
+  phone       String?
+  email       String?
+  address     String?
+  serviceType String?
+  status      CustomerStatus @default(lead)
+  notes       String?
+  message     String?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  @@index([status])
+}
+
+enum ContentType {
+  text
+  richtext
+  image
+}
+
+model ContentBlock {
+  id        String      @id @default(cuid())
+  page      String
+  key       String
+  type      ContentType @default(text)
+  value     String      @db.Text
+  updatedAt DateTime    @updatedAt
+
+  @@unique([page, key])
+  @@index([page])
+}
+
+model Service {
+  id          String   @id @default(cuid())
+  category    String
+  name        String
+  description String
+  sortOrder   Int      @default(0)
+
+  @@index([category])
+}
+
+model GalleryImage {
+  id            String   @id @default(cuid())
+  url           String
+  caption       String?
+  category      String?
+  sortOrder     Int      @default(0)
+  isBeforeAfter Boolean  @default(false)
+  pairUrl       String?
+  createdAt     DateTime @default(now())
+}
+
+model BlogPost {
+  id          String    @id @default(cuid())
+  slug        String    @unique
+  title       String
+  excerpt     String?
+  tag         String?
+  body        String    @db.Text
+  coverImage  String?
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
