@@ -789,11 +789,13 @@ p { color: var(--text-soft); }
   text-transform: uppercase;
   color: var(--white);
   background: rgba(9, 11, 5, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(4px);
   pointer-events: none;
   z-index: 3;
 }
-.ba-tag--before { left: 16px; }
-.ba-tag--after { right: 16px; }
+.ba-tag--before { left: 16px; color: rgba(255, 255, 255, 0.85); }
+.ba-tag--after { right: 16px; color: var(--olive-light); border-color: rgba(179, 209, 90, 0.4); }
 .ba-handle {
   position: absolute;
   top: 0;
@@ -810,21 +812,23 @@ p { color: var(--text-soft); }
   content: "";
   position: absolute;
   top: 0; bottom: 0; left: 50%;
-  width: 3px;
-  background: var(--white);
+  width: 2px;
+  background: rgba(255, 255, 255, 0.9);
   transform: translateX(-50%);
-  box-shadow: 0 0 0 1px rgba(0,0,0,0.25);
+  box-shadow: 0 0 14px rgba(139, 174, 60, 0.6), 0 0 0 1px rgba(0, 0, 0, 0.2);
 }
 .ba-handle-grip {
   position: relative;
-  width: 44px; height: 44px;
+  width: 46px; height: 46px;
   border-radius: 50%;
-  background: var(--white);
-  box-shadow: var(--shadow);
+  background: rgba(9, 11, 5, 0.68);
+  backdrop-filter: blur(4px);
+  border: 1.5px solid var(--olive-light);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.45), 0 0 18px rgba(139, 174, 60, 0.28);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #1a1a1a;
+  color: var(--olive-light);
   cursor: ew-resize;
 }
 .ba-caption {
@@ -847,6 +851,50 @@ p { color: var(--text-soft); }
   font-size: 0.8rem;
   color: var(--text-soft);
   margin-top: 8px;
+}
+
+/* Before & After carousel navigation */
+.ba-carousel { max-width: 640px; margin: 0 auto; }
+.ba-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 22px;
+}
+.ba-nav-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--surface-line);
+  background: var(--bg-elev);
+  color: var(--olive-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: border-color .15s ease, background .15s ease, transform .15s ease;
+}
+.ba-nav-btn:hover {
+  border-color: var(--olive);
+  background: var(--bg-elev-2);
+  transform: translateY(-1px);
+}
+.ba-dots { display: flex; align-items: center; gap: 9px; }
+.ba-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  background: var(--surface-line);
+  cursor: pointer;
+  transition: background .15s ease, transform .15s ease;
+}
+.ba-dot:hover { background: var(--olive-deep); }
+.ba-dot.is-active {
+  background: var(--olive-light);
+  transform: scale(1.25);
 }
 
 /* Blog article */

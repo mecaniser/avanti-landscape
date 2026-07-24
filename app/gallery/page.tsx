@@ -1,17 +1,18 @@
 import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
-import BeforeAfterSlider from "@/components/BeforeAfterSlider";
+import BeforeAfterCarousel from "@/components/BeforeAfterCarousel";
 import { getContent, getGlobalContent } from "@/lib/content";
 import { prisma } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
 export default async function GalleryPage() {
-  const [c, g, images] = await Promise.all([
+  const [c, g, images, projects] = await Promise.all([
     getContent("gallery"),
     getGlobalContent(),
     prisma.galleryImage.findMany({ orderBy: { sortOrder: "asc" } }),
+    prisma.beforeAfterProject.findMany({ orderBy: { sortOrder: "asc" } }),
   ]);
 
   return (
@@ -26,24 +27,18 @@ export default async function GalleryPage() {
           </div>
         </section>
 
-        <section className="section section--tight">
-          <div className="container">
-            <div className="section-head">
-              <span className="eyebrow">Before &amp; After</span>
-              <h2>See the Transformation</h2>
-              <p>Drag the slider to see one of our recent foundation bed renovations, start to finish.</p>
+        {projects.length > 0 && (
+          <section className="section section--tight">
+            <div className="container">
+              <div className="section-head">
+                <span className="eyebrow">Before &amp; After</span>
+                <h2>See the Transformations</h2>
+                <p>Drag the slider to compare, and browse through our recent projects.</p>
+              </div>
+              <BeforeAfterCarousel projects={projects} />
             </div>
-            <div className="ba-wrap">
-              <BeforeAfterSlider
-                beforeSrc={c.ba_before_image}
-                afterSrc={c.ba_after_image}
-                beforeAlt="Before: bare mulch bed along the stone chimney during soil delivery"
-                afterAlt="After: finished planting bed with new arborvitae and flowers along the stone chimney"
-              />
-              <div className="ba-caption">{c.ba_caption_title}<span>{c.ba_caption_sub}</span></div>
-            </div>
-          </div>
-        </section>
+          </section>
+        )}
 
         <section className="section section--tight">
           <div className="container">

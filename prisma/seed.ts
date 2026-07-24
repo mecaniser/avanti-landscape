@@ -160,6 +160,19 @@ async function main() {
     data: galleryImages.map((g, i) => ({ ...g, category: "project", sortOrder: i })),
   });
 
+  // --- Before & After projects ---
+  if ((await prisma.beforeAfterProject.count()) === 0) {
+    await prisma.beforeAfterProject.create({
+      data: {
+        beforeUrl: "/assets/img/ba-foundation-before.jpg",
+        afterUrl: "/assets/img/ba-foundation-after.jpg",
+        caption: "Foundation Bed Renovation — Waxhaw, NC",
+        subtext: "Soil preparation, fresh plantings, and mulch, drag to compare",
+        sortOrder: 0,
+      },
+    });
+  }
+
   // --- Blog posts ---
   const posts = [
     {

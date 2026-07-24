@@ -1,14 +1,19 @@
 import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
-import BeforeAfterSlider from "@/components/BeforeAfterSlider";
+import BeforeAfterCarousel from "@/components/BeforeAfterCarousel";
 import HeroMedia from "@/components/HeroMedia";
 import { getContent, getGlobalContent, parseAreaList } from "@/lib/content";
+import { prisma } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const [c, g] = await Promise.all([getContent("home"), getGlobalContent()]);
+  const [c, g, projects] = await Promise.all([
+    getContent("home"),
+    getGlobalContent(),
+    prisma.beforeAfterProject.findMany({ orderBy: { sortOrder: "asc" } }),
+  ]);
   const areas = parseAreaList(g.area_list);
   const phoneTel = g.phone_tel ?? "9803287141";
   const phone = g.phone ?? "980-328-7141";
@@ -94,6 +99,7 @@ export default async function HomePage() {
           </div>
         </section>
 
+        {projects.length > 0 && (
         <section className="section">
           <div className="container">
             <div className="section-head">
@@ -101,20 +107,13 @@ export default async function HomePage() {
               <h2>{c.ba_heading}</h2>
               <p>{c.ba_paragraph}</p>
             </div>
-            <div className="ba-wrap">
-              <BeforeAfterSlider
-                beforeSrc={c.ba_before_image}
-                afterSrc={c.ba_after_image}
-                beforeAlt="Before: bare mulch bed along the stone chimney during soil delivery"
-                afterAlt="After: finished planting bed with new arborvitae and flowers along the stone chimney"
-              />
-              <div className="ba-caption">{c.ba_caption_title}<span>{c.ba_caption_sub}</span></div>
-            </div>
+            <BeforeAfterCarousel projects={projects} />
             <div style={{ textAlign: "center", marginTop: 30 }}>
               <Link href="/gallery" className="btn btn--dark">See More Project Photos</Link>
             </div>
           </div>
         </section>
+        )}
 
         <section className="section section--cream">
           <div className="container">

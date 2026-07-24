@@ -2,7 +2,16 @@ import Link from "next/link";
 import type { ContentBlock } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { isCloudinaryConfigured } from "@/lib/cloudinary";
-import { updateContentBlock, updateBeforeAfter, uploadHeroVideo, clearHeroVideo } from "../actions";
+import { updateContentBlock, uploadHeroVideo, clearHeroVideo } from "../actions";
+
+// Managed by dedicated screens, so hidden from the generic content editor.
+const MANAGED_ELSEWHERE = new Set([
+  "hero_video",
+  "ba_before_image",
+  "ba_after_image",
+  "ba_caption_title",
+  "ba_caption_sub",
+]);
 
 export const dynamic = "force-dynamic";
 
@@ -44,11 +53,7 @@ function BlockField({ page, block }: { page: string; block: ContentBlock }) {
 
       {block.type === "image" ? (
         <>
-          <img
-            src={block.value}
-            alt={block.key}
-            style={{ width: "100%", maxWidth: 220, aspectRatio: "4 / 3", objectFit: "cover", borderRadius: 8, marginBottom: 12, border: "1px solid var(--surface-line, #333825)" }}
-          />
+          <img src={block.value} alt={block.key} style={imgStyle} />
           <input type="file" name="file" accept="image/*" />
         </>
       ) : block.value.length > 80 ? (
@@ -75,7 +80,7 @@ export default async function ContentEditorPage({
 
   // Hero video is managed by its own card (below), not the generic loop.
   const heroVideo = allBlocks.find((b) => b.key === "hero_video");
-  const blocks = allBlocks.filter((b) => b.key !== "hero_video");
+  const blocks = allBlocks.filter((b) => !MANAGED_ELSEWHERE.has(b.key));
   const uploadsEnabled = isCloudinaryConfigured();
 
   const byKey = (k: string) => blocks.find((b) => b.key === k);
@@ -176,16 +181,8 @@ function GalleryContent({
   byKey: (k: string) => ContentBlock | undefined;
   otherBlocks: ContentBlock[];
 }) {
-  const before = byKey("ba_before_image");
-  const after = byKey("ba_after_image");
-  const capTitle = byKey("ba_caption_title");
-  const capSub = byKey("ba_caption_sub");
   const intro = byKey("hero_paragraph");
-
-  const grouped = new Set(
-    ["ba_before_image", "ba_after_image", "ba_caption_title", "ba_caption_sub", "hero_paragraph"]
-  );
-  const leftover = otherBlocks.filter((b) => !grouped.has(b.key));
+  const leftover = otherBlocks.filter((b) => b.key !== "hero_paragraph");
 
   return (
     <>
@@ -196,45 +193,13 @@ function GalleryContent({
         </div>
       )}
 
-      {(before || after || capTitle || capSub) && (
-        <div className="admin-card">
-          <h3 style={{ marginBottom: 4 }}>Before &amp; After Slider</h3>
-          <p className="subtitle" style={{ marginBottom: 16 }}>
-            The draggable comparison shown at the top of the Gallery page.
-            Leave a photo field empty to keep the current one.
-          </p>
-
-          <form action={updateBeforeAfter} className="admin-form" encType="multipart/form-data">
-            <div className="content-subhead">Comparison Photos</div>
-            <div className="content-grid-2">
-              <div>
-                <label>Before Image</label>
-                {before && <img src={before.value} alt="Before" style={imgStyle} />}
-                <input type="file" name="before_file" accept="image/*" />
-              </div>
-              <div>
-                <label>After Image</label>
-                {after && <img src={after.value} alt="After" style={imgStyle} />}
-                <input type="file" name="after_file" accept="image/*" />
-              </div>
-            </div>
-
-            <div className="content-subhead">Caption</div>
-            <div className="content-grid-2">
-              <div>
-                <label>Comparison Caption</label>
-                <input type="text" name="caption_title" defaultValue={capTitle?.value ?? ""} />
-              </div>
-              <div>
-                <label>Comparison Subtext</label>
-                <input type="text" name="caption_sub" defaultValue={capSub?.value ?? ""} />
-              </div>
-            </div>
-
-            <button type="submit" className="admin-btn">Save Changes</button>
-          </form>
-        </div>
-      )}
+      <div className="admin-card">
+        <h3 style={{ marginBottom: 4 }}>Before &amp; After Projects</h3>
+        <p className="subtitle" style={{ margin: 0 }}>
+          The comparison carousel is now a set of projects you manage in the{" "}
+          <a href="/admin/gallery" style={{ color: "var(--olive-light)", fontWeight: 600 }}>Gallery</a> section.
+        </p>
+      </div>
 
       {leftover.map((block) => (
         <div className="admin-card" key={block.id}>
