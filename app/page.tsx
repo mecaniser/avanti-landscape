@@ -2,6 +2,7 @@ import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import BeforeAfterSlider from "@/components/BeforeAfterSlider";
+import HeroMedia from "@/components/HeroMedia";
 import { getContent, getGlobalContent, parseAreaList } from "@/lib/content";
 
 export const dynamic = "force-dynamic";
@@ -12,22 +13,15 @@ export default async function HomePage() {
   const phoneTel = g.phone_tel ?? "9803287141";
   const phone = g.phone ?? "980-328-7141";
   const heroPoster = c.hero_image || "/assets/img/hero-mulch-wide.jpg";
-  const heroVideo = c.hero_video || "";
+  // Admin-uploaded video (Cloudinary) wins; otherwise the committed default clip.
+  const heroVideo = c.hero_video || "/assets/hero.mp4";
 
   return (
     <>
       <SiteHeader active="home" />
       <main>
         <section className="hero">
-          <div className="hero-media">
-            <img className="hero-media-img" src={heroPoster} alt="" aria-hidden="true" />
-            {heroVideo && (
-              <video className="hero-video" autoPlay muted loop playsInline poster={heroPoster}>
-                <source src={heroVideo} type="video/mp4" />
-              </video>
-            )}
-            <div className="hero-overlay" />
-          </div>
+          <HeroMedia poster={heroPoster} video={heroVideo} />
           <div className="container">
             <div className="hero-copy">
               <span className="eyebrow">{c.hero_eyebrow}</span>

@@ -344,6 +344,30 @@ p { color: var(--text-soft); }
 .hero-badges div span { font-size: 0.78rem; color: rgba(255,255,255,0.78); }
 .hero-art { display: none; }
 
+.hero-sound {
+  position: absolute;
+  right: 22px;
+  bottom: 22px;
+  z-index: 4;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(9, 11, 5, 0.55);
+  backdrop-filter: blur(4px);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background .15s ease, border-color .15s ease, color .15s ease;
+}
+.hero-sound:hover {
+  background: rgba(9, 11, 5, 0.82);
+  border-color: var(--olive-light);
+  color: var(--olive-light);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .hero-video { display: none; }
 }

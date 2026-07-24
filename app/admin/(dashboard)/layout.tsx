@@ -20,6 +20,9 @@ export default function AdminDashboardLayout({ children }: { children: React.Rea
         {NAV.map((item) => (
           <Link key={item.href} href={item.href}>{item.label}</Link>
         ))}
+        <Link href="/" target="_blank" rel="noopener" className="admin-view-site">
+          View Website ↗
+        </Link>
         <form
           action={async () => {
             "use server";
