@@ -23,12 +23,29 @@ export function isCloudinaryConfigured() {
   );
 }
 
+// Photos come straight off a phone — several MB at ~4000px wide — but the site
+// never renders them wider than about 640px. Store the original untouched and
+// serve a transformed delivery URL: f_auto picks WebP/AVIF per browser, q_auto
+// tunes compression, and c_limit caps the width without upscaling smaller files.
+const DELIVERY_MAX_WIDTH = 1600;
+
 export async function uploadImageBuffer(buffer: Buffer, folder = "avanti"): Promise<string> {
   const cl = getCloudinary();
   return new Promise((resolve, reject) => {
     const stream = cl.uploader.upload_stream({ folder }, (error, result) => {
       if (error || !result) return reject(error ?? new Error("Cloudinary upload failed"));
-      resolve(result.secure_url);
+      resolve(
+        cl.url(result.public_id, {
+          secure: true,
+          version: result.version,
+          fetch_format: "auto",
+          quality: "auto",
+          crop: "limit",
+          width: DELIVERY_MAX_WIDTH,
+          // These URLs are persisted, so keep them free of the SDK's analytics param.
+          analytics: false,
+        })
+      );
     });
     stream.end(buffer);
   });
