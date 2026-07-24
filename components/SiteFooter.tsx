@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getGlobalContent } from "@/lib/content";
 
 export default async function SiteFooter() {
@@ -22,20 +23,20 @@ export default async function SiteFooter() {
           <div className="footer-col">
             <h4>Services</h4>
             <ul>
-              <li><a href="/services#lawn-care">Lawn Care</a></li>
-              <li><a href="/services#landscaping">Landscaping</a></li>
-              <li><a href="/services#hardscaping">Hardscaping</a></li>
-              <li><a href="/services#maintenance">Lawn &amp; Landscape Maintenance</a></li>
+              <li><Link href="/services#lawn-care">Lawn Care</Link></li>
+              <li><Link href="/services#landscaping">Landscaping</Link></li>
+              <li><Link href="/services#hardscaping">Hardscaping</Link></li>
+              <li><Link href="/services#maintenance">Lawn &amp; Landscape Maintenance</Link></li>
             </ul>
           </div>
           <div className="footer-col">
             <h4>Company</h4>
             <ul>
-              <li><a href="/about">About Us</a></li>
-              <li><a href="/areas">Service Areas</a></li>
-              <li><a href="/gallery">Gallery</a></li>
-              <li><a href="/blog">Blog</a></li>
-              <li><a href="/contact">Contact</a></li>
+              <li><Link href="/about">About Us</Link></li>
+              <li><Link href="/areas">Service Areas</Link></li>
+              <li><Link href="/gallery">Gallery</Link></li>
+              <li><Link href="/blog">Blog</Link></li>
+              <li><Link href="/contact">Contact</Link></li>
             </ul>
           </div>
           <div className="footer-col">
@@ -54,9 +55,9 @@ export default async function SiteFooter() {
         <div className="footer-bottom">
           <span>© 2026 Avanti Landscaping LLC. All rights reserved.</span>
           <span>
-            <a href="/contact">Request a Free Quote</a>
+            <Link href="/contact">Request a Free Quote</Link>
             <span style={{ margin: "0 10px", opacity: 0.4 }}>·</span>
-            <a href="/admin/login">Staff Login</a>
+            <Link href="/admin/login">Staff Login</Link>
           </span>
         </div>
       </div>

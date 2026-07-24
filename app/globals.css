@@ -820,6 +820,9 @@ p { color: var(--text-soft); }
 .ba-handle-grip {
   position: relative;
   width: 46px; height: 46px;
+  /* The parent .ba-handle is a zero-width flex container, so without this the
+     grip shrinks to the icon's width and the circle renders as an oval. */
+  flex-shrink: 0;
   border-radius: 50%;
   background: rgba(9, 11, 5, 0.68);
   backdrop-filter: blur(4px);

@@ -16,13 +16,16 @@ export async function addGalleryImage(formData: FormData) {
   const buffer = Buffer.from(await file.arrayBuffer());
   const url = await uploadImageBuffer(buffer, "avanti/gallery");
 
-  const count = await prisma.galleryImage.count();
+  // Derive from the current maximum, not the row count: after a delete from the
+  // middle, count would collide with an existing sortOrder and the public
+  // ordering becomes nondeterministic.
+  const { _max } = await prisma.galleryImage.aggregate({ _max: { sortOrder: true } });
   await prisma.galleryImage.create({
     data: {
       url,
       caption: String(formData.get("caption") || "") || null,
       category: String(formData.get("category") || "project") || null,
-      sortOrder: count,
+      sortOrder: (_max.sortOrder ?? -1) + 1,
     },
   });
 
@@ -54,14 +57,16 @@ export async function addBeforeAfterProject(formData: FormData) {
     uploadImageBuffer(Buffer.from(await afterFile.arrayBuffer()), "avanti/before-after"),
   ]);
 
-  const count = await prisma.beforeAfterProject.count();
+  // See addGalleryImage: max + 1 so deleting a project can't make the next one
+  // collide with an existing sortOrder.
+  const { _max } = await prisma.beforeAfterProject.aggregate({ _max: { sortOrder: true } });
   await prisma.beforeAfterProject.create({
     data: {
       beforeUrl,
       afterUrl,
       caption: String(formData.get("caption") || "") || "Project",
       subtext: String(formData.get("subtext") || "") || null,
-      sortOrder: count,
+      sortOrder: (_max.sortOrder ?? -1) + 1,
     },
   });
 

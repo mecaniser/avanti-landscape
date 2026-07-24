@@ -48,8 +48,8 @@ export default async function GalleryAdminPage() {
             </div>
             <div className="content-grid-2">
               <div>
-                <label htmlFor="caption">Caption</label>
-                <input type="text" id="caption" name="caption" placeholder="e.g. Foundation Bed Renovation — Waxhaw, NC" required />
+                <label htmlFor="ba-caption">Caption</label>
+                <input type="text" id="ba-caption" name="caption" placeholder="e.g. Foundation Bed Renovation — Waxhaw, NC" required />
               </div>
               <div>
                 <label htmlFor="subtext">Subtext</label>
@@ -96,7 +96,7 @@ export default async function GalleryAdminPage() {
           <form action={addGalleryImage} className="admin-form" encType="multipart/form-data">
             <label htmlFor="file">Photo</label>
             <input type="file" id="file" name="file" accept="image/*" required />
-            <label htmlFor="caption">Caption</label>
+            <label htmlFor="gallery-caption">Caption</label>
             <input type="text" id="gallery-caption" name="caption" placeholder="e.g. Mulch Installation" />
             <button type="submit" className="admin-btn">Upload</button>
           </form>
