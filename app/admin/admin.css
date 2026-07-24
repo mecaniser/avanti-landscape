@@ -178,6 +178,52 @@
 
 .admin-form textarea { resize: vertical; }
 
+/* Native file input, themed to match the dashboard */
+.admin-form input[type="file"] {
+  padding: 8px 10px;
+  color: var(--text-soft, #a3a992);
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+.admin-form input[type="file"]::file-selector-button {
+  font-family: var(--font-head), "Segoe UI", sans-serif;
+  font-weight: 600;
+  font-size: 0.82rem;
+  background: var(--olive-deep, #5f7d28);
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 14px;
+  margin-right: 12px;
+  cursor: pointer;
+  transition: background .15s ease;
+}
+.admin-form input[type="file"]::file-selector-button:hover {
+  background: #6f9130;
+}
+
+/* Two-column field layout for grouped content sections */
+.content-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+.content-grid-2 > * { margin: 0; }
+.content-subhead {
+  font-family: var(--font-head), "Segoe UI", sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--olive-light, #b3d15a);
+  margin: 22px 0 12px;
+}
+.content-subhead:first-child { margin-top: 0; }
+@media (max-width: 700px) {
+  .content-grid-2 { grid-template-columns: 1fr; }
+}
+
 .admin-btn {
   display: inline-block;
   background: var(--olive-deep, #5f7d28);

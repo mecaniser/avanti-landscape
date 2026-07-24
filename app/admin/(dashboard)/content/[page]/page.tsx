@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { ContentBlock } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { isCloudinaryConfigured } from "@/lib/cloudinary";
 import { updateContentBlock, uploadHeroVideo, clearHeroVideo } from "../actions";
@@ -7,8 +8,48 @@ export const dynamic = "force-dynamic";
 
 const PAGES = ["home", "about", "areas", "services", "gallery", "contact", "global"];
 
-function formatLabel(key: string) {
-  return key.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+// Friendly labels so internal field names (e.g. "ba_before_image") never leak.
+const LABELS: Record<string, string> = {
+  ba_before_image: "Before Image",
+  ba_after_image: "After Image",
+  ba_caption_title: "Comparison Caption",
+  ba_caption_sub: "Comparison Subtext",
+  hero_paragraph: "Intro Paragraph",
+};
+
+function labelFor(key: string) {
+  return LABELS[key] ?? key.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+function BlockField({ page, block }: { page: string; block: ContentBlock }) {
+  const update = updateContentBlock.bind(null, page, block.key);
+  return (
+    <form
+      action={update}
+      className="admin-form"
+      encType={block.type === "image" ? "multipart/form-data" : undefined}
+    >
+      <label>{labelFor(block.key)}</label>
+      <input type="hidden" name="type" value={block.type} />
+
+      {block.type === "image" ? (
+        <>
+          <img
+            src={block.value}
+            alt={block.key}
+            style={{ width: "100%", maxWidth: 220, aspectRatio: "4 / 3", objectFit: "cover", borderRadius: 8, marginBottom: 12, border: "1px solid var(--surface-line, #333825)" }}
+          />
+          <input type="file" name="file" accept="image/*" />
+        </>
+      ) : block.value.length > 80 ? (
+        <textarea name="value" rows={3} defaultValue={block.value} />
+      ) : (
+        <input type="text" name="value" defaultValue={block.value} />
+      )}
+
+      <button type="submit" className="admin-btn">Save</button>
+    </form>
+  );
 }
 
 export default async function ContentEditorPage({
@@ -22,10 +63,12 @@ export default async function ContentEditorPage({
     orderBy: { key: "asc" },
   });
 
-  // Hero video is managed by its own card (below), not the generic text loop.
+  // Hero video is managed by its own card (below), not the generic loop.
   const heroVideo = allBlocks.find((b) => b.key === "hero_video");
   const blocks = allBlocks.filter((b) => b.key !== "hero_video");
   const uploadsEnabled = isCloudinaryConfigured();
+
+  const byKey = (k: string) => blocks.find((b) => b.key === k);
 
   return (
     <>
@@ -63,8 +106,8 @@ export default async function ContentEditorPage({
         <div className="admin-card">
           <h3 style={{ marginBottom: 4 }}>Hero Background Video</h3>
           <p className="subtitle" style={{ marginBottom: 16 }}>
-            Plays muted and looping behind the homepage headline. Landscape (wide) MP4 works best.
-            If no video is set, the hero shows the background photo instead.
+            Plays once (muted) behind the homepage headline, then holds on the final frame.
+            Landscape (wide) MP4 works best. If no video is set, the hero shows the background photo.
           </p>
 
           {heroVideo?.value ? (
@@ -72,7 +115,6 @@ export default async function ContentEditorPage({
               <video
                 src={heroVideo.value}
                 muted
-                loop
                 autoPlay
                 playsInline
                 style={{ width: 320, maxWidth: "100%", borderRadius: 8, marginBottom: 14, border: "1px solid var(--surface-line, #333825)" }}
@@ -100,42 +142,80 @@ export default async function ContentEditorPage({
         </div>
       )}
 
-      {blocks.length === 0 ? (
+      {page === "gallery" ? (
+        <GalleryContent page={page} byKey={byKey} otherBlocks={blocks} />
+      ) : blocks.length === 0 ? (
         <p className="subtitle">No content blocks for this page.</p>
       ) : (
-        blocks.map((block) => {
-          const update = updateContentBlock.bind(null, page, block.key);
-          return (
-            <div className="admin-card" key={block.id}>
-              <form
-                action={update}
-                className="admin-form"
-                encType={block.type === "image" ? "multipart/form-data" : undefined}
-              >
-                <label>{formatLabel(block.key)}</label>
-                <input type="hidden" name="type" value={block.type} />
-
-                {block.type === "image" ? (
-                  <>
-                    <img
-                      src={block.value}
-                      alt={block.key}
-                      style={{ width: 200, height: 130, objectFit: "cover", borderRadius: 8, marginBottom: 12, border: "1px solid var(--surface-line, #333825)" }}
-                    />
-                    <input type="file" name="file" accept="image/*" />
-                  </>
-                ) : block.value.length > 80 ? (
-                  <textarea name="value" rows={3} defaultValue={block.value} />
-                ) : (
-                  <input type="text" name="value" defaultValue={block.value} />
-                )}
-
-                <button type="submit" className="admin-btn">Save</button>
-              </form>
-            </div>
-          );
-        })
+        blocks.map((block) => (
+          <div className="admin-card" key={block.id}>
+            <BlockField page={page} block={block} />
+          </div>
+        ))
       )}
+    </>
+  );
+}
+
+function GalleryContent({
+  page,
+  byKey,
+  otherBlocks,
+}: {
+  page: string;
+  byKey: (k: string) => ContentBlock | undefined;
+  otherBlocks: ContentBlock[];
+}) {
+  const before = byKey("ba_before_image");
+  const after = byKey("ba_after_image");
+  const capTitle = byKey("ba_caption_title");
+  const capSub = byKey("ba_caption_sub");
+  const intro = byKey("hero_paragraph");
+
+  const grouped = new Set(
+    ["ba_before_image", "ba_after_image", "ba_caption_title", "ba_caption_sub", "hero_paragraph"]
+  );
+  const leftover = otherBlocks.filter((b) => !grouped.has(b.key));
+
+  return (
+    <>
+      {intro && (
+        <div className="admin-card">
+          <h3 style={{ marginBottom: 12 }}>Page Intro</h3>
+          <BlockField page={page} block={intro} />
+        </div>
+      )}
+
+      {(before || after || capTitle || capSub) && (
+        <div className="admin-card">
+          <h3 style={{ marginBottom: 4 }}>Before &amp; After Slider</h3>
+          <p className="subtitle" style={{ marginBottom: 16 }}>
+            The draggable comparison shown at the top of the Gallery page.
+          </p>
+
+          <div className="content-subhead">Comparison Photos</div>
+          <div className="content-grid-2">
+            {before && <BlockField page={page} block={before} />}
+            {after && <BlockField page={page} block={after} />}
+          </div>
+
+          {(capTitle || capSub) && (
+            <>
+              <div className="content-subhead">Caption</div>
+              <div className="content-grid-2">
+                {capTitle && <BlockField page={page} block={capTitle} />}
+                {capSub && <BlockField page={page} block={capSub} />}
+              </div>
+            </>
+          )}
+        </div>
+      )}
+
+      {leftover.map((block) => (
+        <div className="admin-card" key={block.id}>
+          <BlockField page={page} block={block} />
+        </div>
+      ))}
     </>
   );
 }
