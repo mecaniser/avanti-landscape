@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { ContentBlock } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { isCloudinaryConfigured } from "@/lib/cloudinary";
-import { updateContentBlock, uploadHeroVideo, clearHeroVideo } from "../actions";
+import { updateContentBlock, updateBeforeAfter, uploadHeroVideo, clearHeroVideo } from "../actions";
 
 export const dynamic = "force-dynamic";
 
@@ -20,6 +20,16 @@ const LABELS: Record<string, string> = {
 function labelFor(key: string) {
   return LABELS[key] ?? key.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
+
+const imgStyle: React.CSSProperties = {
+  width: "100%",
+  maxWidth: 220,
+  aspectRatio: "4 / 3",
+  objectFit: "cover",
+  borderRadius: 8,
+  marginBottom: 12,
+  border: "1px solid var(--surface-line, #333825)",
+};
 
 function BlockField({ page, block }: { page: string; block: ContentBlock }) {
   const update = updateContentBlock.bind(null, page, block.key);
@@ -191,23 +201,38 @@ function GalleryContent({
           <h3 style={{ marginBottom: 4 }}>Before &amp; After Slider</h3>
           <p className="subtitle" style={{ marginBottom: 16 }}>
             The draggable comparison shown at the top of the Gallery page.
+            Leave a photo field empty to keep the current one.
           </p>
 
-          <div className="content-subhead">Comparison Photos</div>
-          <div className="content-grid-2">
-            {before && <BlockField page={page} block={before} />}
-            {after && <BlockField page={page} block={after} />}
-          </div>
-
-          {(capTitle || capSub) && (
-            <>
-              <div className="content-subhead">Caption</div>
-              <div className="content-grid-2">
-                {capTitle && <BlockField page={page} block={capTitle} />}
-                {capSub && <BlockField page={page} block={capSub} />}
+          <form action={updateBeforeAfter} className="admin-form" encType="multipart/form-data">
+            <div className="content-subhead">Comparison Photos</div>
+            <div className="content-grid-2">
+              <div>
+                <label>Before Image</label>
+                {before && <img src={before.value} alt="Before" style={imgStyle} />}
+                <input type="file" name="before_file" accept="image/*" />
               </div>
-            </>
-          )}
+              <div>
+                <label>After Image</label>
+                {after && <img src={after.value} alt="After" style={imgStyle} />}
+                <input type="file" name="after_file" accept="image/*" />
+              </div>
+            </div>
+
+            <div className="content-subhead">Caption</div>
+            <div className="content-grid-2">
+              <div>
+                <label>Comparison Caption</label>
+                <input type="text" name="caption_title" defaultValue={capTitle?.value ?? ""} />
+              </div>
+              <div>
+                <label>Comparison Subtext</label>
+                <input type="text" name="caption_sub" defaultValue={capSub?.value ?? ""} />
+              </div>
+            </div>
+
+            <button type="submit" className="admin-btn">Save Changes</button>
+          </form>
         </div>
       )}
 
