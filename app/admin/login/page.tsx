@@ -34,14 +34,21 @@ export default function AdminLoginPage() {
   return (
     <div className="admin-login-wrap">
       <div className="admin-login-card">
-        <h2 style={{ marginBottom: 4 }}>Avanti Admin</h2>
-        <p className="subtitle" style={{ marginBottom: 20 }}>Sign in to manage the site.</p>
+        <div className="admin-login-brand">
+          <img src="/assets/logo.svg" alt="Avanti Landscaping logo" />
+          <strong>
+            Avanti Landscaping
+            <span>Control Board</span>
+          </strong>
+        </div>
+        <h2 style={{ marginBottom: 4 }}>Welcome back</h2>
+        <p className="subtitle">Sign in to manage your site.</p>
         <form className="admin-form" onSubmit={handleSubmit}>
           <label htmlFor="email">Email</label>
           <input type="email" id="email" name="email" required autoFocus />
           <label htmlFor="password">Password</label>
           <input type="password" id="password" name="password" required />
-          {error && <p style={{ color: "#b3261e", marginBottom: 12, fontSize: "0.88rem" }}>{error}</p>}
+          {error && <p style={{ color: "#f0a08e", marginBottom: 12, fontSize: "0.88rem" }}>{error}</p>}
           <button type="submit" className="admin-btn" style={{ width: "100%" }} disabled={loading}>
             {loading ? "Signing in…" : "Sign In"}
           </button>
