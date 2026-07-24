@@ -33,3 +33,17 @@ export async function uploadImageBuffer(buffer: Buffer, folder = "avanti"): Prom
     stream.end(buffer);
   });
 }
+
+export async function uploadVideoBuffer(buffer: Buffer, folder = "avanti/video"): Promise<string> {
+  const cl = getCloudinary();
+  return new Promise((resolve, reject) => {
+    const stream = cl.uploader.upload_stream(
+      { folder, resource_type: "video" },
+      (error, result) => {
+        if (error || !result) return reject(error ?? new Error("Cloudinary video upload failed"));
+        resolve(result.secure_url);
+      }
+    );
+    stream.end(buffer);
+  });
+}
