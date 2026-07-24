@@ -53,7 +53,11 @@ export default async function SiteFooter() {
         </div>
         <div className="footer-bottom">
           <span>© 2026 Avanti Landscaping LLC. All rights reserved.</span>
-          <span><a href="/contact">Request a Free Quote</a></span>
+          <span>
+            <a href="/contact">Request a Free Quote</a>
+            <span style={{ margin: "0 10px", opacity: 0.4 }}>·</span>
+            <a href="/admin/login">Staff Login</a>
+          </span>
         </div>
       </div>
     </footer>

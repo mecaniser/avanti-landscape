@@ -220,18 +220,21 @@ p { color: var(--text-soft); }
 .nav-links > li.active > a { background: var(--bg-elev-2); color: var(--olive-light); }
 .caret { font-size: 0.6rem; margin-top: 2px; }
 
-.nav-cta { display: flex; align-items: center; gap: 14px; }
+.nav-cta { display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
 .nav-phone {
   font-family: var(--font-head);
   font-weight: 700;
   color: var(--heading);
   font-size: 0.98rem;
+  flex-shrink: 0;
 }
+.nav-phone a { white-space: nowrap; }
 .nav-phone small {
   display: block;
   font-weight: 500;
   font-size: 0.7rem;
   color: var(--text-soft);
+  white-space: nowrap;
 }
 
 /* Dropdown mega menu for Services */
