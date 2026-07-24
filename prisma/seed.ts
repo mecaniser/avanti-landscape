@@ -51,8 +51,6 @@ async function main() {
     { page: "home", key: "why_paragraph", type: "text", value: "We treat every property like it's our own — showing up on schedule and leaving things looking sharp." },
     { page: "home", key: "ba_heading", type: "text", value: "See the Transformation" },
     { page: "home", key: "ba_paragraph", type: "text", value: "Drag the slider to see one of our recent foundation bed renovations, start to finish." },
-    { page: "home", key: "ba_caption_title", type: "text", value: "Foundation Bed Renovation — Waxhaw, NC" },
-    { page: "home", key: "ba_caption_sub", type: "text", value: "Soil preparation, fresh plantings, and mulch, drag to compare" },
     { page: "home", key: "areas_heading", type: "text", value: "Proudly Serving the Waxhaw Area" },
     { page: "home", key: "areas_paragraph", type: "text", value: "Based in Waxhaw, NC and serving these nearby communities." },
     { page: "home", key: "about_heading", type: "text", value: "A Local Crew That Takes Pride In The Details" },
@@ -63,8 +61,6 @@ async function main() {
     { page: "home", key: "card_landscaping_image", type: "image", value: "/assets/img/card-landscaping.jpg" },
     { page: "home", key: "card_maintenance_image", type: "image", value: "/assets/img/card-maintenance.jpg" },
     { page: "home", key: "about_teaser_image", type: "image", value: "/assets/img/about-crew.jpg" },
-    { page: "home", key: "ba_before_image", type: "image", value: "/assets/img/ba-foundation-before.jpg" },
-    { page: "home", key: "ba_after_image", type: "image", value: "/assets/img/ba-foundation-after.jpg" },
 
     // About
     { page: "about", key: "hero_paragraph", type: "text", value: "A local lawn care and landscaping team focused on quality, consistency, and honest service." },
@@ -87,10 +83,6 @@ async function main() {
 
     // Gallery
     { page: "gallery", key: "hero_paragraph", type: "text", value: "Real photos from real properties across the Waxhaw area." },
-    { page: "gallery", key: "ba_caption_title", type: "text", value: "Foundation Bed Renovation — Waxhaw, NC" },
-    { page: "gallery", key: "ba_caption_sub", type: "text", value: "Soil preparation, fresh plantings, and mulch, drag to compare" },
-    { page: "gallery", key: "ba_before_image", type: "image", value: "/assets/img/ba-foundation-before.jpg" },
-    { page: "gallery", key: "ba_after_image", type: "image", value: "/assets/img/ba-foundation-after.jpg" },
 
     // Contact
     { page: "contact", key: "hero_paragraph", type: "text", value: "Tell us a bit about your property and what you need — we'll follow up quickly." },
@@ -161,15 +153,26 @@ async function main() {
   });
 
   // --- Before & After projects ---
+  // Only seeds an empty table — the owner manages this list from the Gallery
+  // admin screen, so a reseed must never clobber what they've added.
   if ((await prisma.beforeAfterProject.count()) === 0) {
-    await prisma.beforeAfterProject.create({
-      data: {
-        beforeUrl: "/assets/img/ba-foundation-before.jpg",
-        afterUrl: "/assets/img/ba-foundation-after.jpg",
-        caption: "Foundation Bed Renovation — Waxhaw, NC",
-        subtext: "Soil preparation, fresh plantings, and mulch, drag to compare",
-        sortOrder: 0,
-      },
+    await prisma.beforeAfterProject.createMany({
+      data: [
+        {
+          beforeUrl: "/assets/img/ba-foundation-before.jpg",
+          afterUrl: "/assets/img/ba-foundation-after.jpg",
+          caption: "Foundation Bed Renovation — Waxhaw, NC",
+          subtext: "Soil preparation, fresh plantings, and mulch, drag to compare",
+          sortOrder: 0,
+        },
+        {
+          beforeUrl: "/assets/img/gallery-soil-prep.jpg",
+          afterUrl: "/assets/img/gallery-sod-closeup.jpg",
+          caption: "New Lawn Installation — Marvin, NC",
+          subtext: "From bare soil prep to fresh sod, drag to compare",
+          sortOrder: 1,
+        },
+      ],
     });
   }
 
