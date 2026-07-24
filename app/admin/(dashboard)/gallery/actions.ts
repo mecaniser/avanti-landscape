@@ -75,6 +75,44 @@ export async function addBeforeAfterProject(formData: FormData) {
   revalidatePath("/");
 }
 
+export async function updateBeforeAfterProject(id: string, formData: FormData) {
+  const caption = String(formData.get("caption") || "").trim();
+  if (!caption) {
+    throw new Error("A caption is required.");
+  }
+
+  const beforeFile = formData.get("before_file");
+  const afterFile = formData.get("after_file");
+  const newBefore = beforeFile instanceof File && beforeFile.size > 0 ? beforeFile : null;
+  const newAfter = afterFile instanceof File && afterFile.size > 0 ? afterFile : null;
+
+  // Only replacing a photo needs Cloudinary. Text stays editable without it, so
+  // a caption typo is always fixable even if the keys are missing.
+  if ((newBefore || newAfter) && !isCloudinaryConfigured()) {
+    throw new Error("Cloudinary isn't configured yet — add the CLOUDINARY_* keys to replace photos.");
+  }
+
+  const [beforeUrl, afterUrl] = await Promise.all([
+    newBefore ? uploadImageBuffer(Buffer.from(await newBefore.arrayBuffer()), "avanti/before-after") : null,
+    newAfter ? uploadImageBuffer(Buffer.from(await newAfter.arrayBuffer()), "avanti/before-after") : null,
+  ]);
+
+  await prisma.beforeAfterProject.update({
+    where: { id },
+    data: {
+      caption,
+      subtext: String(formData.get("subtext") || "").trim() || null,
+      // Leaving a file input empty keeps the existing photo.
+      ...(beforeUrl ? { beforeUrl } : {}),
+      ...(afterUrl ? { afterUrl } : {}),
+    },
+  });
+
+  revalidatePath("/admin/gallery");
+  revalidatePath("/gallery");
+  revalidatePath("/");
+}
+
 export async function deleteBeforeAfterProject(id: string) {
   await prisma.beforeAfterProject.delete({ where: { id } });
   revalidatePath("/admin/gallery");

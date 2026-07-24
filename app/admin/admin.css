@@ -224,6 +224,34 @@
   .content-grid-2 { grid-template-columns: 1fr; }
 }
 
+/* Editable Before & After project in the gallery admin */
+.ba-admin-item {
+  padding: 16px;
+  border: 1px solid var(--surface-line, #333825);
+  border-radius: 10px;
+  background: var(--bg-elev-2, #16190f);
+}
+.ba-admin-item__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.ba-admin-item__pos {
+  font-family: var(--font-head), "Segoe UI", sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--olive-light, #b3d15a);
+}
+/* Delete is its own form, so it sits outside the edit form rather than nested. */
+.ba-admin-item__delete {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--surface-line, #333825);
+}
+
 .admin-btn {
   display: inline-block;
   background: var(--olive-deep, #5f7d28);

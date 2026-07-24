@@ -4,10 +4,22 @@ import {
   addGalleryImage,
   deleteGalleryImage,
   addBeforeAfterProject,
+  updateBeforeAfterProject,
   deleteBeforeAfterProject,
 } from "./actions";
 
 export const dynamic = "force-dynamic";
+
+const thumbStyle: React.CSSProperties = {
+  width: "100%",
+  maxWidth: 220,
+  aspectRatio: "4 / 3",
+  objectFit: "cover",
+  borderRadius: 8,
+  margin: "0 0 10px",
+  border: "1px solid var(--surface-line)",
+  display: "block",
+};
 
 export default async function GalleryAdminPage() {
   const [images, projects] = await Promise.all([
@@ -64,23 +76,54 @@ export default async function GalleryAdminPage() {
           <p className="subtitle" style={{ margin: 0 }}>No before/after projects yet.</p>
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-            {projects.map((proj) => {
+            {projects.map((proj, i) => {
+              const save = updateBeforeAfterProject.bind(null, proj.id);
               const del = deleteBeforeAfterProject.bind(null, proj.id);
               return (
-                <div
-                  key={proj.id}
-                  style={{ display: "flex", gap: 14, alignItems: "center", padding: 12, border: "1px solid var(--surface-line)", borderRadius: 10, background: "var(--bg-elev-2)", flexWrap: "wrap" }}
-                >
-                  <div style={{ display: "flex", gap: 6 }}>
-                    <img src={proj.beforeUrl} alt="Before" style={{ width: 90, height: 68, objectFit: "cover", borderRadius: 6 }} />
-                    <img src={proj.afterUrl} alt="After" style={{ width: 90, height: 68, objectFit: "cover", borderRadius: 6 }} />
+                <div key={proj.id} className="ba-admin-item">
+                  <div className="ba-admin-item__head">
+                    <span className="ba-admin-item__pos">Slide {i + 1}</span>
                   </div>
-                  <div style={{ flex: 1, minWidth: 160 }}>
-                    <strong style={{ color: "var(--heading)", fontFamily: "var(--font-head)", fontSize: "0.95rem" }}>{proj.caption}</strong>
-                    {proj.subtext && <div className="subtitle" style={{ margin: "4px 0 0" }}>{proj.subtext}</div>}
-                  </div>
-                  <form action={del}>
-                    <button type="submit" className="admin-btn admin-btn--danger">Delete</button>
+
+                  <form action={save} className="admin-form" encType="multipart/form-data">
+                    <div className="content-grid-2">
+                      <div>
+                        <label htmlFor={`before-${proj.id}`}>Before Photo</label>
+                        <img src={proj.beforeUrl} alt="Before" style={thumbStyle} />
+                        {uploadsEnabled && (
+                          <input type="file" id={`before-${proj.id}`} name="before_file" accept="image/*" />
+                        )}
+                      </div>
+                      <div>
+                        <label htmlFor={`after-${proj.id}`}>After Photo</label>
+                        <img src={proj.afterUrl} alt="After" style={thumbStyle} />
+                        {uploadsEnabled && (
+                          <input type="file" id={`after-${proj.id}`} name="after_file" accept="image/*" />
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="content-grid-2">
+                      <div>
+                        <label htmlFor={`caption-${proj.id}`}>Caption</label>
+                        <input type="text" id={`caption-${proj.id}`} name="caption" defaultValue={proj.caption} required />
+                      </div>
+                      <div>
+                        <label htmlFor={`subtext-${proj.id}`}>Subtext</label>
+                        <input type="text" id={`subtext-${proj.id}`} name="subtext" defaultValue={proj.subtext ?? ""} />
+                      </div>
+                    </div>
+
+                    {uploadsEnabled && (
+                      <p className="subtitle" style={{ margin: "0 0 4px" }}>
+                        Leave a photo field empty to keep the current one.
+                      </p>
+                    )}
+                    <button type="submit" className="admin-btn">Save Changes</button>
+                  </form>
+
+                  <form action={del} className="ba-admin-item__delete">
+                    <button type="submit" className="admin-btn admin-btn--danger">Delete Project</button>
                   </form>
                 </div>
               );
