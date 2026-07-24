@@ -40,37 +40,39 @@ export default function HeroMedia({ poster, video }: { poster: string; video: st
   }
 
   return (
-    <div className="hero-media">
-      <img className="hero-media-img" src={poster} alt="" aria-hidden="true" />
-      {video && (
-        <video
-          ref={ref}
-          className="hero-video"
-          autoPlay
-          muted
-          playsInline
-          poster={poster}
-          onTimeUpdate={onTimeUpdate}
-          onEnded={() => {
-            setEnded(true);
-            setShowBrand(true);
-          }}
-        >
-          <source src={video} type="video/mp4" />
-        </video>
-      )}
-      <div className="hero-overlay" />
+    <>
+      <div className="hero-media">
+        <img className="hero-media-img" src={poster} alt="" aria-hidden="true" />
+        {video && (
+          <video
+            ref={ref}
+            className="hero-video"
+            autoPlay
+            muted
+            playsInline
+            poster={poster}
+            onTimeUpdate={onTimeUpdate}
+            onEnded={() => {
+              setEnded(true);
+              setShowBrand(true);
+            }}
+          >
+            <source src={video} type="video/mp4" />
+          </video>
+        )}
+        <div className="hero-overlay" />
 
-      {video && (
-        <div className={`hero-endcard${showBrand ? " is-visible" : ""}`} aria-hidden="true">
-          <div className="hero-endcard-lockup">
-            <img src="/assets/logo.svg" alt="" />
-            <strong>Avanti Landscaping</strong>
-            <span>Lawn &amp; Landscape Co.</span>
-            <em>Waxhaw, NC</em>
+        {video && (
+          <div className={`hero-endcard${showBrand ? " is-visible" : ""}`} aria-hidden="true">
+            <div className="hero-endcard-lockup">
+              <img src="/assets/logo.svg" alt="" />
+              <strong>Avanti Landscaping</strong>
+              <span>Lawn &amp; Landscape Co.</span>
+              <em>Waxhaw, NC</em>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {video && (
         <div className="hero-controls">
@@ -100,6 +102,6 @@ export default function HeroMedia({ poster, video }: { poster: string; video: st
           )}
         </div>
       )}
-    </div>
+    </>
   );
 }

@@ -396,13 +396,15 @@ p { color: var(--text-soft); }
   position: absolute;
   right: 22px;
   bottom: 22px;
-  z-index: 4;
+  z-index: 5;
   display: flex;
   gap: 10px;
 }
 .hero-control {
-  width: 46px;
-  height: 46px;
+  width: 48px;
+  height: 48px;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
   border-radius: 50%;
   border: 1px solid rgba(255, 255, 255, 0.3);
   background: rgba(9, 11, 5, 0.55);
@@ -908,19 +910,14 @@ p { color: var(--text-soft); }
 
 /* ---------- Responsive ---------- */
 @media (max-width: 980px) {
-  .nav-links, .nav-cta .btn { display: none; }
+  .nav-links, .nav-cta { display: none; }
   .nav-toggle { display: flex; }
   .hero .container { grid-template-columns: 1fr; text-align: center; }
   .hero-copy p { margin-left: auto; margin-right: auto; }
   .hero-actions, .hero-badges { justify-content: center; }
-  .hero-endcard {
-    align-items: flex-end;
-    justify-content: center;
-    padding: 0 24px 44px;
-    background: linear-gradient(0deg, rgba(9, 11, 5, 0.85) 0%, rgba(9, 11, 5, 0.35) 30%, rgba(9, 11, 5, 0) 55%);
-  }
-  .hero-endcard-lockup { text-align: center; }
-  .hero-endcard-lockup img { margin: 0 auto 12px; }
+  /* The branded sign-off overlaps the hero stats on narrow screens, and the
+     brand already lives in the header — so keep the stats and drop the overlay. */
+  .hero-endcard { display: none; }
   .grid--3, .grid--4, .grid--2 { grid-template-columns: repeat(2, 1fr); }
   .service-row { grid-template-columns: 1fr; }
   .area-chip-grid { grid-template-columns: repeat(2, 1fr); }
@@ -931,7 +928,13 @@ p { color: var(--text-soft); }
 }
 
 @media (max-width: 640px) {
-  .topbar .topbar-right span:not(:last-child) { display: none; }
+  .topbar-right { display: none; }
+  .topbar .container { justify-content: center; }
+  .topbar .topbar-tag { text-align: center; }
+  .hero .container { padding-top: 64px; padding-bottom: 60px; }
+  /* Anchor the video control to the top of the hero (just under the header) so
+     it stays visible over the video instead of falling below the fold. */
+  .hero-controls { top: 14px; right: 14px; bottom: auto; }
   .grid--3, .grid--4, .grid--2, .area-chip-grid, .footer-grid, .stat-grid, .blog-grid { grid-template-columns: 1fr; }
   .cta-band { flex-direction: column; text-align: center; }
   .form-row { grid-template-columns: 1fr; }
