@@ -344,6 +344,54 @@ p { color: var(--text-soft); }
 .hero-badges div span { font-size: 0.78rem; color: rgba(255,255,255,0.78); }
 .hero-art { display: none; }
 
+/* Branded sign-off that fades in for the video's final frame */
+.hero-endcard {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 clamp(28px, 6vw, 96px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1.4s ease;
+  background: linear-gradient(270deg, rgba(9, 11, 5, 0.78) 0%, rgba(9, 11, 5, 0.35) 32%, rgba(9, 11, 5, 0) 58%);
+}
+.hero-endcard.is-visible { opacity: 1; }
+.hero-endcard-lockup { text-align: right; }
+.hero-endcard-lockup img {
+  width: 84px;
+  height: 84px;
+  margin: 0 0 16px auto;
+}
+.hero-endcard-lockup strong {
+  display: block;
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: clamp(1.7rem, 3vw, 2.6rem);
+  color: #ffffff;
+  line-height: 1.1;
+}
+.hero-endcard-lockup span {
+  display: block;
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: 0.82rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--olive-light);
+  margin-top: 8px;
+}
+.hero-endcard-lockup em {
+  display: block;
+  font-style: normal;
+  font-size: 0.82rem;
+  color: var(--gold);
+  margin-top: 10px;
+  letter-spacing: 0.03em;
+}
+
 .hero-controls {
   position: absolute;
   right: 22px;
@@ -865,6 +913,14 @@ p { color: var(--text-soft); }
   .hero .container { grid-template-columns: 1fr; text-align: center; }
   .hero-copy p { margin-left: auto; margin-right: auto; }
   .hero-actions, .hero-badges { justify-content: center; }
+  .hero-endcard {
+    align-items: flex-end;
+    justify-content: center;
+    padding: 0 24px 44px;
+    background: linear-gradient(0deg, rgba(9, 11, 5, 0.85) 0%, rgba(9, 11, 5, 0.35) 30%, rgba(9, 11, 5, 0) 55%);
+  }
+  .hero-endcard-lockup { text-align: center; }
+  .hero-endcard-lockup img { margin: 0 auto 12px; }
   .grid--3, .grid--4, .grid--2 { grid-template-columns: repeat(2, 1fr); }
   .service-row { grid-template-columns: 1fr; }
   .area-chip-grid { grid-template-columns: repeat(2, 1fr); }

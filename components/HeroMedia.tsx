@@ -6,12 +6,20 @@ export default function HeroMedia({ poster, video }: { poster: string; video: st
   const ref = useRef<HTMLVideoElement>(null);
   const [muted, setMuted] = useState(true);
   const [ended, setEnded] = useState(false);
+  const [showBrand, setShowBrand] = useState(false);
 
   // Ensure the muted property (not just the attribute) is set so autoplay works
   // reliably across browsers.
   useEffect(() => {
     if (ref.current) ref.current.muted = true;
   }, []);
+
+  function onTimeUpdate() {
+    const v = ref.current;
+    if (!v || !v.duration || Number.isNaN(v.duration)) return;
+    // Reveal the brand sign-off in the final ~2 seconds.
+    if (v.duration - v.currentTime <= 2) setShowBrand(true);
+  }
 
   function toggleSound() {
     const v = ref.current;
@@ -27,6 +35,7 @@ export default function HeroMedia({ poster, video }: { poster: string; video: st
     if (!v) return;
     v.currentTime = 0;
     setEnded(false);
+    setShowBrand(false);
     v.play().catch(() => {});
   }
 
@@ -41,12 +50,27 @@ export default function HeroMedia({ poster, video }: { poster: string; video: st
           muted
           playsInline
           poster={poster}
-          onEnded={() => setEnded(true)}
+          onTimeUpdate={onTimeUpdate}
+          onEnded={() => {
+            setEnded(true);
+            setShowBrand(true);
+          }}
         >
           <source src={video} type="video/mp4" />
         </video>
       )}
       <div className="hero-overlay" />
+
+      {video && (
+        <div className={`hero-endcard${showBrand ? " is-visible" : ""}`} aria-hidden="true">
+          <div className="hero-endcard-lockup">
+            <img src="/assets/logo.svg" alt="" />
+            <strong>Avanti Landscaping</strong>
+            <span>Lawn &amp; Landscape Co.</span>
+            <em>Waxhaw, NC</em>
+          </div>
+        </div>
+      )}
 
       {video && (
         <div className="hero-controls">
