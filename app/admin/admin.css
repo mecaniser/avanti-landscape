@@ -3,8 +3,17 @@
   min-height: 100vh;
   font-family: var(--font-body), "Segoe UI", sans-serif;
   background: #f4f5f2;
-  color: var(--ink, #232b1e);
+  color: #232b1e;
 }
+
+/* Admin is a light utilitarian surface — re-assert dark text over the
+   public site's dark-theme global heading/paragraph colors. */
+.admin-shell h1, .admin-shell h2, .admin-shell h3, .admin-shell h4,
+.admin-login-card h1, .admin-login-card h2, .admin-login-card h3 {
+  color: #1e2a16;
+}
+.admin-shell p, .admin-login-card p { color: #4a4f43; }
+.admin-main .subtitle { color: #666; }
 
 .admin-sidebar {
   width: 220px;
