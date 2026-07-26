@@ -49,7 +49,8 @@ export default async function GalleryPage() {
             <div className="gallery-grid">
               {images.map((img) => (
                 <div className="gallery-item" key={img.id} style={{ position: "relative" }}>
-                  <img src={img.url} alt={img.caption ?? ""} />
+                  {/* Below the fold: lazy so React doesn't emit an unused preload for each. */}
+                  <img src={img.url} alt={img.caption ?? ""} loading="lazy" />
                   {img.caption && (
                     <div
                       className="caption"

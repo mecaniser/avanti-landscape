@@ -267,6 +267,41 @@
   transition: background .15s ease, border-color .15s ease;
 }
 .admin-btn:hover { background: #6f9130; }
+.admin-btn:disabled,
+.admin-btn[aria-busy="true"] {
+  opacity: 0.7;
+  cursor: progress;
+}
+.admin-btn:disabled:hover { background: var(--olive-deep, #5f7d28); }
+.admin-btn--danger:disabled:hover { background: transparent; }
+
+/* Pending indicator for server action submissions */
+.admin-spinner {
+  display: inline-block;
+  vertical-align: -2px;
+  width: 13px;
+  height: 13px;
+  margin-right: 8px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: admin-spin 0.6s linear infinite;
+}
+@keyframes admin-spin {
+  to { transform: rotate(360deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .admin-spinner { animation-duration: 2s; }
+}
+
+.admin-loading {
+  display: flex;
+  align-items: center;
+  padding: 40px 0;
+  color: var(--olive-light, #b3d15a);
+  font-family: var(--font-head), "Segoe UI", sans-serif;
+  font-size: 0.9rem;
+}
 
 .admin-btn--ghost {
   background: transparent;

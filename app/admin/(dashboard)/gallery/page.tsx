@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import { isCloudinaryConfigured } from "@/lib/cloudinary";
+import SubmitButton from "../SubmitButton";
 import {
   addGalleryImage,
   deleteGalleryImage,
@@ -68,7 +69,7 @@ export default async function GalleryAdminPage() {
                 <input type="text" id="subtext" name="subtext" placeholder="e.g. Soil prep, fresh plantings, and mulch" />
               </div>
             </div>
-            <button type="submit" className="admin-btn">Add Project</button>
+            <SubmitButton pendingLabel="Uploading photos…">Add Project</SubmitButton>
           </form>
         )}
 
@@ -119,11 +120,13 @@ export default async function GalleryAdminPage() {
                         Leave a photo field empty to keep the current one.
                       </p>
                     )}
-                    <button type="submit" className="admin-btn">Save Changes</button>
+                    <SubmitButton pendingLabel="Saving…">Save Changes</SubmitButton>
                   </form>
 
                   <form action={del} className="ba-admin-item__delete">
-                    <button type="submit" className="admin-btn admin-btn--danger">Delete Project</button>
+                    <SubmitButton className="admin-btn admin-btn--danger" pendingLabel="Deleting…">
+                      Delete Project
+                    </SubmitButton>
                   </form>
                 </div>
               );
@@ -141,7 +144,7 @@ export default async function GalleryAdminPage() {
             <input type="file" id="file" name="file" accept="image/*" required />
             <label htmlFor="gallery-caption">Caption</label>
             <input type="text" id="gallery-caption" name="caption" placeholder="e.g. Mulch Installation" />
-            <button type="submit" className="admin-btn">Upload</button>
+            <SubmitButton pendingLabel="Uploading…">Upload</SubmitButton>
           </form>
         )}
       </div>
@@ -151,13 +154,17 @@ export default async function GalleryAdminPage() {
           const del = deleteGalleryImage.bind(null, img.id);
           return (
             <div className="admin-thumb" key={img.id}>
-              <img src={img.url} alt={img.caption ?? ""} />
+              <img src={img.url} alt={img.caption ?? ""} loading="lazy" />
               <div className="meta">
                 <div>{img.caption || "—"}</div>
                 <form action={del} style={{ marginTop: 6 }}>
-                  <button type="submit" className="admin-btn admin-btn--danger" style={{ fontSize: "0.75rem", padding: "4px 10px" }}>
+                  <SubmitButton
+                    className="admin-btn admin-btn--danger"
+                    style={{ fontSize: "0.75rem", padding: "4px 10px" }}
+                    pendingLabel="Deleting…"
+                  >
                     Delete
-                  </button>
+                  </SubmitButton>
                 </form>
               </div>
             </div>
