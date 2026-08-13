@@ -20,7 +20,9 @@ export async function sendLeadNotification(lead: {
   const resend = getClient();
 
   if (!resend || !to) {
-    console.log("[email] Resend not configured — skipping send. Lead:", lead);
+    // The lead is persisted by the contact route. Do not write customer PII
+    // to provider logs when notification delivery is intentionally disabled.
+    console.warn("[email] Lead notification skipped: Resend is not configured.");
     return { skipped: true };
   }
 
