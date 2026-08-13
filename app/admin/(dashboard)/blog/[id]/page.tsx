@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
-import { updateBlogPost, deleteBlogPost } from "../actions";
+import { deleteBlogPost } from "../actions";
+import AdminUploadForm from "@/components/AdminUploadForm";
 
 export const dynamic = "force-dynamic";
 
@@ -13,7 +14,6 @@ export default async function EditBlogPostPage({
   const post = await prisma.blogPost.findUnique({ where: { id } });
   if (!post) notFound();
 
-  const update = updateBlogPost.bind(null, id);
   const del = deleteBlogPost.bind(null, id);
 
   return (
@@ -22,7 +22,8 @@ export default async function EditBlogPostPage({
       <p className="subtitle">/blog/{post.slug}</p>
 
       <div className="admin-card">
-        <form action={update} className="admin-form" encType="multipart/form-data">
+        <AdminUploadForm operation="blog-update" submitLabel="Save Changes" processingLabel="Saving post…" redirectTo="/admin/blog" className="admin-form">
+          <input type="hidden" name="id" value={id} />
           <label htmlFor="title">Title</label>
           <input type="text" id="title" name="title" defaultValue={post.title} required />
 
@@ -50,8 +51,7 @@ export default async function EditBlogPostPage({
             Published
           </label>
 
-          <button type="submit" className="admin-btn">Save Changes</button>
-        </form>
+        </AdminUploadForm>
       </div>
 
       <form action={del}>

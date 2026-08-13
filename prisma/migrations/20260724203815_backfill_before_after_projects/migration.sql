@@ -17,19 +17,11 @@ SELECT * FROM (
   VALUES
     (
       'seed_ba_foundation_bed',
-      '/assets/img/ba-foundation-before.jpg',
-      '/assets/img/ba-foundation-after.jpg',
-      'Foundation Bed Renovation — Waxhaw, NC',
-      'Soil preparation, fresh plantings, and mulch, drag to compare',
+      '/assets/img/project-planting-before.jpg',
+      '/assets/img/project-planting-after.jpg',
+      'Planting Bed Installation',
+      'The same property before work began and after the new planting bed was installed',
       0
-    ),
-    (
-      'seed_ba_new_lawn_marvin',
-      '/assets/img/gallery-soil-prep.jpg',
-      '/assets/img/gallery-sod-closeup.jpg',
-      'New Lawn Installation — Marvin, NC',
-      'From bare soil prep to fresh sod, drag to compare',
-      1
     )
 ) AS v ("id", "beforeUrl", "afterUrl", "caption", "subtext", "sortOrder")
 WHERE NOT EXISTS (SELECT 1 FROM "BeforeAfterProject");

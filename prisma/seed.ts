@@ -49,8 +49,8 @@ async function main() {
     { page: "home", key: "services_paragraph", type: "text", value: "From weekly mowing to full backyard transformations, our crews handle it all." },
     { page: "home", key: "why_heading", type: "text", value: "Clean, Reliable, Detail-Focused Work" },
     { page: "home", key: "why_paragraph", type: "text", value: "We treat every property like it's our own — showing up on schedule and leaving things looking sharp." },
-    { page: "home", key: "ba_heading", type: "text", value: "See the Transformation" },
-    { page: "home", key: "ba_paragraph", type: "text", value: "Drag the slider to see one of our recent foundation bed renovations, start to finish." },
+    { page: "home", key: "ba_heading", type: "text", value: "A real before & after" },
+    { page: "home", key: "ba_paragraph", type: "text", value: "One Avanti project, shown before work and after installation." },
     { page: "home", key: "areas_heading", type: "text", value: "Proudly Serving the Waxhaw Area" },
     { page: "home", key: "areas_paragraph", type: "text", value: "Based in Waxhaw, NC and serving these nearby communities." },
     { page: "home", key: "about_heading", type: "text", value: "A Local Crew That Takes Pride In The Details" },
@@ -159,18 +159,11 @@ async function main() {
     await prisma.beforeAfterProject.createMany({
       data: [
         {
-          beforeUrl: "/assets/img/ba-foundation-before.jpg",
-          afterUrl: "/assets/img/ba-foundation-after.jpg",
-          caption: "Foundation Bed Renovation — Waxhaw, NC",
-          subtext: "Soil preparation, fresh plantings, and mulch, drag to compare",
+          beforeUrl: "/assets/img/project-planting-before.jpg",
+          afterUrl: "/assets/img/project-planting-after.jpg",
+          caption: "Planting Bed Installation",
+          subtext: "The same property before work began and after the new planting bed was installed",
           sortOrder: 0,
-        },
-        {
-          beforeUrl: "/assets/img/gallery-soil-prep.jpg",
-          afterUrl: "/assets/img/gallery-sod-closeup.jpg",
-          caption: "New Lawn Installation — Marvin, NC",
-          subtext: "From bare soil prep to fresh sod, drag to compare",
-          sortOrder: 1,
         },
       ],
     });

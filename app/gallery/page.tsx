@@ -18,7 +18,7 @@ export default async function GalleryPage() {
   return (
     <>
       <SiteHeader active="gallery" />
-      <main>
+      <main id="main-content" tabIndex={-1}>
         <section className="page-hero">
           <div className="container">
             <div className="breadcrumb"><Link href="/" style={{ color: "inherit" }}>Home</Link> / Gallery</div>
@@ -31,9 +31,8 @@ export default async function GalleryPage() {
           <section className="section section--tight">
             <div className="container">
               <div className="section-head">
-                <span className="eyebrow">Before &amp; After</span>
-                <h2>See the Transformations</h2>
-                <p>Drag the slider to compare, and browse through our recent projects.</p>
+                <h2>Before &amp; After</h2>
+                <p>One Avanti project, shown clearly before work and after installation.</p>
               </div>
               <BeforeAfterCarousel projects={projects} />
             </div>

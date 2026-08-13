@@ -16,7 +16,7 @@ export default async function ContactPage() {
   return (
     <>
       <SiteHeader active="contact" />
-      <main>
+      <main id="main-content" tabIndex={-1}>
         <section className="page-hero">
           <div className="container">
             <div className="breadcrumb"><Link href="/" style={{ color: "inherit" }}>Home</Link> / Contact</div>

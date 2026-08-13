@@ -1,4 +1,4 @@
-import { createBlogPost } from "../actions";
+import AdminUploadForm from "@/components/AdminUploadForm";
 
 export default function NewBlogPostPage() {
   return (
@@ -7,7 +7,7 @@ export default function NewBlogPostPage() {
       <p className="subtitle">Body supports basic HTML tags (h2, p, ul/li).</p>
 
       <div className="admin-card">
-        <form action={createBlogPost} className="admin-form" encType="multipart/form-data">
+        <AdminUploadForm operation="blog-create" submitLabel="Create Post" processingLabel="Saving post…" redirectTo="/admin/blog" className="admin-form">
           <label htmlFor="title">Title</label>
           <input type="text" id="title" name="title" required />
 
@@ -31,8 +31,7 @@ export default function NewBlogPostPage() {
             Publish immediately
           </label>
 
-          <button type="submit" className="admin-btn">Create Post</button>
-        </form>
+        </AdminUploadForm>
       </div>
     </>
   );

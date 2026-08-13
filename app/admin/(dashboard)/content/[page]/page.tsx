@@ -2,7 +2,8 @@ import Link from "next/link";
 import type { ContentBlock } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { isCloudinaryConfigured } from "@/lib/cloudinary";
-import { updateContentBlock, uploadHeroVideo, clearHeroVideo } from "../actions";
+import { updateContentBlock, clearHeroVideo } from "../actions";
+import AdminUploadForm from "@/components/AdminUploadForm";
 
 // Managed by dedicated screens, so hidden from the generic content editor.
 const MANAGED_ELSEWHERE = new Set([
@@ -42,21 +43,33 @@ const imgStyle: React.CSSProperties = {
 
 function BlockField({ page, block }: { page: string; block: ContentBlock }) {
   const update = updateContentBlock.bind(null, page, block.key);
+
+  if (block.type === "image") {
+    return (
+      <AdminUploadForm
+        operation="content-image"
+        submitLabel="Save Image"
+        processingLabel="Saving image…"
+        className="admin-form"
+      >
+        <input type="hidden" name="page" value={page} />
+        <input type="hidden" name="key" value={block.key} />
+        <label>{labelFor(block.key)}</label>
+        <img src={block.value} alt={block.key} style={imgStyle} />
+        <input type="file" name="file" accept="image/*" required />
+      </AdminUploadForm>
+    );
+  }
+
   return (
     <form
       action={update}
       className="admin-form"
-      encType={block.type === "image" ? "multipart/form-data" : undefined}
     >
       <label>{labelFor(block.key)}</label>
       <input type="hidden" name="type" value={block.type} />
 
-      {block.type === "image" ? (
-        <>
-          <img src={block.value} alt={block.key} style={imgStyle} />
-          <input type="file" name="file" accept="image/*" />
-        </>
-      ) : block.value.length > 80 ? (
+      {block.value.length > 80 ? (
         <textarea name="value" rows={3} defaultValue={block.value} />
       ) : (
         <input type="text" name="value" defaultValue={block.value} />
@@ -136,10 +149,9 @@ export default async function ContentEditorPage({
               />
               <div style={{ display: "flex", gap: 10, alignItems: "flex-start", flexWrap: "wrap" }}>
                 {uploadsEnabled && (
-                  <form action={uploadHeroVideo} className="admin-form" encType="multipart/form-data" style={{ margin: 0 }}>
+                  <AdminUploadForm operation="hero-video" submitLabel="Replace Video" processingLabel="Saving video…" className="admin-form">
                     <input type="file" name="file" accept="video/*" required style={{ marginBottom: 10 }} />
-                    <button type="submit" className="admin-btn">Replace Video</button>
-                  </form>
+                  </AdminUploadForm>
                 )}
                 <form action={clearHeroVideo}>
                   <button type="submit" className="admin-btn admin-btn--danger">Remove Video</button>
@@ -147,10 +159,9 @@ export default async function ContentEditorPage({
               </div>
             </>
           ) : uploadsEnabled ? (
-            <form action={uploadHeroVideo} className="admin-form" encType="multipart/form-data">
+            <AdminUploadForm operation="hero-video" submitLabel="Upload Video" processingLabel="Saving video…" className="admin-form">
               <input type="file" name="file" accept="video/*" required />
-              <button type="submit" className="admin-btn">Upload Video</button>
-            </form>
+            </AdminUploadForm>
           ) : (
             <p className="subtitle" style={{ margin: 0 }}>Add the Cloudinary keys to enable video uploads.</p>
           )}

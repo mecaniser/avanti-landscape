@@ -224,7 +224,7 @@
   .content-grid-2 { grid-template-columns: 1fr; }
 }
 
-/* Editable Before & After project in the gallery admin */
+/* Saved before/after slides read as their public proof first; editing is opt-in. */
 .ba-admin-item {
   padding: 16px;
   border: 1px solid var(--surface-line, #333825);
@@ -245,11 +245,105 @@
   text-transform: uppercase;
   color: var(--olive-light, #b3d15a);
 }
+.ba-admin-create { margin: 0 0 20px; }
+.ba-admin-create summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  padding: 9px 13px;
+  border: 1px solid var(--surface-line, #333825);
+  border-radius: 8px;
+  color: var(--olive-light, #b3d15a);
+  cursor: pointer;
+  font-family: var(--font-head), "Segoe UI", sans-serif;
+  font-size: .84rem;
+  font-weight: 600;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.ba-admin-create summary span { font-family: var(--font-body), "Segoe UI", sans-serif; font-size: 1.1rem; line-height: .75; }
+.ba-admin-create summary:focus-visible {
+  outline: 2px solid var(--olive-light, #b3d15a);
+  outline-offset: 4px;
+}
+.ba-admin-create[open] summary { background: rgba(139, 174, 60, .1); border-color: var(--olive, #8fae3c); }
+.ba-admin-create__body {
+  margin-top: 14px;
+  padding: 16px;
+  border: 1px solid var(--surface-line, #333825);
+  border-radius: 10px;
+  background: var(--bg-elev-2, #16190f);
+}
+.ba-admin-preview {
+  display: grid;
+  grid-template-columns: minmax(132px, .72fr) minmax(180px, 1fr) minmax(132px, .72fr);
+  gap: 16px;
+  align-items: center;
+}
+.ba-admin-preview figure { margin: 0; }
+.ba-admin-preview figure img {
+  width: 100%;
+  max-width: none !important;
+  margin-bottom: 6px !important;
+  aspect-ratio: 4 / 3;
+}
+.ba-admin-preview figcaption {
+  color: var(--text-soft, #a3a992);
+  font-family: var(--font-head), "Segoe UI", sans-serif;
+  font-size: .75rem;
+  font-weight: 600;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+.ba-admin-preview__copy { min-width: 0; }
+.ba-admin-preview__copy strong {
+  display: block;
+  color: var(--heading, #f2f4e8);
+  font-family: var(--font-head), "Segoe UI", sans-serif;
+  font-size: 1.25rem;
+  line-height: 1.05;
+  overflow-wrap: anywhere;
+}
+.ba-admin-preview__copy p {
+  margin: 8px 0 0;
+  color: var(--text-soft, #a3a992);
+  font-size: .88rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.ba-admin-edit { margin-top: 14px; }
+.ba-admin-edit summary {
+  width: fit-content;
+  color: var(--olive-light, #b3d15a);
+  cursor: pointer;
+  font-family: var(--font-head), "Segoe UI", sans-serif;
+  font-size: .84rem;
+  font-weight: 600;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.ba-admin-edit summary:focus-visible {
+  outline: 2px solid var(--olive-light, #b3d15a);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+.ba-admin-edit__body {
+  margin-top: 14px;
+  padding-top: 16px;
+  border-top: 1px solid var(--surface-line, #333825);
+}
 /* Delete is its own form, so it sits outside the edit form rather than nested. */
 .ba-admin-item__delete {
   margin-top: 12px;
   padding-top: 12px;
   border-top: 1px solid var(--surface-line, #333825);
+}
+@media (max-width: 700px) {
+  .ba-admin-preview { grid-template-columns: 1fr 1fr; }
+  .ba-admin-preview__copy { grid-column: 1 / -1; grid-row: 1; }
+  .ba-admin-preview figure:first-child { grid-column: 1; grid-row: 2; }
+  .ba-admin-preview figure:last-child { grid-column: 2; grid-row: 2; }
 }
 
 .admin-btn {
@@ -264,9 +358,10 @@
   cursor: pointer;
   text-decoration: none;
   font-family: var(--font-head), "Segoe UI", sans-serif;
-  transition: background .15s ease, border-color .15s ease;
+  transition: background .15s ease, border-color .15s ease, transform .16s cubic-bezier(.23, 1, .32, 1);
 }
 .admin-btn:hover { background: #6f9130; }
+.admin-btn:active { transform: scale(.97); }
 .admin-btn:disabled,
 .admin-btn[aria-busy="true"] {
   opacity: 0.7;
@@ -292,7 +387,32 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .admin-spinner { animation-duration: 2s; }
+  .admin-btn { transition: background .15s ease, border-color .15s ease; }
 }
+
+/* Progress is supplied by XMLHttpRequest's upload event, not a simulated timer. */
+.admin-upload-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 24px;
+  margin-top: 10px;
+  color: var(--text-soft, #a3a992);
+  font-size: .82rem;
+}
+.admin-upload-progress {
+  width: min(240px, 100%);
+  height: 6px;
+  overflow: hidden;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(179, 209, 90, .16);
+  accent-color: var(--olive-light, #b3d15a);
+}
+.admin-upload-progress::-webkit-progress-bar { background: rgba(179, 209, 90, .16); }
+.admin-upload-progress::-webkit-progress-value { background: var(--olive-light, #b3d15a); }
+.admin-upload-progress::-moz-progress-bar { background: var(--olive-light, #b3d15a); }
+.admin-upload-status--error { color: #f0a08e; }
 
 .admin-loading {
   display: flex;

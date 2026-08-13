@@ -1,0 +1,76 @@
+{
+  "title": "Choose Avanti's homepage visual world",
+  "question": "Choose the world that should carry Avanti's scroll story. The first direction is the assigned recommendation; alternates test different ways to make the work memorable.",
+  "options": [
+    {
+      "id": "assigned-property-survey",
+      "label": "The Property Plan",
+      "kicker": "ASSIGNED DIRECTION",
+      "lineage": "residential survey plats, landscape staking plans, and field-marking systems",
+      "thesis": "One accountable crew reads the whole property, marks what matters, and carries it from routine care to finished improvement.",
+      "palette": ["#182A1E", "#E8E3D5", "#B7C78B", "#EF6A3A"],
+      "materials": ["survey linen", "graphite linework", "fluorescent stake flags", "authentic project photography"],
+      "viewport": "A full-bleed working-property photograph is crossed by a precise survey line that labels Care, Build, and Maintain while the headline and quote action sit on the open lawn.",
+      "risk": "It becomes sterile if the technical linework outruns the warmth and evidence of the real crew.",
+      "sketch": ".impeccable/sketches/avanti-property-plan.png"
+    },
+    {
+      "id": "challenger-brick-instructions",
+      "label": "Built in Steps",
+      "kicker": "CLARITY CHALLENGER",
+      "lineage": "numbered exploded build-instruction books",
+      "thesis": "Every service is shown as a visible sequence from the property as found to the finished result.",
+      "case": "Product clarity is excellent, but the toy-like grammar identifies less naturally with homeowners choosing a trusted property crew.",
+      "palette": ["#8EC9EA", "#F4F1E8", "#1A1A18", "#D64C36"],
+      "materials": ["sky-blue instruction stock", "black keylines", "numbered work stages", "before-and-after image pieces"],
+      "viewport": "A three-step property transformation fills the viewport, with the current step in full color, prior work ghosted, and one clear arrow ending at Request a Quote.",
+      "risk": "Without disciplined photography and adult typography, the system can feel playful rather than dependable.",
+      "sketch": ".impeccable/sketches/avanti-built-in-steps.png",
+      "hero": "https://impeccable.style/worlds/cards/games-toys-physics-play-brick-build-instructions-hero.webp",
+      "board": "https://impeccable.style/worlds/cards/games-toys-physics-play-brick-build-instructions.webp"
+    },
+    {
+      "id": "challenger-photo-mook",
+      "label": "The Project Lookbook",
+      "kicker": "IMAGE CHALLENGER",
+      "lineage": "Japanese fashion mook spreads and annotated coordinate photography",
+      "thesis": "Real project photographs overlap like a collected field lookbook, with ribbons naming the service and outcome in each scene.",
+      "case": "The imagery feels authored and contemporary, but the fashion lineage identifies weakly with local property stewardship and makes service scanning less direct.",
+      "palette": ["#161B17", "#F1EBDD", "#8CAE54", "#B83B32"],
+      "materials": ["shingled photographic prints", "annotation ribbons", "fold-out project sheets", "fine ink captions"],
+      "viewport": "Three overlapping Avanti project photographs dominate the frame while one annotation ribbon connects the active image to the offer and quote action.",
+      "risk": "The overlapping structure can obscure the strongest project proof on small screens.",
+      "sketch": ".impeccable/sketches/avanti-project-lookbook.png",
+      "hero": "https://impeccable.style/worlds/cards/pop-culture-shelf-gothic-lolita-mook-hero.webp",
+      "board": "https://impeccable.style/worlds/cards/pop-culture-shelf-gothic-lolita-mook.webp"
+    },
+    {
+      "id": "challenger-ikebana",
+      "label": "Living Balance",
+      "kicker": "LANDSCAPE CHALLENGER",
+      "lineage": "tokonoma alcoves and asymmetric ikebana arrangements",
+      "thesis": "A few carefully placed images, lines, and seasonal cues make the property feel composed rather than decorated.",
+      "case": "The audience connection to landscaping is credible, but it fuses poorly with mowing, drainage, hardscaping, and the full-service promise.",
+      "palette": ["#E7E1D5", "#4A433A", "#395D47", "#425E9B"],
+      "materials": ["pale plaster", "weathered branch linework", "bronze anchors", "seasonal photography"],
+      "viewport": "One tall project photograph and two smaller proof moments form an asymmetric triangle around a quiet headline and grounded quote action.",
+      "risk": "Its restraint can understate the practical breadth and energy of a working landscaping crew.",
+      "sketch": ".impeccable/sketches/avanti-living-balance.png",
+      "hero": "https://impeccable.style/worlds/cards/growth-metamorphosis-branching-ikebana-ma-arrangement-hero.webp",
+      "board": "https://impeccable.style/worlds/cards/growth-metamorphosis-branching-ikebana-ma-arrangement.webp"
+    }
+  ],
+  "reroll": true,
+  "canon": true,
+  "canonCard": {
+    "label": "The polished category standard",
+    "lineage": "premium local landscaping websites",
+    "thesis": "A cinematic project hero, service overview, trust proof, gallery, service area, and quote close executed at a high level.",
+    "palette": ["#173520", "#F4F0E5", "#9DB45B", "#FFFFFF"],
+    "materials": ["full-bleed project video", "clean service cards", "restrained botanical accents", "authentic photography"],
+    "viewport": "A refined landscape video hero carries the offer, two equal contact actions, and a concise local proof line.",
+    "risk": "It is clear and credible but easier to confuse with another premium landscaping company.",
+    "sketch": ".impeccable/sketches/avanti-category-standard.png"
+  },
+  "steer": true
+}

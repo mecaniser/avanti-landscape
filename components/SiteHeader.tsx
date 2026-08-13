@@ -21,6 +21,7 @@ export default async function SiteHeader({ active }: { active: string }) {
 
   return (
     <header className="site-header">
+      <a className="skip-link" href="#main-content">Skip to main content</a>
       <div className="topbar">
         <div className="container">
           <div><span className="topbar-tag">Locally owned &amp; operated in Waxhaw, NC</span></div>
@@ -31,7 +32,7 @@ export default async function SiteHeader({ active }: { active: string }) {
         </div>
       </div>
       <div className="container">
-        <nav className="navbar">
+        <nav className="navbar" aria-label="Primary navigation">
           <Link href="/" className="brand">
             <img src="/assets/logo.svg" alt="Avanti Landscaping logo" />
             <div className="brand-text">
@@ -44,7 +45,7 @@ export default async function SiteHeader({ active }: { active: string }) {
             {NAV.map((item) =>
               item.key === "services" ? (
                 <li key={item.key} className={active === item.key ? "active" : undefined}>
-                  <Link href="/services">
+                  <Link href="/services" aria-current={active === item.key ? "page" : undefined}>
                     Services <span className="caret">▾</span>
                   </Link>
                   <div className="dropdown-panel">
@@ -57,7 +58,7 @@ export default async function SiteHeader({ active }: { active: string }) {
                 </li>
               ) : (
                 <li key={item.key} className={active === item.key ? "active" : undefined}>
-                  <Link href={item.href}>{item.label}</Link>
+                  <Link href={item.href} aria-current={active === item.key ? "page" : undefined}>{item.label}</Link>
                 </li>
               )
             )}
@@ -71,19 +72,9 @@ export default async function SiteHeader({ active }: { active: string }) {
             <Link href="/contact" className="btn btn--dark btn--sm">Get a Free Quote</Link>
           </div>
 
-          <button className="nav-toggle" aria-label="Toggle menu">
-            <span></span><span></span><span></span>
-          </button>
+          <MobileNavToggle items={NAV} active={active} phone={phone} phoneTel={phoneTel} />
         </nav>
       </div>
-
-      <div className="mobile-nav">
-        {NAV.map((item) => (
-          <Link key={item.key} href={item.href}>{item.label}</Link>
-        ))}
-        <a href={`tel:${phoneTel}`}>Call {phone}</a>
-      </div>
-      <MobileNavToggle />
     </header>
   );
 }

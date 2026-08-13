@@ -1,33 +1,57 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
 export default function HeroMedia({ poster, video }: { poster: string; video: string }) {
   const ref = useRef<HTMLVideoElement>(null);
   const [muted, setMuted] = useState(true);
   const [ended, setEnded] = useState(false);
-  const [showBrand, setShowBrand] = useState(false);
+  const [paused, setPaused] = useState(false);
+  const [canPlayVideo, setCanPlayVideo] = useState(false);
 
-  // Ensure the muted property (not just the attribute) is set so autoplay works
-  // reliably across browsers.
+  // Start with the poster and only mount the video after hydration. This keeps
+  // motion media off the network when the visitor requests reduced motion or
+  // data savings, while preserving a complete no-JavaScript hero.
   useEffect(() => {
-    if (ref.current) ref.current.muted = true;
+    const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const connection = (
+      navigator as Navigator & {
+        connection?: { saveData?: boolean; effectiveType?: string };
+      }
+    ).connection;
+
+    const updateVideoPreference = () => {
+      const constrainedConnection =
+        connection?.saveData || connection?.effectiveType?.includes("2g");
+      setCanPlayVideo(!motion.matches && !constrainedConnection);
+    };
+
+    updateVideoPreference();
+    motion.addEventListener("change", updateVideoPreference);
+    return () => motion.removeEventListener("change", updateVideoPreference);
   }, []);
 
-  function onTimeUpdate() {
-    const v = ref.current;
-    if (!v || !v.duration || Number.isNaN(v.duration)) return;
-    // Reveal the brand sign-off in the final ~2 seconds.
-    if (v.duration - v.currentTime <= 2) setShowBrand(true);
-  }
+  useEffect(() => {
+    if (canPlayVideo && ref.current) ref.current.muted = true;
+  }, [canPlayVideo]);
 
   function toggleSound() {
     const v = ref.current;
     if (!v) return;
     const next = !muted;
     v.muted = next;
-    if (!next) v.play().catch(() => {});
     setMuted(next);
+  }
+
+  function togglePlayback() {
+    const v = ref.current;
+    if (!v) return;
+    if (v.paused) {
+      v.play().catch(() => {});
+    } else {
+      v.pause();
+    }
   }
 
   function replay() {
@@ -35,15 +59,23 @@ export default function HeroMedia({ poster, video }: { poster: string; video: st
     if (!v) return;
     v.currentTime = 0;
     setEnded(false);
-    setShowBrand(false);
+    setPaused(false);
     v.play().catch(() => {});
   }
 
   return (
     <>
       <div className="hero-media">
-        <img className="hero-media-img" src={poster} alt="" aria-hidden="true" />
-        {video && (
+        <Image
+          className="hero-media-img"
+          src={poster}
+          alt=""
+          aria-hidden="true"
+          fill
+          priority
+          sizes="100vw"
+        />
+        {video && canPlayVideo && (
           <video
             ref={ref}
             className="hero-video"
@@ -51,10 +83,10 @@ export default function HeroMedia({ poster, video }: { poster: string; video: st
             muted
             playsInline
             poster={poster}
-            onTimeUpdate={onTimeUpdate}
+            onPlay={() => setPaused(false)}
+            onPause={() => setPaused(true)}
             onEnded={() => {
               setEnded(true);
-              setShowBrand(true);
             }}
           >
             <source src={video} type="video/mp4" />
@@ -62,20 +94,10 @@ export default function HeroMedia({ poster, video }: { poster: string; video: st
         )}
         <div className="hero-overlay" />
 
-        {video && (
-          <div className={`hero-endcard${showBrand ? " is-visible" : ""}`} aria-hidden="true">
-            <div className="hero-endcard-lockup">
-              <img src="/assets/logo.svg" alt="" />
-              <strong>Avanti Landscaping</strong>
-              <span>Lawn &amp; Landscape Co.</span>
-              <em>Waxhaw, NC</em>
-            </div>
-          </div>
-        )}
       </div>
 
-      {video && (
-        <div className="hero-controls">
+      {video && canPlayVideo && (
+        <div className="hero-controls" role="group" aria-label="Background video controls">
           {ended ? (
             <button type="button" className="hero-control" onClick={replay} aria-label="Replay video">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -84,21 +106,34 @@ export default function HeroMedia({ poster, video }: { poster: string; video: st
               </svg>
             </button>
           ) : (
-            <button type="button" className="hero-control" onClick={toggleSound} aria-label={muted ? "Turn video sound on" : "Mute video"}>
-              {muted ? (
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M11 5 6 9H2v6h4l5 4V5z" />
-                  <line x1="23" y1="9" x2="17" y2="15" />
-                  <line x1="17" y1="9" x2="23" y2="15" />
-                </svg>
-              ) : (
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M11 5 6 9H2v6h4l5 4V5z" />
-                  <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
-                  <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
-                </svg>
-              )}
-            </button>
+            <>
+              <button type="button" className="hero-control" onClick={togglePlayback} aria-label={paused ? "Play background video" : "Pause background video"}>
+                {paused ? (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                ) : (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M6 5h4v14H6zM14 5h4v14h-4z" />
+                  </svg>
+                )}
+              </button>
+              <button type="button" className="hero-control" onClick={toggleSound} aria-label={muted ? "Turn video sound on" : "Mute video"}>
+                {muted ? (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M11 5 6 9H2v6h4l5 4V5z" />
+                    <line x1="23" y1="9" x2="17" y2="15" />
+                    <line x1="17" y1="9" x2="23" y2="15" />
+                  </svg>
+                ) : (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M11 5 6 9H2v6h4l5 4V5z" />
+                    <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
+                  </svg>
+                )}
+              </button>
+            </>
           )}
         </div>
       )}

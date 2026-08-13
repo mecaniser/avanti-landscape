@@ -1,11 +1,9 @@
 import { prisma } from "@/lib/db";
 import { isCloudinaryConfigured } from "@/lib/cloudinary";
 import SubmitButton from "../SubmitButton";
+import AdminUploadForm from "@/components/AdminUploadForm";
 import {
-  addGalleryImage,
   deleteGalleryImage,
-  addBeforeAfterProject,
-  updateBeforeAfterProject,
   deleteBeforeAfterProject,
 } from "./actions";
 
@@ -48,29 +46,39 @@ export default async function GalleryAdminPage() {
         </p>
 
         {uploadsEnabled && (
-          <form action={addBeforeAfterProject} className="admin-form" encType="multipart/form-data" style={{ marginBottom: projects.length ? 24 : 0 }}>
-            <div className="content-grid-2">
-              <div>
-                <label htmlFor="before_file">Before Photo</label>
-                <input type="file" id="before_file" name="before_file" accept="image/*" required />
-              </div>
-              <div>
-                <label htmlFor="after_file">After Photo</label>
-                <input type="file" id="after_file" name="after_file" accept="image/*" required />
-              </div>
+          <details className="ba-admin-create">
+            <summary><span aria-hidden="true">+</span> Add project</summary>
+            <div className="ba-admin-create__body">
+              <AdminUploadForm
+                operation="before-after-create"
+                submitLabel="Add Project"
+                processingLabel="Saving project…"
+                resetOnSuccess
+                className="admin-form"
+              >
+                <div className="content-grid-2">
+                  <div>
+                    <label htmlFor="before_file">Before Photo</label>
+                    <input type="file" id="before_file" name="before_file" accept="image/*" required />
+                  </div>
+                  <div>
+                    <label htmlFor="after_file">After Photo</label>
+                    <input type="file" id="after_file" name="after_file" accept="image/*" required />
+                  </div>
+                </div>
+                <div className="content-grid-2">
+                  <div>
+                    <label htmlFor="ba-caption">Caption</label>
+                    <input type="text" id="ba-caption" name="caption" placeholder="e.g. Foundation Bed Renovation — Waxhaw, NC" required />
+                  </div>
+                  <div>
+                    <label htmlFor="subtext">Subtext</label>
+                    <input type="text" id="subtext" name="subtext" placeholder="e.g. Soil prep, fresh plantings, and mulch" />
+                  </div>
+                </div>
+              </AdminUploadForm>
             </div>
-            <div className="content-grid-2">
-              <div>
-                <label htmlFor="ba-caption">Caption</label>
-                <input type="text" id="ba-caption" name="caption" placeholder="e.g. Foundation Bed Renovation — Waxhaw, NC" required />
-              </div>
-              <div>
-                <label htmlFor="subtext">Subtext</label>
-                <input type="text" id="subtext" name="subtext" placeholder="e.g. Soil prep, fresh plantings, and mulch" />
-              </div>
-            </div>
-            <SubmitButton pendingLabel="Uploading photos…">Add Project</SubmitButton>
-          </form>
+          </details>
         )}
 
         {projects.length === 0 ? (
@@ -78,56 +86,79 @@ export default async function GalleryAdminPage() {
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
             {projects.map((proj, i) => {
-              const save = updateBeforeAfterProject.bind(null, proj.id);
               const del = deleteBeforeAfterProject.bind(null, proj.id);
               return (
                 <div key={proj.id} className="ba-admin-item">
                   <div className="ba-admin-item__head">
                     <span className="ba-admin-item__pos">Slide {i + 1}</span>
                   </div>
-
-                  <form action={save} className="admin-form" encType="multipart/form-data">
-                    <div className="content-grid-2">
-                      <div>
-                        <label htmlFor={`before-${proj.id}`}>Before Photo</label>
-                        <img src={proj.beforeUrl} alt="Before" style={thumbStyle} />
-                        {uploadsEnabled && (
-                          <input type="file" id={`before-${proj.id}`} name="before_file" accept="image/*" />
-                        )}
-                      </div>
-                      <div>
-                        <label htmlFor={`after-${proj.id}`}>After Photo</label>
-                        <img src={proj.afterUrl} alt="After" style={thumbStyle} />
-                        {uploadsEnabled && (
-                          <input type="file" id={`after-${proj.id}`} name="after_file" accept="image/*" />
-                        )}
-                      </div>
+                  <div className="ba-admin-preview" aria-label={`Preview of ${proj.caption}`}>
+                    <figure>
+                      <img src={proj.beforeUrl} alt={`Before — ${proj.caption}`} style={thumbStyle} />
+                      <figcaption>Before</figcaption>
+                    </figure>
+                    <div className="ba-admin-preview__copy">
+                      <strong>{proj.caption}</strong>
+                      {proj.subtext && <p>{proj.subtext}</p>}
                     </div>
+                    <figure>
+                      <img src={proj.afterUrl} alt={`After — ${proj.caption}`} style={thumbStyle} />
+                      <figcaption>After</figcaption>
+                    </figure>
+                  </div>
 
-                    <div className="content-grid-2">
-                      <div>
-                        <label htmlFor={`caption-${proj.id}`}>Caption</label>
-                        <input type="text" id={`caption-${proj.id}`} name="caption" defaultValue={proj.caption} required />
-                      </div>
-                      <div>
-                        <label htmlFor={`subtext-${proj.id}`}>Subtext</label>
-                        <input type="text" id={`subtext-${proj.id}`} name="subtext" defaultValue={proj.subtext ?? ""} />
-                      </div>
+                  <details className="ba-admin-edit">
+                    <summary>Edit project</summary>
+                    <div className="ba-admin-edit__body">
+                      <AdminUploadForm
+                        operation="before-after-update"
+                        submitLabel="Save Changes"
+                        processingLabel="Saving changes…"
+                        className="admin-form"
+                      >
+                        <input type="hidden" name="id" value={proj.id} />
+                        <div className="content-grid-2">
+                          <div>
+                            <label htmlFor={`before-${proj.id}`}>Replace before photo</label>
+                            <img src={proj.beforeUrl} alt={`Current before — ${proj.caption}`} style={thumbStyle} />
+                            {uploadsEnabled && (
+                              <input type="file" id={`before-${proj.id}`} name="before_file" accept="image/*" />
+                            )}
+                          </div>
+                          <div>
+                            <label htmlFor={`after-${proj.id}`}>Replace after photo</label>
+                            <img src={proj.afterUrl} alt={`Current after — ${proj.caption}`} style={thumbStyle} />
+                            {uploadsEnabled && (
+                              <input type="file" id={`after-${proj.id}`} name="after_file" accept="image/*" />
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="content-grid-2">
+                          <div>
+                            <label htmlFor={`caption-${proj.id}`}>Caption</label>
+                            <input type="text" id={`caption-${proj.id}`} name="caption" defaultValue={proj.caption} required />
+                          </div>
+                          <div>
+                            <label htmlFor={`subtext-${proj.id}`}>Subtext</label>
+                            <input type="text" id={`subtext-${proj.id}`} name="subtext" defaultValue={proj.subtext ?? ""} />
+                          </div>
+                        </div>
+
+                        {uploadsEnabled && (
+                          <p className="subtitle" style={{ margin: "0 0 4px" }}>
+                            Leave a photo field empty to keep the current one.
+                          </p>
+                        )}
+                      </AdminUploadForm>
+
+                      <form action={del} className="ba-admin-item__delete">
+                        <SubmitButton className="admin-btn admin-btn--danger" pendingLabel="Deleting…">
+                          Delete Project
+                        </SubmitButton>
+                      </form>
                     </div>
-
-                    {uploadsEnabled && (
-                      <p className="subtitle" style={{ margin: "0 0 4px" }}>
-                        Leave a photo field empty to keep the current one.
-                      </p>
-                    )}
-                    <SubmitButton pendingLabel="Saving…">Save Changes</SubmitButton>
-                  </form>
-
-                  <form action={del} className="ba-admin-item__delete">
-                    <SubmitButton className="admin-btn admin-btn--danger" pendingLabel="Deleting…">
-                      Delete Project
-                    </SubmitButton>
-                  </form>
+                  </details>
                 </div>
               );
             })}
@@ -139,13 +170,18 @@ export default async function GalleryAdminPage() {
       <div className="admin-card">
         <h3 style={{ marginBottom: 12 }}>Photo Grid</h3>
         {uploadsEnabled && (
-          <form action={addGalleryImage} className="admin-form" encType="multipart/form-data">
+          <AdminUploadForm
+            operation="gallery-image"
+            submitLabel="Upload"
+            processingLabel="Saving to gallery…"
+            resetOnSuccess
+            className="admin-form"
+          >
             <label htmlFor="file">Photo</label>
             <input type="file" id="file" name="file" accept="image/*" required />
             <label htmlFor="gallery-caption">Caption</label>
             <input type="text" id="gallery-caption" name="caption" placeholder="e.g. Mulch Installation" />
-            <SubmitButton pendingLabel="Uploading…">Upload</SubmitButton>
-          </form>
+          </AdminUploadForm>
         )}
       </div>
 

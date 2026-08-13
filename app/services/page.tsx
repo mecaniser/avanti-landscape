@@ -22,7 +22,7 @@ export default async function ServicesPage() {
   return (
     <>
       <SiteHeader active="services" />
-      <main>
+      <main id="main-content" tabIndex={-1}>
         <section className="page-hero">
           <div className="container">
             <div className="breadcrumb"><Link href="/" style={{ color: "inherit" }}>Home</Link> / Services</div>

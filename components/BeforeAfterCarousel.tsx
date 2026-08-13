@@ -29,10 +29,10 @@ export default function BeforeAfterCarousel({ projects }: { projects: BAProject[
           key={project.id}
           beforeSrc={project.beforeUrl}
           afterSrc={project.afterUrl}
-          beforeAlt={`Before — ${project.caption}`}
-          afterAlt={`After — ${project.caption}`}
+          beforeAlt={`Before work began — ${project.caption}`}
+          afterAlt={`Completed work — ${project.caption}`}
         />
-        <div className="ba-caption">
+        <div className="ba-caption" aria-live="polite">
           {project.caption}
           {project.subtext && <span>{project.subtext}</span>}
         </div>
@@ -46,7 +46,7 @@ export default function BeforeAfterCarousel({ projects }: { projects: BAProject[
             </svg>
           </button>
 
-          <div className="ba-dots" role="tablist" aria-label="Projects">
+          <div className="ba-dots" role="group" aria-label="Choose a project">
             {projects.map((p, i) => (
               <button
                 key={p.id}
@@ -54,9 +54,10 @@ export default function BeforeAfterCarousel({ projects }: { projects: BAProject[
                 className={`ba-dot${i === index ? " is-active" : ""}`}
                 onClick={() => setIndex(i)}
                 aria-label={`Show project ${i + 1} of ${count}`}
-                aria-selected={i === index}
-                role="tab"
-              />
+                aria-current={i === index ? "true" : undefined}
+              >
+                <span className="ba-dot-indicator" aria-hidden="true" />
+              </button>
             ))}
           </div>
 

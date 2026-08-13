@@ -12,7 +12,7 @@ export default async function AreasPage() {
   return (
     <>
       <SiteHeader active="areas" />
-      <main>
+      <main id="main-content" tabIndex={-1}>
         <section className="page-hero">
           <div className="container">
             <div className="breadcrumb"><Link href="/" style={{ color: "inherit" }}>Home</Link> / Areas</div>

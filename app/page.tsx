@@ -1,8 +1,12 @@
 import Link from "next/link";
+import Image from "next/image";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import BeforeAfterCarousel from "@/components/BeforeAfterCarousel";
 import HeroMedia from "@/components/HeroMedia";
+import HeroServiceRoute from "@/components/HeroServiceRoute";
+import PropertyRoute from "@/components/PropertyRoute";
+import WebsiteFlowTrace from "@/components/WebsiteFlowTrace";
 import { getContent, getGlobalContent, parseAreaList } from "@/lib/content";
 import { prisma } from "@/lib/db";
 
@@ -24,101 +28,64 @@ export default async function HomePage() {
   return (
     <>
       <SiteHeader active="home" />
-      <main>
-        <section className="hero">
+      <main id="main-content" tabIndex={-1}>
+        <section className="hero hero--property-plan">
           <HeroMedia poster={heroPoster} video={heroVideo} />
           <div className="container">
             <div className="hero-copy">
-              <span className="eyebrow">{c.hero_eyebrow}</span>
-              <h1>{c.hero_heading}</h1>
-              <p>{c.hero_paragraph}</p>
+              <h1>One crew.<br />Your whole property.</h1>
+              <p>Lawn care, landscaping, hardscaping, and maintenance for homes and businesses across the Waxhaw area.</p>
               <div className="hero-actions">
                 <Link href="/contact" className="btn btn--primary">Get a Free Quote</Link>
                 <a href={`tel:${phoneTel}`} className="btn btn--outline">Call {phone}</a>
+                <a href={`sms:${phoneTel}`} className="hero-text-link">Text us</a>
               </div>
-              <div className="hero-badges">
-                <div><strong>9+</strong><span>Communities Served</span></div>
-                <div><strong>100%</strong><span>Satisfaction Focused</span></div>
-                <div><strong>Free</strong><span>On-Site Estimates</span></div>
+              <div className="hero-owner-proof">
+                <span aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="3" /><path d="M5 21c.7-4 3.1-6 7-6s6.3 2 7 6M3 5.5h3M18 5.5h3" /></svg>
+                </span>
+                <strong>100% owner-involved crews</strong>
               </div>
             </div>
+            <HeroServiceRoute />
           </div>
         </section>
 
-        <section className="section">
-          <div className="container">
-            <div className="section-head">
-              <span className="eyebrow">What We Do</span>
-              <h2>{c.services_heading}</h2>
-              <p>{c.services_paragraph}</p>
-            </div>
-            <div className="grid grid--4">
-              <div className="card">
-                <div className="card-photo"><img src={c.card_lawncare_image} alt="Avanti Landscaping crew applying lawn fertilization treatment" /></div>
-                <h3>Lawn Care</h3>
-                <p>Fertilization, weed control, aeration, and seeding for a thicker, greener lawn.</p>
-                <Link className="card-link" href="/services#lawn-care">Explore Lawn Care →</Link>
-              </div>
-              <div className="card">
-                <div className="card-photo"><img src={c.card_landscaping_image} alt="Fresh sod installation by Avanti Landscaping" /></div>
-                <h3>Landscaping</h3>
-                <p>Plantings, sod, lighting, drainage, and grading that boost curb appeal.</p>
-                <Link className="card-link" href="/services#landscaping">Explore Landscaping →</Link>
-              </div>
-              <div className="card">
-                <div className="card-photo">
-                  <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="300" fill="#c9c2ac" /><g stroke="#9a9276" strokeWidth="3"><rect x="10" y="10" width="80" height="60" /><rect x="100" y="10" width="80" height="60" /><rect x="190" y="10" width="80" height="60" /><rect x="280" y="10" width="110" height="60" /><rect x="10" y="80" width="80" height="60" /><rect x="100" y="80" width="80" height="60" /><rect x="190" y="80" width="80" height="60" /><rect x="280" y="80" width="110" height="60" /><rect x="10" y="150" width="80" height="60" /><rect x="100" y="150" width="80" height="60" /><rect x="190" y="150" width="80" height="60" /><rect x="280" y="150" width="110" height="60" /><rect x="10" y="220" width="80" height="60" /><rect x="100" y="220" width="80" height="60" /><rect x="190" y="220" width="80" height="60" /><rect x="280" y="220" width="110" height="60" /></g></svg>
-                </div>
-                <h3>Hardscaping</h3>
-                <p>Patios, retaining walls, fire pits, walkways, and outdoor steps built to last.</p>
-                <Link className="card-link" href="/services#hardscaping">Explore Hardscaping →</Link>
-              </div>
-              <div className="card">
-                <div className="card-photo"><img src={c.card_maintenance_image} alt="Avanti Landscaping crew member mowing a lawn" /></div>
-                <h3>Lawn &amp; Landscape Maintenance</h3>
-                <p>Mowing, mulching, and seasonal cleanups on a schedule that fits your property.</p>
-                <Link className="card-link" href="/services#maintenance">Explore Maintenance →</Link>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="section section--dark">
-          <div className="container">
-            <div className="section-head">
-              <span className="eyebrow">Why Avanti</span>
-              <h2>{c.why_heading}</h2>
-              <p>{c.why_paragraph}</p>
-            </div>
-            <div className="stat-grid">
-              <div><strong>9</strong><span>Communities Served</span></div>
-              <div><strong>100%</strong><span>Owner-Involved Crews</span></div>
-              <div><strong>Free</strong><span>Estimates &amp; Consultations</span></div>
-              <div><strong>All</strong><span>Residential &amp; Commercial</span></div>
-            </div>
-          </div>
-        </section>
+        <PropertyRoute />
 
         {projects.length > 0 && (
-        <section className="section">
+        <section className="section results-section" id="results-section">
           <div className="container">
-            <div className="section-head">
-              <span className="eyebrow">Real Results</span>
-              <h2>{c.ba_heading}</h2>
-              <p>{c.ba_paragraph}</p>
+            <div className="results-head">
+              <div>
+                <h2>{c.ba_heading}</h2>
+                <p>{c.ba_paragraph}</p>
+              </div>
+              <Link href="/gallery" className="route-link">View the gallery<span aria-hidden="true">→</span></Link>
             </div>
             <BeforeAfterCarousel projects={projects} />
-            <div style={{ textAlign: "center", marginTop: 30 }}>
-              <Link href="/gallery" className="btn btn--dark">See More Project Photos</Link>
-            </div>
           </div>
+          <WebsiteFlowTrace />
         </section>
         )}
 
-        <section className="section section--cream">
+        <section className="section field-proof">
+          <div className="container">
+            <div className="field-proof-head">
+              <h2>{c.why_heading}</h2>
+              <p>{c.why_paragraph}</p>
+            </div>
+            <div className="field-proof-list">
+              <div><span>01</span><strong>One accountable crew</strong><p>Regular care and larger outdoor work can stay with the same local team.</p></div>
+              <div><span>02</span><strong>Real property work</strong><p>See the actual details behind the services before you decide to call.</p></div>
+              <div><span>03</span><strong>Clear next step</strong><p>Request a free quote, call, or text—whichever works best for you.</p></div>
+            </div>
+          </div>
+        </section>
+
+        <section className="section coverage-section">
           <div className="container">
             <div className="section-head">
-              <span className="eyebrow">Where We Work</span>
               <h2>{c.areas_heading}</h2>
               <p>{c.areas_paragraph}</p>
             </div>
@@ -136,18 +103,22 @@ export default async function HomePage() {
           </div>
         </section>
 
-        <section className="section">
+        <section className="section about-section">
           <div className="container about-split">
             <div className="card-photo" style={{ aspectRatio: "4/3.2", marginBottom: 0 }}>
-              <img src={c.about_teaser_image} alt="Avanti Landscaping team member trimming shrubs at a client property" />
+              <Image
+                src={c.about_teaser_image}
+                alt="Avanti Landscaping team member trimming shrubs at a client property"
+                fill
+                sizes="(max-width: 980px) calc(100vw - 48px), 565px"
+              />
             </div>
             <div>
-              <span className="eyebrow">About Avanti</span>
               <h2>{c.about_heading}</h2>
               <p>{c.about_paragraph}</p>
               <ul className="value-list">
                 <li><span className="check">✓</span> Locally owned &amp; operated</li>
-                <li><span className="check">✓</span> Free on-site estimates</li>
+                <li><span className="check">✓</span> Free quotes</li>
                 <li><span className="check">✓</span> Residential &amp; commercial properties</li>
               </ul>
               <div style={{ marginTop: 24 }}>
@@ -157,7 +128,7 @@ export default async function HomePage() {
           </div>
         </section>
 
-        <section className="section section--tight">
+        <section className="section section--tight close-section">
           <div className="container">
             <div className="cta-band">
               <div>

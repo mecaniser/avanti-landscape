@@ -20,7 +20,7 @@ export default async function BlogPostPage({
   return (
     <>
       <SiteHeader active="blog" />
-      <main>
+      <main id="main-content" tabIndex={-1}>
         <section className="page-hero">
           <div className="container">
             <div className="breadcrumb">
