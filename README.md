@@ -9,6 +9,7 @@ Next.js (App Router) + PostgreSQL, deployed on Railway.
 - **NextAuth (credentials)** — admin login, guarded by `proxy.ts`
 - **Cloudinary** — stores images and video uploaded through the admin
 - **Resend** — emails a notification when the contact form is submitted
+- **Google Analytics 4** — optional page-view and successful quote-request tracking
 
 ## Structure
 - `app/` — public pages (home, services, areas, about, gallery, contact, blog)
@@ -53,3 +54,10 @@ through the admin.
 Required environment variables are listed in `.env.example`. Without the
 `CLOUDINARY_*` keys the admin hides every upload form, so the owner cannot add
 photos or before/after projects.
+
+Set `NEXT_PUBLIC_GA_MEASUREMENT_ID` to the website's GA4 web-stream measurement
+ID (such as `G-XXXXXXXXXX`) to enable analytics. Page views are collected through
+GA4 Enhanced Measurement, and successful quote requests emit a `generate_lead`
+event. Admin routes are excluded. In GA4, keep **Enhanced measurement → Page
+views → Page changes based on browser history events** enabled so client-side
+route changes are counted.

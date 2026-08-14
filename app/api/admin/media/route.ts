@@ -111,6 +111,25 @@ async function updateBeforeAfterProject(formData: FormData) {
   refreshGallery();
 }
 
+async function updateGalleryImage(formData: FormData) {
+  const id = getRequiredText(formData, "id");
+  const existing = await prisma.galleryImage.findUnique({ where: { id } });
+  if (!existing) throw new UploadError("That gallery photo no longer exists.");
+
+  const file = getFile(formData, "file", false, "image");
+  if (file && !isCloudinaryConfigured()) requireCloudinary();
+  const url = file ? await storeImage(file, "avanti/gallery") : null;
+
+  await prisma.galleryImage.update({
+    where: { id },
+    data: {
+      caption: getOptionalText(formData, "caption"),
+      ...(url ? { url } : {}),
+    },
+  });
+  refreshGallery();
+}
+
 async function updateContentImage(formData: FormData) {
   requireCloudinary();
   const page = getRequiredText(formData, "page");
@@ -196,6 +215,7 @@ export async function POST(request: Request) {
 
     switch (operation) {
       case "gallery-image": await addGalleryImage(formData); break;
+      case "gallery-image-update": await updateGalleryImage(formData); break;
       case "before-after-create": await addBeforeAfterProject(formData); break;
       case "before-after-update": await updateBeforeAfterProject(formData); break;
       case "content-image": await updateContentImage(formData); break;

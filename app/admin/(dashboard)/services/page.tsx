@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/db";
-import { updateService, addService, deleteService } from "./actions";
+import { AddServiceForm, EditServiceForm } from "./ServiceForms";
 
 export const dynamic = "force-dynamic";
 
@@ -14,42 +14,58 @@ export default async function ServicesAdminPage() {
   const services = await prisma.service.findMany({ orderBy: [{ category: "asc" }, { sortOrder: "asc" }] });
 
   return (
-    <>
+    <section className="services-admin">
       <h2>Services</h2>
-      <p className="subtitle">Edit the service list shown on the public Services page.</p>
+      <p className="subtitle">Manage the service list displayed on the public Services page.</p>
 
-      {CATEGORIES.map((cat) => (
-        <div className="admin-card" key={cat.id}>
-          <h3 style={{ marginBottom: 12 }}>{cat.label}</h3>
+      {CATEGORIES.map((category) => {
+        const categoryServices = services.filter((service) => service.category === category.id);
+        return (
+          <section className="admin-card service-admin-category" key={category.id} aria-labelledby={`service-category-${category.id}`}>
+            <div className="service-admin-category__head">
+              <div>
+                <h3 id={`service-category-${category.id}`}>{category.label}</h3>
+                <p>{categoryServices.length} {categoryServices.length === 1 ? "service" : "services"}</p>
+              </div>
+            </div>
 
-          {services
-            .filter((s) => s.category === cat.id)
-            .map((s) => {
-              const update = updateService.bind(null, s.id);
-              const del = deleteService.bind(null, s.id);
-              return (
-                <form
-                  action={update}
-                  key={s.id}
-                  className="admin-form"
-                  style={{ display: "flex", gap: 10, alignItems: "flex-start", marginBottom: 10, borderBottom: "1px solid #eee", paddingBottom: 10 }}
-                >
-                  <input type="text" name="name" defaultValue={s.name} style={{ flex: "0 0 220px", marginBottom: 0 }} />
-                  <input type="text" name="description" defaultValue={s.description} style={{ flex: 1, marginBottom: 0 }} />
-                  <button type="submit" className="admin-btn" style={{ flexShrink: 0 }}>Save</button>
-                  <button type="submit" formAction={del} className="admin-btn admin-btn--danger" style={{ flexShrink: 0 }}>Delete</button>
-                </form>
-              );
-            })}
+            <details className="ba-admin-create service-admin-category__create">
+              <summary><span aria-hidden="true">+</span> Add service</summary>
+              <div className="ba-admin-create__body">
+                <div className="service-admin-category__create-head">
+                  <p>Add a customer-facing service to {category.label}.</p>
+                </div>
+                <AddServiceForm category={category.id} label={category.label} />
+              </div>
+            </details>
 
-          <form action={addService} className="admin-form" style={{ display: "flex", gap: 10, alignItems: "flex-start", marginTop: 14 }}>
-            <input type="hidden" name="category" value={cat.id} />
-            <input type="text" name="name" placeholder="New service name" style={{ flex: "0 0 220px", marginBottom: 0 }} required />
-            <input type="text" name="description" placeholder="Short description" style={{ flex: 1, marginBottom: 0 }} required />
-            <button type="submit" className="admin-btn admin-btn--ghost" style={{ flexShrink: 0 }}>+ Add</button>
-          </form>
-        </div>
-      ))}
-    </>
+            {categoryServices.length === 0 ? (
+              <p className="subtitle" style={{ margin: 0 }}>No services in this category yet.</p>
+            ) : (
+              <div className="service-admin-list">
+                {categoryServices.map((service) => {
+                  return (
+                    <article className="service-admin-item" key={service.id}>
+                      <div className="service-admin-item__summary">
+                        <div>
+                          <h4>{service.name}</h4>
+                          <p>{service.description}</p>
+                        </div>
+                        <details className="service-admin-item__edit">
+                          <summary>Edit service</summary>
+                          <div className="service-admin-item__edit-body">
+                            <EditServiceForm id={service.id} name={service.name} description={service.description} />
+                          </div>
+                        </details>
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+            )}
+          </section>
+        );
+      })}
+    </section>
   );
 }

@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { sendGAEvent } from "@next/third-parties/google";
+import { formatUsPhone, isValidUsPhone } from "@/lib/phone";
 
 type Errors = Partial<Record<"name" | "phone" | "email" | "message", string>>;
 
@@ -14,9 +16,8 @@ function validate(data: Record<string, string>): Errors {
   else if (name.length < 2) errors.name = "Please enter your full name.";
 
   const phone = (data.phone ?? "").trim();
-  const digits = phone.replace(/\D/g, "");
   if (!phone) errors.phone = "Please enter a phone number.";
-  else if (digits.length < 10) errors.phone = "Enter a valid phone number (at least 10 digits).";
+  else if (!isValidUsPhone(phone)) errors.phone = "Enter a valid 10-digit phone number.";
 
   const email = (data.email ?? "").trim();
   if (!email) errors.email = "Please enter your email address.";
@@ -70,6 +71,12 @@ export default function ContactForm() {
         const body = await res.json().catch(() => null);
         throw new Error(body?.error ?? "Something went wrong. Please call or text us instead.");
       }
+      if (process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID) {
+        sendGAEvent("event", "generate_lead", {
+          form_name: "contact_quote_request",
+          service: data.service,
+        });
+      }
       setStatus("success");
       form.reset();
     } catch (err) {
@@ -119,10 +126,15 @@ export default function ContactForm() {
             name="phone"
             placeholder="(704) 555-0100"
             autoComplete="tel"
+            inputMode="numeric"
+            maxLength={14}
             className={errors.phone ? "invalid" : undefined}
             aria-invalid={errors.phone ? true : undefined}
             aria-describedby={errors.phone ? "phone-error" : undefined}
-            onChange={() => clearFieldError("phone")}
+            onChange={(event) => {
+              event.currentTarget.value = formatUsPhone(event.currentTarget.value);
+              clearFieldError("phone");
+            }}
           />
           {errors.phone && <span className="field-error" id="phone-error">{errors.phone}</span>}
         </div>

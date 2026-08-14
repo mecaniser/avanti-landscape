@@ -1,10 +1,12 @@
+import Link from "next/link";
 import AdminUploadForm from "@/components/AdminUploadForm";
+import BlogBodyEditor from "@/components/BlogBodyEditor";
 
 export default function NewBlogPostPage() {
   return (
-    <>
+    <section className="blog-editor">
       <h2>New Blog Post</h2>
-      <p className="subtitle">Body supports basic HTML tags (h2, p, ul/li).</p>
+      <p className="subtitle">Write and format the article just as it will appear to customers.</p>
 
       <div className="admin-card">
         <AdminUploadForm operation="blog-create" submitLabel="Create Post" processingLabel="Saving post…" redirectTo="/admin/blog" className="admin-form">
@@ -23,8 +25,7 @@ export default function NewBlogPostPage() {
           <label htmlFor="coverImageFile">Cover Image</label>
           <input type="file" id="coverImageFile" name="coverImageFile" accept="image/*" />
 
-          <label htmlFor="body">Body (HTML)</label>
-          <textarea id="body" name="body" rows={14} required />
+          <BlogBodyEditor />
 
           <label style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
             <input type="checkbox" name="publish" style={{ width: "auto", marginBottom: 0 }} />
@@ -33,6 +34,9 @@ export default function NewBlogPostPage() {
 
         </AdminUploadForm>
       </div>
-    </>
+      <div className="blog-editor__footer">
+        <Link href="/admin/blog" className="admin-btn admin-btn--ghost">Cancel</Link>
+      </div>
+    </section>
   );
 }

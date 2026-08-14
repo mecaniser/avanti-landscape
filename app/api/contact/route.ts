@@ -2,10 +2,11 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { sendLeadNotification } from "@/lib/email";
+import { formatUsPhone, isValidUsPhone } from "@/lib/phone";
 
 const contactSchema = z.object({
   name: z.string().trim().min(1).max(200),
-  phone: z.string().trim().min(1).max(50),
+  phone: z.string().trim().min(1).max(50).refine(isValidUsPhone).transform(formatUsPhone),
   email: z.string().trim().email().max(200),
   address: z.string().trim().max(300).optional().or(z.literal("")),
   service: z.string().trim().max(100).optional().or(z.literal("")),

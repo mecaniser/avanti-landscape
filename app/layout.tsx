@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
+import SiteAnalytics from "@/components/SiteAnalytics";
 import "./globals.css";
+
+const gaMeasurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 
 export const metadata: Metadata = {
   title: "Avanti Landscaping | Lawn Care & Landscaping in Waxhaw, NC",
@@ -26,6 +29,7 @@ export default function RootLayout({
         <template dangerouslySetInnerHTML={{ __html: "<!-- impeccable:home-property-plan|THESIS: A living property map turns four services into one accountable crew, refusing the generic service-card hero. OWN-WORLD: Field green, survey linen, graphite contours, lichen markers, stake orange. STORY: Discover the whole-property crew, choose a route, see real work, request a quote or call. FIRST VIEWPORT: Hero copy left; video property field and plotted markers right; equal actions below. FORM: Property Plan, approved comp home-property-plan-guided-route.png, seed 3c89f15e. FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, and DESIGN.md -->" }} />
         {children}
       </body>
+      {gaMeasurementId && <SiteAnalytics measurementId={gaMeasurementId} />}
     </html>
   );
 }

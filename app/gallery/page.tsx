@@ -2,6 +2,7 @@ import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import BeforeAfterCarousel from "@/components/BeforeAfterCarousel";
+import GalleryPhotoGrid from "@/components/GalleryPhotoGrid";
 import { getContent, getGlobalContent } from "@/lib/content";
 import { prisma } from "@/lib/db";
 
@@ -44,34 +45,9 @@ export default async function GalleryPage() {
             <div className="section-head">
               <span className="eyebrow">More Work</span>
               <h2>Project Photos</h2>
+              <p>Select a project photo to view the work up close.</p>
             </div>
-            <div className="gallery-grid">
-              {images.map((img) => (
-                <div className="gallery-item" key={img.id} style={{ position: "relative" }}>
-                  {/* Below the fold: lazy so React doesn't emit an unused preload for each. */}
-                  <img src={img.url} alt={img.caption ?? ""} loading="lazy" />
-                  {img.caption && (
-                    <div
-                      className="caption"
-                      style={{
-                        position: "absolute",
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        padding: "14px 16px",
-                        background: "linear-gradient(to top, rgba(35,43,30,0.75), transparent)",
-                        color: "#fff",
-                        fontFamily: "var(--font-head)",
-                        fontWeight: 600,
-                        fontSize: "0.9rem",
-                      }}
-                    >
-                      {img.caption}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
+            <GalleryPhotoGrid images={images.map((image) => ({ id: image.id, url: image.url, caption: image.caption }))} />
 
             <div className="blog-notice">
               <p style={{ margin: 0 }}>

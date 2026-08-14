@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
+import { formatUsPhone } from "@/lib/phone";
 
 export async function updateCustomer(id: string, formData: FormData) {
   const status = String(formData.get("status") || "lead");
@@ -10,7 +11,7 @@ export async function updateCustomer(id: string, formData: FormData) {
     where: { id },
     data: {
       name: String(formData.get("name") || ""),
-      phone: String(formData.get("phone") || "") || null,
+      phone: formatUsPhone(String(formData.get("phone") || "")) || null,
       email: String(formData.get("email") || "") || null,
       address: String(formData.get("address") || "") || null,
       serviceType: String(formData.get("serviceType") || "") || null,
@@ -26,7 +27,7 @@ export async function createCustomer(formData: FormData) {
   const customer = await prisma.customer.create({
     data: {
       name: String(formData.get("name") || ""),
-      phone: String(formData.get("phone") || "") || null,
+      phone: formatUsPhone(String(formData.get("phone") || "")) || null,
       email: String(formData.get("email") || "") || null,
       address: String(formData.get("address") || "") || null,
       serviceType: String(formData.get("serviceType") || "") || null,

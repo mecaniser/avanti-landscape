@@ -57,7 +57,7 @@ export default async function SiteFooter() {
           <span>
             <Link href="/contact">Request a Free Quote</Link>
             <span style={{ margin: "0 10px", opacity: 0.4 }}>·</span>
-            <Link href="/admin/login">Staff Login</Link>
+            <a href="/admin/login">Staff Login</a>
           </span>
         </div>
       </div>

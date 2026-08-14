@@ -3,16 +3,18 @@
 import { useRef, useState, type FormEvent, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 
-type UploadPhase = "idle" | "uploading" | "processing" | "error";
+type UploadPhase = "idle" | "uploading" | "processing" | "success" | "error";
 
 type AdminUploadFormProps = {
   operation: string;
   children: ReactNode;
   submitLabel: string;
   processingLabel: string;
+  successLabel?: string;
   className?: string;
   resetOnSuccess?: boolean;
   redirectTo?: string;
+  statusId?: string;
 };
 
 /**
@@ -26,9 +28,11 @@ export default function AdminUploadForm({
   children,
   submitLabel,
   processingLabel,
+  successLabel = "Saved successfully.",
   className = "admin-form",
   resetOnSuccess = false,
   redirectTo,
+  statusId = operation,
 }: AdminUploadFormProps) {
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
@@ -55,6 +59,7 @@ export default function AdminUploadForm({
     const request = new XMLHttpRequest();
     request.open("POST", "/api/admin/media");
     request.responseType = "json";
+    request.timeout = 120000;
 
     request.upload.onprogress = (uploadEvent) => {
       if (!uploadEvent.lengthComputable) return;
@@ -71,6 +76,11 @@ export default function AdminUploadForm({
       setError("The upload could not reach the server. Check your connection and try again.");
     };
 
+    request.ontimeout = () => {
+      setPhase("error");
+      setError("This is taking longer than expected. Your changes may still be processing; refresh before trying again.");
+    };
+
     request.onload = () => {
       const payload = request.response as { error?: string; redirectTo?: string } | null;
       if (request.status < 200 || request.status >= 300) {
@@ -80,8 +90,8 @@ export default function AdminUploadForm({
       }
 
       if (resetOnSuccess) formRef.current?.reset();
-      setPhase("idle");
-      setProgress(0);
+      setPhase("success");
+      setProgress(100);
       router.refresh();
       const destination = payload?.redirectTo ?? redirectTo;
       if (destination) router.push(destination);
@@ -93,7 +103,7 @@ export default function AdminUploadForm({
   return (
     <form ref={formRef} className={className} onSubmit={submit} encType="multipart/form-data" aria-busy={busy}>
       {children}
-      <button type="submit" className="admin-btn" disabled={busy} aria-describedby={`${operation}-upload-status`}>
+      <button type="submit" className="admin-btn" disabled={busy} aria-describedby={`${statusId}-upload-status`}>
         {busy ? (
           <>
             <span className="admin-spinner" aria-hidden="true" />
@@ -104,13 +114,14 @@ export default function AdminUploadForm({
         )}
       </button>
       <div
-        id={`${operation}-upload-status`}
+        id={`${statusId}-upload-status`}
         className="admin-upload-status"
         role="status"
         aria-live="polite"
       >
         {phase === "uploading" && <progress className="admin-upload-progress" value={progress} max="100">Uploading {progress}%</progress>}
         {phase === "processing" && <span>{processingLabel}</span>}
+        {phase === "success" && <span>{successLabel}</span>}
         {phase === "error" && <span className="admin-upload-status--error">{error}</span>}
       </div>
     </form>

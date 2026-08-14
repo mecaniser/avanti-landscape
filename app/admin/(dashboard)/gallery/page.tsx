@@ -2,6 +2,7 @@ import { prisma } from "@/lib/db";
 import { isCloudinaryConfigured } from "@/lib/cloudinary";
 import SubmitButton from "../SubmitButton";
 import AdminUploadForm from "@/components/AdminUploadForm";
+import DetailsCloseButton from "@/components/DetailsCloseButton";
 import {
   deleteGalleryImage,
   deleteBeforeAfterProject,
@@ -28,7 +29,7 @@ export default async function GalleryAdminPage() {
   const uploadsEnabled = isCloudinaryConfigured();
 
   return (
-    <>
+    <section className="gallery-admin">
       <h2>Gallery</h2>
       <p className="subtitle">Before &amp; after projects and the photo grid shown on the public Gallery page.</p>
 
@@ -77,6 +78,7 @@ export default async function GalleryAdminPage() {
                   </div>
                 </div>
               </AdminUploadForm>
+              <DetailsCloseButton>Close</DetailsCloseButton>
             </div>
           </details>
         )}
@@ -151,6 +153,7 @@ export default async function GalleryAdminPage() {
                           </p>
                         )}
                       </AdminUploadForm>
+                      <DetailsCloseButton>Close</DetailsCloseButton>
 
                       <form action={del} className="ba-admin-item__delete">
                         <SubmitButton className="admin-btn admin-btn--danger" pendingLabel="Deleting…">
@@ -167,46 +170,80 @@ export default async function GalleryAdminPage() {
       </div>
 
       {/* ---------- Photo grid ---------- */}
-      <div className="admin-card">
-        <h3 style={{ marginBottom: 12 }}>Photo Grid</h3>
+      <div className="admin-card gallery-photo-grid">
+        <h3 style={{ marginBottom: 4 }}>Photo Grid</h3>
+        <p className="subtitle">These images appear in the project grid on the public Gallery page.</p>
         {uploadsEnabled && (
-          <AdminUploadForm
-            operation="gallery-image"
-            submitLabel="Upload"
-            processingLabel="Saving to gallery…"
-            resetOnSuccess
-            className="admin-form"
-          >
-            <label htmlFor="file">Photo</label>
-            <input type="file" id="file" name="file" accept="image/*" required />
-            <label htmlFor="gallery-caption">Caption</label>
-            <input type="text" id="gallery-caption" name="caption" placeholder="e.g. Mulch Installation" />
-          </AdminUploadForm>
+          <details className="ba-admin-create gallery-photo-grid__create">
+            <summary><span aria-hidden="true">+</span> Add photo</summary>
+            <div className="ba-admin-create__body">
+              <AdminUploadForm
+                operation="gallery-image"
+                submitLabel="Add photo"
+                processingLabel="Saving to gallery…"
+                resetOnSuccess
+                className="admin-form"
+              >
+                <label htmlFor="file">Photo</label>
+                <input type="file" id="file" name="file" accept="image/*" required />
+                <label htmlFor="gallery-caption">Caption</label>
+                <input type="text" id="gallery-caption" name="caption" placeholder="e.g. Mulch Installation" />
+              </AdminUploadForm>
+              <DetailsCloseButton>Close</DetailsCloseButton>
+            </div>
+          </details>
+        )}
+
+        {images.length === 0 ? (
+          <p className="subtitle" style={{ margin: 0 }}>No gallery photos yet.</p>
+        ) : (
+          <div className="admin-grid-list gallery-photo-grid__list">
+            {images.map((img) => {
+              const del = deleteGalleryImage.bind(null, img.id);
+              return (
+                <article className="admin-thumb gallery-photo-card" key={img.id}>
+                  <img src={img.url} alt={img.caption ?? ""} loading="lazy" />
+                  <div className="meta">
+                    <strong>{img.caption || "Untitled photo"}</strong>
+                    <details className="gallery-photo-card__edit">
+                      <summary>Edit photo</summary>
+                      <div className="gallery-photo-card__edit-body">
+                        <AdminUploadForm
+                          operation="gallery-image-update"
+                          statusId={`gallery-image-update-${img.id}`}
+                          submitLabel="Save changes"
+                          processingLabel="Saving photo…"
+                          className="admin-form"
+                        >
+                          <input type="hidden" name="id" value={img.id} />
+                          <label htmlFor={`gallery-caption-${img.id}`}>Caption</label>
+                          <input type="text" id={`gallery-caption-${img.id}`} name="caption" defaultValue={img.caption ?? ""} placeholder="e.g. Mulch Installation" />
+                          <label htmlFor={`gallery-file-${img.id}`}>Replace photo</label>
+                          {uploadsEnabled ? (
+                            <input type="file" id={`gallery-file-${img.id}`} name="file" accept="image/*" />
+                          ) : (
+                            <p className="subtitle" style={{ margin: "0 0 12px" }}>Image replacement is unavailable until Cloudinary is configured.</p>
+                          )}
+                        </AdminUploadForm>
+                        <DetailsCloseButton>Close</DetailsCloseButton>
+                        <form action={del} className="gallery-photo-card__delete">
+                          <SubmitButton
+                            className="admin-btn admin-btn--danger"
+                            style={{ fontSize: "0.75rem", padding: "4px 10px" }}
+                            pendingLabel="Deleting…"
+                          >
+                            Delete photo
+                          </SubmitButton>
+                        </form>
+                      </div>
+                    </details>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
         )}
       </div>
-
-      <div className="admin-grid-list">
-        {images.map((img) => {
-          const del = deleteGalleryImage.bind(null, img.id);
-          return (
-            <div className="admin-thumb" key={img.id}>
-              <img src={img.url} alt={img.caption ?? ""} loading="lazy" />
-              <div className="meta">
-                <div>{img.caption || "—"}</div>
-                <form action={del} style={{ marginTop: 6 }}>
-                  <SubmitButton
-                    className="admin-btn admin-btn--danger"
-                    style={{ fontSize: "0.75rem", padding: "4px 10px" }}
-                    pendingLabel="Deleting…"
-                  >
-                    Delete
-                  </SubmitButton>
-                </form>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </>
+    </section>
   );
 }

@@ -1,7 +1,9 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { deleteBlogPost } from "../actions";
 import AdminUploadForm from "@/components/AdminUploadForm";
+import BlogBodyEditor from "@/components/BlogBodyEditor";
 
 export const dynamic = "force-dynamic";
 
@@ -17,7 +19,7 @@ export default async function EditBlogPostPage({
   const del = deleteBlogPost.bind(null, id);
 
   return (
-    <>
+    <section className="blog-editor">
       <h2>Edit Post</h2>
       <p className="subtitle">/blog/{post.slug}</p>
 
@@ -43,8 +45,7 @@ export default async function EditBlogPostPage({
           <label htmlFor="coverImageFile">Replace Cover Image</label>
           <input type="file" id="coverImageFile" name="coverImageFile" accept="image/*" />
 
-          <label htmlFor="body">Body (HTML)</label>
-          <textarea id="body" name="body" rows={14} defaultValue={post.body} required />
+          <BlogBodyEditor initialHtml={post.body} />
 
           <label style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
             <input type="checkbox" name="publish" defaultChecked={!!post.publishedAt} style={{ width: "auto", marginBottom: 0 }} />
@@ -54,9 +55,12 @@ export default async function EditBlogPostPage({
         </AdminUploadForm>
       </div>
 
-      <form action={del}>
-        <button type="submit" className="admin-btn admin-btn--danger">Delete Post</button>
-      </form>
-    </>
+      <div className="blog-editor__footer">
+        <Link href="/admin/blog" className="admin-btn admin-btn--ghost">Cancel</Link>
+        <form action={del}>
+          <button type="submit" className="admin-btn admin-btn--danger">Delete Post</button>
+        </form>
+      </div>
+    </section>
   );
 }
