@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   title: "Avanti Landscaping | Lawn Care & Landscaping in Waxhaw, NC",
   description:
     "Avanti Landscaping provides lawn care, landscaping, hardscaping, and property maintenance in Waxhaw, Marvin, Weddington, Matthews, and nearby NC/SC communities. Call 980-328-7141 for a free quote.",
-  icons: { icon: "/assets/logo.svg" },
+  icons: { icon: "/assets/avanti-mark.png" },
 };
 
 export default function RootLayout({

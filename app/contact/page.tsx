@@ -27,46 +27,50 @@ export default async function ContactPage() {
 
         <section className="section">
           <div className="container contact-grid">
-            <div>
-              <h2 style={{ marginBottom: 20 }}>Send Us a Message</h2>
-              <ContactForm />
+            <div className="contact-form-column">
+              <div className="contact-form-card">
+                <h2 className="contact-panel-title">Send Us a Message</h2>
+                <ContactForm />
+              </div>
             </div>
 
-            <div>
+            <aside className="contact-details-column" aria-label="Contact information">
               <div className="contact-info-card">
-                <div className="contact-info-row">
-                  <div className="ico">📞</div>
-                  <div><strong>Call or Text</strong><span><a href={`tel:${phoneTel}`}>{phone}</a></span></div>
-                </div>
-                <div className="contact-info-row">
-                  <div className="ico">✉️</div>
-                  <div><strong>Email</strong><span><a href={`mailto:${email}`}>{email}</a></span></div>
-                </div>
-                <div className="contact-info-row">
-                  <div className="ico">📍</div>
-                  <div><strong>Based In</strong><span>Waxhaw, NC</span></div>
-                </div>
-                <div className="contact-info-row">
-                  <div className="ico">🕐</div>
-                  <div><strong>Hours</strong><span>{hours}</span></div>
-                </div>
-                <div className="contact-info-row">
-                  <div className="ico">🌐</div>
-                  <div>
-                    <strong>Follow Us</strong>
-                    <span>
-                      <a href={g.facebook_url} target="_blank" rel="noopener">Facebook</a> ·{" "}
-                      <a href={g.instagram_url} target="_blank" rel="noopener">Instagram</a>
-                    </span>
+                <div className="contact-info-list">
+                  <div className="contact-info-row">
+                    <div className="ico">📞</div>
+                    <div><strong>Call or Text</strong><span><a href={`tel:${phoneTel}`}>{phone}</a></span></div>
+                  </div>
+                  <div className="contact-info-row">
+                    <div className="ico">✉️</div>
+                    <div><strong>Email</strong><span><a href={`mailto:${email}`}>{email}</a></span></div>
+                  </div>
+                  <div className="contact-info-row">
+                    <div className="ico">📍</div>
+                    <div><strong>Based In</strong><span>Waxhaw, NC</span></div>
+                  </div>
+                  <div className="contact-info-row">
+                    <div className="ico">🕐</div>
+                    <div><strong>Hours</strong><span>{hours}</span></div>
+                  </div>
+                  <div className="contact-info-row">
+                    <div className="ico">🌐</div>
+                    <div>
+                      <strong>Follow Us</strong>
+                      <span>
+                        <a href={g.facebook_url} target="_blank" rel="noopener">Facebook</a> ·{" "}
+                        <a href={g.instagram_url} target="_blank" rel="noopener">Instagram</a>
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div style={{ marginTop: 26 }}>
-                <h3 style={{ marginBottom: 10 }}>Where We Work</h3>
-                <p style={{ fontSize: "0.92rem" }}>Waxhaw, Marvin, Weddington, Wesley Chapel, Matthews, Stallings, Pineville, Indian Land, and Ballantyne.</p>
+                <div className="contact-coverage">
+                  <h3>Where We Work</h3>
+                  <p>Waxhaw, Marvin, Weddington, Wesley Chapel, Matthews, Stallings, Pineville, Indian Land, and Ballantyne.</p>
+                </div>
               </div>
-            </div>
+            </aside>
           </div>
         </section>
       </main>

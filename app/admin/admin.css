@@ -1200,26 +1200,11 @@
 .admin-login-brand {
   display: flex;
   align-items: center;
-  gap: 12px;
   margin-bottom: 24px;
   padding-bottom: 22px;
   border-bottom: 1px solid var(--surface-line, #333825);
 }
-.admin-login-brand img { width: 44px; height: 44px; }
-.admin-login-brand strong {
-  font-family: var(--font-head), "Segoe UI", sans-serif;
-  color: #f2f4e8;
-  font-size: 1.05rem;
-  line-height: 1.15;
-}
-.admin-login-brand span {
-  display: block;
-  font-size: 0.66rem;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
-  color: #b3d15a;
-  font-weight: 600;
-}
+.admin-login-brand img { display: block; width: 156px; height: auto; }
 
 .admin-login-card h2 {
   color: #ffffff;

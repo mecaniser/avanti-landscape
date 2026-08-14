@@ -34,11 +34,10 @@ export default async function SiteHeader({ active }: { active: string }) {
       <div className="container">
         <nav className="navbar" aria-label="Primary navigation">
           <Link href="/" className="brand">
-            <img src="/assets/logo.svg" alt="Avanti Landscaping logo" />
-            <div className="brand-text">
-              <strong>Avanti Landscaping</strong>
-              <span>Lawn &amp; Landscape Co.</span>
-            </div>
+            <picture>
+              <source media="(max-width: 640px)" srcSet="/assets/avanti-mark.png" />
+              <img src="/assets/avanti-wordmark.png" alt="Avanti Lawn & Landscaping" />
+            </picture>
           </Link>
 
           <ul className="nav-links">

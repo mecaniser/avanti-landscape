@@ -15,8 +15,7 @@ export default async function SiteFooter() {
         <div className="footer-grid">
           <div>
             <div className="footer-brand">
-              <img src="/assets/logo.svg" alt="Avanti Landscaping logo" />
-              <strong>Avanti Landscaping</strong>
+              <img src="/assets/avanti-wordmark.png" alt="Avanti Lawn & Landscaping" />
             </div>
             <p>Locally owned lawn care, landscaping, and hardscaping serving Waxhaw, NC and the surrounding communities.</p>
           </div>

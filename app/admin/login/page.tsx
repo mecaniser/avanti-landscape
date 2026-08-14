@@ -37,11 +37,7 @@ export default function AdminLoginPage() {
     <div className="admin-login-wrap">
       <div className="admin-login-card">
         <div className="admin-login-brand">
-          <img src="/assets/logo.svg" alt="Avanti Landscaping logo" />
-          <strong>
-            Avanti Landscaping
-            <span>Control Board</span>
-          </strong>
+          <img src="/assets/avanti-wordmark.png" alt="Avanti Lawn & Landscaping" />
         </div>
         <h2 style={{ marginBottom: 4 }}>Welcome back</h2>
         <p className="subtitle">Sign in to manage your site.</p>
