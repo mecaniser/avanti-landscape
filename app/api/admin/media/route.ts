@@ -4,11 +4,9 @@ import { TAGS } from "@/lib/content";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
 import { isCloudinaryConfigured, uploadImageBuffer, uploadVideoBuffer } from "@/lib/cloudinary";
+import { maxBytesFor, oversizeMessage } from "@/lib/uploads";
 
 export const runtime = "nodejs";
-
-const MAX_IMAGE_BYTES = 15 * 1024 * 1024;
-const MAX_VIDEO_BYTES = 100 * 1024 * 1024;
 
 class UploadError extends Error {}
 
@@ -31,9 +29,10 @@ function getFile(formData: FormData, name: string, required: boolean, kind: "ima
   if (!value.type.startsWith(`${kind}/`)) {
     throw new UploadError(`Choose a valid ${kind} file.`);
   }
-  const limit = kind === "image" ? MAX_IMAGE_BYTES : MAX_VIDEO_BYTES;
-  if (value.size > limit) {
-    throw new UploadError(`${kind === "image" ? "Images" : "Videos"} must be ${limit / 1024 / 1024} MB or smaller.`);
+  // The browser form shrinks images and checks this first; this is the backstop
+  // for anything that reaches the route another way.
+  if (value.size > maxBytesFor(kind)) {
+    throw new UploadError(oversizeMessage(kind, value.size));
   }
   return value;
 }
