@@ -22,8 +22,12 @@ export default async function HomePage() {
   const phoneTel = g.phone_tel ?? "9803287141";
   const phone = g.phone ?? "980-328-7141";
   const heroPoster = c.hero_image || "/assets/img/hero-mulch-wide.jpg";
-  // Admin-uploaded video (Cloudinary) wins; otherwise the committed default clip.
-  const heroVideo = c.hero_video || "/assets/hero.mp4";
+  // Admin-uploaded video (Cloudinary) wins; otherwise the committed default
+  // clip — unless video has been explicitly turned off, in which case no
+  // video renders at all (HeroMedia treats an empty string as "no video").
+  // Clearing an uploaded video alone can't express this: it falls back to
+  // the default clip rather than to nothing.
+  const heroVideo = c.hero_video_disabled === "true" ? "" : c.hero_video || "/assets/hero.mp4";
   const routeImages = {
     lawn: c.card_lawncare_image,
     landscaping: c.card_landscaping_image,

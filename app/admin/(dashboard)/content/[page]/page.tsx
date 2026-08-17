@@ -4,7 +4,7 @@ import { prisma } from "@/lib/db";
 import { isCloudinaryConfigured } from "@/lib/cloudinary";
 import { parseAreaList } from "@/lib/content";
 import SubmitButton from "../../SubmitButton";
-import { clearHeroVideo, clearHeroImage } from "../actions";
+import { clearHeroVideo, clearHeroImage, disableHeroVideo, enableHeroVideo } from "../actions";
 import { ContentSectionForm, ContentTextForm, ServiceAreaForm } from "../ContentForms";
 import AdminUploadForm from "@/components/AdminUploadForm";
 import DetailsCloseButton from "@/components/DetailsCloseButton";
@@ -13,6 +13,7 @@ import { SERVICE_CATEGORIES, categoryImageKey } from "@/lib/services";
 // These fields belong to dedicated owner workflows, not this generic page editor.
 const MANAGED_ELSEWHERE = new Set([
   "hero_video",
+  "hero_video_disabled",
   "hero_image",
   "ba_before_image",
   "ba_after_image",
@@ -219,10 +220,12 @@ function ContentSection({ page, title, blocks, uploadsEnabled }: { page: string;
 function HeroBackgroundControl({
   imageBlock,
   videoBlock,
+  videoDisabled,
   uploadsEnabled,
 }: {
   imageBlock: ContentBlock | undefined;
   videoBlock: ContentBlock | undefined;
+  videoDisabled: boolean;
   uploadsEnabled: boolean;
 }) {
   return (
@@ -230,7 +233,11 @@ function HeroBackgroundControl({
       <div className="content-admin-hero-video__head">
         <div>
           <h3>Hero background</h3>
-          <p>Shown behind the homepage headline. Add a photo, a video, or both — the photo also serves as the video&apos;s poster and as the fallback whenever the video doesn&apos;t play.</p>
+          <p>
+            Shown behind the homepage headline. Add a photo, a video, or both — the photo also serves as the video&apos;s
+            poster and as the fallback whenever the video doesn&apos;t play.
+            {videoDisabled && " Video is currently turned off, so only the photo shows, even if a video is uploaded below."}
+          </p>
         </div>
       </div>
 
@@ -284,8 +291,21 @@ function HeroBackgroundControl({
         <div className="content-admin-hero-bg__item">
           <div className="content-admin-hero-bg__item-head">
             <h4>Video</h4>
-            {videoBlock?.value && <span className="admin-badge admin-badge--active">Video set</span>}
+            {videoDisabled ? (
+              <span className="admin-badge admin-badge--inactive">Photo only</span>
+            ) : (
+              videoBlock?.value && <span className="admin-badge admin-badge--active">Video set</span>
+            )}
           </div>
+
+          {/* Independent of whether a video is uploaded: this also silences the
+              committed default clip, which is otherwise what shows when there's
+              no admin-uploaded video at all. */}
+          <form action={videoDisabled ? enableHeroVideo : disableHeroVideo} className="content-admin-hero-video__toggle">
+            <SubmitButton className="admin-btn admin-btn--ghost" pendingLabel={videoDisabled ? "Turning video on…" : "Turning video off…"}>
+              {videoDisabled ? "Turn video back on" : "Turn video off — show photo only"}
+            </SubmitButton>
+          </form>
 
           {videoBlock?.value ? (
             <>
@@ -435,6 +455,7 @@ export default async function ContentEditorPage({
   const uploadsEnabled = isCloudinaryConfigured();
   const heroVideo = allBlocks.find((block) => block.key === "hero_video");
   const heroImage = allBlocks.find((block) => block.key === "hero_image");
+  const heroVideoDisabled = allBlocks.some((block) => block.key === "hero_video_disabled");
   const areaList = allBlocks.find((block) => block.key === "area_list");
   const blockByKey = Object.fromEntries(allBlocks.map((block) => [block.key, block]));
   const routeImageBlocks = Object.fromEntries(ROUTE_IMAGES.map((item) => [item.key, blockByKey[item.key]]));
@@ -473,7 +494,7 @@ export default async function ContentEditorPage({
       {page === "home" && (
         <>
           <p className="content-admin__notice">Only content used by the current property-plan homepage is shown below. Gallery projects and service details have their own management pages.</p>
-          <HeroBackgroundControl imageBlock={heroImage} videoBlock={heroVideo} uploadsEnabled={uploadsEnabled} />
+          <HeroBackgroundControl imageBlock={heroImage} videoBlock={heroVideo} videoDisabled={heroVideoDisabled} uploadsEnabled={uploadsEnabled} />
           <ImageSetControl
             title="Property route photos"
             description="Shown one at a time as visitors switch between Lawn Care, Landscaping, Hardscaping, and Maintenance below the hero."
