@@ -44,11 +44,11 @@ async function main() {
     // Home
     { page: "home", key: "hero_eyebrow", type: "text", value: "Waxhaw, NC & Surrounding Areas" },
     { page: "home", key: "hero_heading", type: "text", value: "Lawn Care & Landscaping You Can Count On" },
-    { page: "home", key: "hero_paragraph", type: "text", value: "Fertilization, landscaping, hardscaping, and full-service maintenance for homes and businesses across the Waxhaw area — done right, every time." },
+    { page: "home", key: "hero_paragraph", type: "text", value: "Fertilization, landscaping, hardscaping, and full-service maintenance for homes and businesses across the Waxhaw area, done right, every time." },
     { page: "home", key: "services_heading", type: "text", value: "Four Ways We Care For Your Property" },
     { page: "home", key: "services_paragraph", type: "text", value: "From weekly mowing to full backyard transformations, our crews handle it all." },
     { page: "home", key: "why_heading", type: "text", value: "Clean, Reliable, Detail-Focused Work" },
-    { page: "home", key: "why_paragraph", type: "text", value: "We treat every property like it's our own — showing up on schedule and leaving things looking sharp." },
+    { page: "home", key: "why_paragraph", type: "text", value: "We treat every property like it's our own, showing up on schedule and leaving things looking sharp." },
     { page: "home", key: "ba_heading", type: "text", value: "A real before & after" },
     { page: "home", key: "ba_paragraph", type: "text", value: "One Avanti project, shown before work and after installation." },
     { page: "home", key: "areas_heading", type: "text", value: "Proudly Serving the Waxhaw Area" },
@@ -65,7 +65,7 @@ async function main() {
     // About
     { page: "about", key: "hero_paragraph", type: "text", value: "A local lawn care and landscaping team focused on quality, consistency, and honest service." },
     { page: "about", key: "story_heading", type: "text", value: "Built On Attention To Detail" },
-    { page: "about", key: "story_paragraph_1", type: "text", value: "Avanti Landscaping got its start caring for lawns right here in Waxhaw, NC. We specialize in tall fescue and Bermuda lawns suited to our local climate, and we've grown by treating every yard — big or small — with the same level of care." },
+    { page: "about", key: "story_paragraph_1", type: "text", value: "Avanti Landscaping got its start caring for lawns right here in Waxhaw, NC. We specialize in tall fescue and Bermuda lawns suited to our local climate, and we've grown by treating every yard, big or small, with the same level of care." },
     { page: "about", key: "story_paragraph_2", type: "text", value: "Today we offer lawn care, landscaping, hardscaping, and full property maintenance for homeowners, HOAs, and businesses across the greater Waxhaw area." },
     { page: "about", key: "photo_image", type: "image", value: "/assets/img/gallery-pruning.jpg" },
     { page: "about", key: "cta_heading", type: "text", value: "Let's talk about your property" },
@@ -74,10 +74,10 @@ async function main() {
     // Areas
     { page: "areas", key: "hero_paragraph", type: "text", value: "Based in Waxhaw, NC, and proud to serve homeowners and businesses throughout these nearby communities." },
     { page: "areas", key: "cta_heading", type: "text", value: "We May Still Be Able to Help" },
-    { page: "areas", key: "cta_paragraph", type: "text", value: "Give us a call — we regularly take on properties just outside our main service map." },
+    { page: "areas", key: "cta_paragraph", type: "text", value: "Give us a call. We regularly take on properties just outside our main service map." },
 
     // Services
-    { page: "services", key: "hero_paragraph", type: "text", value: "Everything your lawn and landscape need — from routine care to full outdoor builds." },
+    { page: "services", key: "hero_paragraph", type: "text", value: "Everything your lawn and landscape need, from routine care to full outdoor builds." },
     { page: "services", key: "cta_heading", type: "text", value: "Not sure what your property needs?" },
     { page: "services", key: "cta_paragraph", type: "text", value: "Tell us what you're looking for and we'll recommend the right services." },
 
@@ -85,7 +85,7 @@ async function main() {
     { page: "gallery", key: "hero_paragraph", type: "text", value: "Real photos from real properties across the Waxhaw area." },
 
     // Contact
-    { page: "contact", key: "hero_paragraph", type: "text", value: "Tell us a bit about your property and what you need — we'll follow up quickly." },
+    { page: "contact", key: "hero_paragraph", type: "text", value: "Tell us a bit about your property and what you need, and we'll follow up quickly." },
   ];
 
   for (const block of contentBlocks) {
@@ -153,7 +153,7 @@ async function main() {
   });
 
   // --- Before & After projects ---
-  // Only seeds an empty table — the owner manages this list from the Gallery
+  // Only seeds an empty table: the owner manages this list from the Gallery
   // admin screen, so a reseed must never clobber what they've added.
   if ((await prisma.beforeAfterProject.count()) === 0) {
     await prisma.beforeAfterProject.createMany({
@@ -177,7 +177,7 @@ async function main() {
       excerpt: "Compacted soil is a common, often invisible reason lawns struggle. Here are 5 signs your lawn needs core aeration.",
       coverImage: null,
       tag: "LAWN CARE",
-      body: `<p>Compacted soil is one of the most common — and least obvious — reasons a lawn struggles, even with regular watering and fertilizing. Aeration relieves that compaction so water, air, and nutrients can actually reach the roots. Here's how to tell if your lawn needs it.</p>
+      body: `<p>Compacted soil is one of the most common, and least obvious, reasons a lawn struggles, even with regular watering and fertilizing. Aeration relieves that compaction so water, air, and nutrients can actually reach the roots. Here's how to tell if your lawn needs it.</p>
 <h2>1. Water Pools Instead of Soaking In</h2>
 <p>If rain or sprinkler water sits on the surface instead of absorbing, compacted soil is likely blocking it from reaching the roots.</p>
 <h2>2. The Lawn Feels Hard Underfoot</h2>
@@ -205,7 +205,7 @@ async function main() {
 <ul>
 <li>Skipping spring cleanup lets weeds get a head start you'll fight all summer.</li>
 <li>Skipping fall cleanup leaves your lawn more vulnerable to disease and winter damage.</li>
-<li>Doing both on schedule means less reactive work — and cost — the rest of the year.</li>
+<li>Doing both on schedule means less reactive work, and cost, the rest of the year.</li>
 </ul>
 <p>If your yard hasn't had a proper cleanup in a while, an overgrown yard cleanup can reset things before you get back on a regular schedule.</p>`,
     },
@@ -215,7 +215,7 @@ async function main() {
       excerpt: "Waxhaw sits in a tricky transition climate zone. Here's why tall fescue tends to be the safer lawn choice.",
       coverImage: "/assets/img/blog-lawn-wide.jpg",
       tag: "LAWN CARE",
-      body: `<p>Waxhaw sits in what's known as the "transition zone" — too hot in summer for cool-season grasses to thrive everywhere, but too cold in winter for warm-season grasses to stay green year-round. That in-between climate is exactly why tall fescue tends to be the safer, more forgiving choice for most yards here.</p>
+      body: `<p>Waxhaw sits in what's known as the "transition zone". It is too hot in summer for cool-season grasses to thrive everywhere, but too cold in winter for warm-season grasses to stay green year-round. That in-between climate is exactly why tall fescue tends to be the safer, more forgiving choice for most yards here.</p>
 <h2>It Handles Our Swings Better</h2>
 <p>Tall fescue has a deep root system that helps it tolerate both summer heat and occasional winter cold better than many alternatives suited to more extreme climates.</p>
 <h2>It Stays Greener, Longer</h2>

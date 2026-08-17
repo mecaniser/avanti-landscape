@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getGlobalContent } from "@/lib/content";
+import { SERVICE_CATEGORIES } from "@/lib/services";
 
 export default async function SiteFooter() {
   const g = await getGlobalContent();
@@ -22,10 +23,9 @@ export default async function SiteFooter() {
           <div className="footer-col">
             <h4>Services</h4>
             <ul>
-              <li><Link href="/services#lawn-care">Lawn Care</Link></li>
-              <li><Link href="/services#landscaping">Landscaping</Link></li>
-              <li><Link href="/services#hardscaping">Hardscaping</Link></li>
-              <li><Link href="/services#maintenance">Lawn &amp; Landscape Maintenance</Link></li>
+              {SERVICE_CATEGORIES.map((cat) => (
+                <li key={cat.slug}><Link href={`/services/${cat.slug}`}>{cat.label}</Link></li>
+              ))}
             </ul>
           </div>
           <div className="footer-col">
@@ -56,7 +56,7 @@ export default async function SiteFooter() {
           <span>
             <Link href="/contact">Request a Free Quote</Link>
             <span style={{ margin: "0 10px", opacity: 0.4 }}>·</span>
-            <a href="/admin/login">Staff Login</a>
+            <a href="/admin/login" rel="nofollow">Staff Login</a>
           </span>
         </div>
       </div>

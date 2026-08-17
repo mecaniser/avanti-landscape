@@ -23,7 +23,7 @@ export function isCloudinaryConfigured() {
   );
 }
 
-// Photos come straight off a phone — several MB at ~4000px wide — but the site
+// Photos come straight off a phone, several MB at ~4000px wide, but the site
 // never renders them wider than about 640px. Store the original untouched and
 // serve a transformed delivery URL: f_auto picks WebP/AVIF per browser, q_auto
 // tunes compression, and c_limit caps the width without upscaling smaller files.

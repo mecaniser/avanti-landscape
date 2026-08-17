@@ -1,10 +1,22 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import BeforeAfterCarousel from "@/components/BeforeAfterCarousel";
 import GalleryPhotoGrid from "@/components/GalleryPhotoGrid";
+import JsonLd from "@/components/JsonLd";
 import { getContent, getGlobalContent } from "@/lib/content";
-import { prisma } from "@/lib/db";
+import { buildBreadcrumbSchema } from "@/lib/schema";
+import { absoluteUrl, pageMetadata } from "@/lib/site";
+import { getBeforeAfterProjects, getGalleryImages } from "@/lib/queries";
+
+export const metadata: Metadata = pageMetadata({
+  title: "Project Gallery: Before & After Landscaping Work",
+  description:
+    "Real before-and-after photos of lawn care, sod installation, mulch beds, drainage, and planting projects completed by Avanti Landscaping around Waxhaw, NC.",
+  path: "/gallery",
+  image: absoluteUrl("/assets/img/project-sod-installation.jpg"),
+});
 
 export const dynamic = "force-dynamic";
 
@@ -12,12 +24,18 @@ export default async function GalleryPage() {
   const [c, g, images, projects] = await Promise.all([
     getContent("gallery"),
     getGlobalContent(),
-    prisma.galleryImage.findMany({ orderBy: { sortOrder: "asc" } }),
-    prisma.beforeAfterProject.findMany({ orderBy: { sortOrder: "asc" } }),
+    getGalleryImages(),
+    getBeforeAfterProjects(),
   ]);
 
   return (
     <>
+      <JsonLd
+        data={buildBreadcrumbSchema([
+          { name: "Home", path: "/" },
+          { name: "Gallery", path: "/gallery" },
+        ])}
+      />
       <SiteHeader active="gallery" />
       <main id="main-content" tabIndex={-1}>
         <section className="page-hero">

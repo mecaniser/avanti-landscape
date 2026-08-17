@@ -1,26 +1,38 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+import JsonLd from "@/components/JsonLd";
 import { getContent } from "@/lib/content";
-import { prisma } from "@/lib/db";
+import { buildBreadcrumbSchema } from "@/lib/schema";
+import { absoluteUrl, pageMetadata } from "@/lib/site";
+import { SERVICE_CATEGORIES } from "@/lib/services";
+import { getServices } from "@/lib/queries";
 
-const CATEGORIES = [
-  { id: "lawn-care", label: "Lawn Care" },
-  { id: "landscaping", label: "Landscaping" },
-  { id: "hardscaping", label: "Hardscaping" },
-  { id: "maintenance", label: "Lawn & Landscape Maintenance" },
-];
+export const metadata: Metadata = pageMetadata({
+  title: "Lawn Care, Landscaping & Hardscaping Services",
+  description:
+    "Lawn care, landscaping, hardscaping, and property maintenance for homes and businesses in Waxhaw, NC. Mowing, sod, mulch, drainage, planting, and seasonal cleanups. Free quotes.",
+  path: "/services",
+  image: absoluteUrl("/assets/img/card-landscaping.jpg"),
+});
 
 export const dynamic = "force-dynamic";
 
 export default async function ServicesPage() {
   const [c, services] = await Promise.all([
     getContent("services"),
-    prisma.service.findMany({ orderBy: { sortOrder: "asc" } }),
+    getServices(),
   ]);
 
   return (
     <>
+      <JsonLd
+        data={buildBreadcrumbSchema([
+          { name: "Home", path: "/" },
+          { name: "Services", path: "/services" },
+        ])}
+      />
       <SiteHeader active="services" />
       <main id="main-content" tabIndex={-1}>
         <section className="page-hero">
@@ -33,22 +45,25 @@ export default async function ServicesPage() {
 
         <section className="section">
           <div className="container">
-            {CATEGORIES.map((cat, i) => (
-              <div className="category-block" id={cat.id} key={cat.id} style={i === CATEGORIES.length - 1 ? { marginBottom: 0 } : undefined}>
+            {SERVICE_CATEGORIES.map((cat, i) => (
+              <div className="category-block" id={cat.slug} key={cat.slug} style={i === SERVICE_CATEGORIES.length - 1 ? { marginBottom: 0 } : undefined}>
                 <div className="category-head">
                   <div>
                     <span className="eyebrow">Category</span>
                     <h2>{cat.label}</h2>
                   </div>
+                  <Link href={`/services/${cat.slug}`} className="route-link">
+                    All {cat.label.toLowerCase()}<span aria-hidden="true">→</span>
+                  </Link>
                 </div>
                 <div className="service-row">
                   {services
-                    .filter((s) => s.category === cat.id)
+                    .filter((s) => s.category === cat.slug)
                     .map((s) => (
                       <div className="service-item" key={s.id}>
                         <span className="dot"></span>
                         <div>
-                          <h4>{s.name}</h4>
+                          <h3>{s.name}</h3>
                           <p>{s.description}</p>
                         </div>
                       </div>

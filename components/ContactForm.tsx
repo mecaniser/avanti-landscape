@@ -88,7 +88,7 @@ export default function ContactForm() {
   if (status === "success") {
     return (
       <div id="form-success">
-        <h3 style={{ marginBottom: 10 }}>Thanks — we&apos;ve got it!</h3>
+        <h3 style={{ marginBottom: 10 }}>Thanks, we&apos;ve got it!</h3>
         <p>
           We&apos;ll be in touch shortly. For anything urgent, call or text us at{" "}
           <a href="tel:9803287141" style={{ color: "var(--olive-light)", fontWeight: 600 }}>980-328-7141</a>.

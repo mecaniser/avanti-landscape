@@ -26,8 +26,8 @@ export async function sendLeadNotification(lead: {
     return { skipped: true };
   }
 
-  return resend.emails.send({
-    from: "Avanti Landscaping Website <onboarding@resend.dev>",
+  const { data, error } = await resend.emails.send({
+    from: process.env.LEAD_NOTIFICATION_FROM ?? "Avanti Landscaping Website <onboarding@resend.dev>",
     to,
     replyTo: lead.email,
     subject: `New quote request from ${lead.name}`,
@@ -35,11 +35,21 @@ export async function sendLeadNotification(lead: {
       `Name: ${lead.name}`,
       `Phone: ${lead.phone}`,
       `Email: ${lead.email}`,
-      `Address: ${lead.address || "—"}`,
-      `Service: ${lead.serviceType || "—"}`,
+      `Address: ${lead.address || "-"}`,
+      `Service: ${lead.serviceType || "-"}`,
       "",
       "Message:",
-      lead.message || "—",
+      lead.message || "-",
     ].join("\n"),
   });
+
+  // Resend reports API failures: bad key, unverified sender domain, rate
+  // limit: by returning an `error` object, not by throwing. Without this
+  // check a rejected send looks identical to a delivered one, and quote
+  // requests stop arriving with nothing in the logs to say why.
+  if (error) {
+    throw new Error(`Resend rejected the lead notification (${error.name}): ${error.message}`);
+  }
+
+  return { skipped: false, id: data?.id };
 }

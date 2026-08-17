@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getGlobalContent } from "@/lib/content";
+import { SERVICE_CATEGORIES } from "@/lib/services";
 import MobileNavToggle from "@/components/MobileNavToggle";
 
 const NAV = [
@@ -34,10 +35,7 @@ export default async function SiteHeader({ active }: { active: string }) {
       <div className="container">
         <nav className="navbar" aria-label="Primary navigation">
           <Link href="/" className="brand">
-            <picture>
-              <source media="(max-width: 640px)" srcSet="/assets/avanti-mark.png" />
-              <img src="/assets/avanti-wordmark.png" alt="Avanti Lawn & Landscaping" />
-            </picture>
+            <img src="/assets/avanti-wordmark.png" alt="Avanti Lawn & Landscaping" />
           </Link>
 
           <ul className="nav-links">
@@ -48,10 +46,11 @@ export default async function SiteHeader({ active }: { active: string }) {
                     Services <span className="caret">▾</span>
                   </Link>
                   <div className="dropdown-panel">
-                    <Link href="/services#lawn-care"><span className="dot"></span>Lawn Care</Link>
-                    <Link href="/services#landscaping"><span className="dot"></span>Landscaping</Link>
-                    <Link href="/services#hardscaping"><span className="dot"></span>Hardscaping</Link>
-                    <Link href="/services#maintenance"><span className="dot"></span>Lawn &amp; Landscape Maintenance</Link>
+                    {SERVICE_CATEGORIES.map((cat) => (
+                      <Link href={`/services/${cat.slug}`} key={cat.slug}>
+                        <span className="dot"></span>{cat.label}
+                      </Link>
+                    ))}
                     <Link href="/services" className="view-all">View All Services →</Link>
                   </div>
                 </li>

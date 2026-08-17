@@ -1,18 +1,33 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
-import { prisma } from "@/lib/db";
+import JsonLd from "@/components/JsonLd";
+import { buildBreadcrumbSchema } from "@/lib/schema";
+import { absoluteUrl, pageMetadata } from "@/lib/site";
+import { getPublishedPosts } from "@/lib/queries";
+
+export const metadata: Metadata = pageMetadata({
+  title: "Lawn & Landscape Tips for Waxhaw-Area Yards",
+  description:
+    "Seasonal lawn and landscape advice from the Avanti Landscaping crew, written for Waxhaw-area yards: tall fescue, core aeration, spring and fall cleanups, and more.",
+  path: "/blog",
+  image: absoluteUrl("/assets/img/blog-lawn-wide.jpg"),
+});
 
 export const dynamic = "force-dynamic";
 
 export default async function BlogPage() {
-  const posts = await prisma.blogPost.findMany({
-    where: { publishedAt: { not: null } },
-    orderBy: { publishedAt: "desc" },
-  });
+  const posts = await getPublishedPosts();
 
   return (
     <>
+      <JsonLd
+        data={buildBreadcrumbSchema([
+          { name: "Home", path: "/" },
+          { name: "Blog", path: "/blog" },
+        ])}
+      />
       <SiteHeader active="blog" />
       <main id="main-content" tabIndex={-1}>
         <section className="page-hero">

@@ -8,7 +8,7 @@ import HeroServiceRoute from "@/components/HeroServiceRoute";
 import PropertyRoute from "@/components/PropertyRoute";
 import WebsiteFlowTrace from "@/components/WebsiteFlowTrace";
 import { getContent, getGlobalContent, parseAreaList } from "@/lib/content";
-import { prisma } from "@/lib/db";
+import { getBeforeAfterProjects } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
 
@@ -16,7 +16,7 @@ export default async function HomePage() {
   const [c, g, projects] = await Promise.all([
     getContent("home"),
     getGlobalContent(),
-    prisma.beforeAfterProject.findMany({ orderBy: { sortOrder: "asc" } }),
+    getBeforeAfterProjects(),
   ]);
   const areas = parseAreaList(g.area_list);
   const phoneTel = g.phone_tel ?? "9803287141";
@@ -78,7 +78,7 @@ export default async function HomePage() {
             <div className="field-proof-list">
               <div><span>01</span><strong>One accountable crew</strong><p>Regular care and larger outdoor work can stay with the same local team.</p></div>
               <div><span>02</span><strong>Real property work</strong><p>See the actual details behind the services before you decide to call.</p></div>
-              <div><span>03</span><strong>Clear next step</strong><p>Request a free quote, call, or text—whichever works best for you.</p></div>
+              <div><span>03</span><strong>Clear next step</strong><p>Request a free quote, call, or text, whichever works best for you.</p></div>
             </div>
           </div>
         </section>

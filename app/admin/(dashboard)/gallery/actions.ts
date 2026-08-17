@@ -1,7 +1,8 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { prisma } from "@/lib/db";
+import { TAGS } from "@/lib/content";
 import { uploadImageBuffer, isCloudinaryConfigured } from "@/lib/cloudinary";
 
 export async function addGalleryImage(formData: FormData) {
@@ -10,7 +11,7 @@ export async function addGalleryImage(formData: FormData) {
     throw new Error("Choose an image to upload.");
   }
   if (!isCloudinaryConfigured()) {
-    throw new Error("Cloudinary isn't configured yet — set CLOUDINARY_* env vars to enable uploads.");
+    throw new Error("Cloudinary isn't configured yet: set CLOUDINARY_* env vars to enable uploads.");
   }
 
   const buffer = Buffer.from(await file.arrayBuffer());
@@ -29,12 +30,14 @@ export async function addGalleryImage(formData: FormData) {
     },
   });
 
+  updateTag(TAGS.gallery);
   revalidatePath("/admin/gallery");
   revalidatePath("/gallery");
 }
 
 export async function deleteGalleryImage(id: string) {
   await prisma.galleryImage.delete({ where: { id } });
+  updateTag(TAGS.gallery);
   revalidatePath("/admin/gallery");
   revalidatePath("/gallery");
 }
@@ -49,7 +52,7 @@ export async function addBeforeAfterProject(formData: FormData) {
     throw new Error("Choose both a before and an after photo.");
   }
   if (!isCloudinaryConfigured()) {
-    throw new Error("Cloudinary isn't configured yet — add the CLOUDINARY_* keys to upload photos.");
+    throw new Error("Cloudinary isn't configured yet: add the CLOUDINARY_* keys to upload photos.");
   }
 
   const [beforeUrl, afterUrl] = await Promise.all([
@@ -70,6 +73,7 @@ export async function addBeforeAfterProject(formData: FormData) {
     },
   });
 
+  updateTag(TAGS.gallery);
   revalidatePath("/admin/gallery");
   revalidatePath("/gallery");
   revalidatePath("/");
@@ -89,7 +93,7 @@ export async function updateBeforeAfterProject(id: string, formData: FormData) {
   // Only replacing a photo needs Cloudinary. Text stays editable without it, so
   // a caption typo is always fixable even if the keys are missing.
   if ((newBefore || newAfter) && !isCloudinaryConfigured()) {
-    throw new Error("Cloudinary isn't configured yet — add the CLOUDINARY_* keys to replace photos.");
+    throw new Error("Cloudinary isn't configured yet: add the CLOUDINARY_* keys to replace photos.");
   }
 
   const [beforeUrl, afterUrl] = await Promise.all([
@@ -108,6 +112,7 @@ export async function updateBeforeAfterProject(id: string, formData: FormData) {
     },
   });
 
+  updateTag(TAGS.gallery);
   revalidatePath("/admin/gallery");
   revalidatePath("/gallery");
   revalidatePath("/");
@@ -115,6 +120,7 @@ export async function updateBeforeAfterProject(id: string, formData: FormData) {
 
 export async function deleteBeforeAfterProject(id: string) {
   await prisma.beforeAfterProject.delete({ where: { id } });
+  updateTag(TAGS.gallery);
   revalidatePath("/admin/gallery");
   revalidatePath("/gallery");
   revalidatePath("/");

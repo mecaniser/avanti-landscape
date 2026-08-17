@@ -87,13 +87,13 @@ export default function CustomerRecord({
             <Fact label="Full name">{customer.name}</Fact>
             <Fact label="Status"><span className={`admin-badge admin-badge--${customer.status}`}>{customer.status}</span></Fact>
             <Fact label="Phone">
-              {customer.phone ? <a href={phoneHref(customer.phone)}>{customer.phone}</a> : "—"}
+              {customer.phone ? <a href={phoneHref(customer.phone)}>{customer.phone}</a> : "-"}
             </Fact>
             <Fact label="Email">
-              {customer.email ? <a href={`mailto:${customer.email}`}>{customer.email}</a> : "—"}
+              {customer.email ? <a href={`mailto:${customer.email}`}>{customer.email}</a> : "-"}
             </Fact>
-            <Fact label="Property address">{customer.address || "—"}</Fact>
-            <Fact label="Requested service">{customer.serviceType || "—"}</Fact>
+            <Fact label="Property address">{customer.address || "-"}</Fact>
+            <Fact label="Requested service">{customer.serviceType || "-"}</Fact>
           </dl>
 
           {customer.message && (

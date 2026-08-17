@@ -13,9 +13,9 @@ const nextConfig: NextConfig = {
   experimental: {
     serverActions: {
       // Next defaults to 1 MB, which rejects the request before the action runs
-      // and surfaces as a bare 500. The gallery forms post two photos at once
-      // and phone photos are several MB each, so raise the ceiling. 20 MB also
-      // matches Cloudinary's 10 MB-per-image limit on the free plan.
+      // and surfaces as a bare 500. This covers server actions only — media
+      // uploads go through the /api/admin/media route handler, which enforces
+      // its own limits from lib/uploads.ts.
       bodySizeLimit: "20mb",
     },
   },

@@ -1,11 +1,15 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
+import { TAGS } from "@/lib/content";
 import { uploadImageBuffer, isCloudinaryConfigured } from "@/lib/cloudinary";
 
 function refresh(slug?: string) {
+  // Tag invalidation clears the cached query in lib/queries.ts; the path
+  // calls below clear the rendered route.
+  updateTag(TAGS.blog);
   revalidatePath("/admin/blog");
   revalidatePath("/blog");
   if (slug) revalidatePath(`/blog/${slug}`);
@@ -15,7 +19,7 @@ async function resolveCoverImage(formData: FormData, existing?: string | null) {
   const file = formData.get("coverImageFile");
   if (file instanceof File && file.size > 0) {
     if (!isCloudinaryConfigured()) {
-      throw new Error("Cloudinary isn't configured yet — set CLOUDINARY_* env vars to enable uploads.");
+      throw new Error("Cloudinary isn't configured yet: set CLOUDINARY_* env vars to enable uploads.");
     }
     const buffer = Buffer.from(await file.arrayBuffer());
     return uploadImageBuffer(buffer, "avanti/blog");

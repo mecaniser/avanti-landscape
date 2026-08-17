@@ -2,8 +2,10 @@
 
 import { useRef, useState, type FormEvent, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
+import { compressImage } from "@/lib/compress-image";
+import { maxBytesFor, oversizeMessage, type UploadKind } from "@/lib/uploads";
 
-type UploadPhase = "idle" | "uploading" | "processing" | "success" | "error";
+type UploadPhase = "idle" | "preparing" | "uploading" | "processing" | "success" | "error";
 
 type AdminUploadFormProps = {
   operation: string;
@@ -22,6 +24,9 @@ type AdminUploadFormProps = {
  * uses XMLHttpRequest for media forms so the progress indicator reflects the
  * browser's real upload, then switches to a separate processing state while
  * Cloudinary and the database finish their work.
+ *
+ * Images are shrunk and the size limit is enforced before anything is sent, so
+ * an oversized photo fails instantly instead of after a full doomed transfer.
  */
 export default function AdminUploadForm({
   operation,
@@ -40,21 +45,42 @@ export default function AdminUploadForm({
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
 
-  const busy = phase === "uploading" || phase === "processing";
+  const busy = phase === "preparing" || phase === "uploading" || phase === "processing";
 
-  function submit(event: FormEvent<HTMLFormElement>) {
+  async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (busy) return;
 
     const form = event.currentTarget;
     const data = new FormData(form);
     data.set("operation", operation);
-    const hasFile = Array.from(form.elements).some(
-      (element) => element instanceof HTMLInputElement && element.type === "file" && element.files?.length
+    const pickedFiles = Array.from(form.elements).filter(
+      (element): element is HTMLInputElement =>
+        element instanceof HTMLInputElement && element.type === "file" && Boolean(element.files?.length)
     );
     setError(null);
     setProgress(0);
-    setPhase(hasFile ? "uploading" : "processing");
+    setPhase(pickedFiles.length ? "preparing" : "processing");
+
+    for (const input of pickedFiles) {
+      const original = input.files![0];
+      const kind: UploadKind = original.type.startsWith("video/") ? "video" : "image";
+      const { file, compressed } = kind === "image" ? await compressImage(original) : { file: original, compressed: false };
+
+      if (file.size > maxBytesFor(kind)) {
+        setPhase("error");
+        setError(
+          compressed || kind === "video"
+            ? oversizeMessage(kind, file.size)
+            : `${oversizeMessage(kind, file.size)} This format cannot be resized in the browser — save it as a JPEG and try again.`
+        );
+        return;
+      }
+
+      data.set(input.name, file, file.name);
+    }
+
+    setPhase(pickedFiles.length ? "uploading" : "processing");
 
     const request = new XMLHttpRequest();
     request.open("POST", "/api/admin/media");
@@ -101,13 +127,19 @@ export default function AdminUploadForm({
   }
 
   return (
-    <form ref={formRef} className={className} onSubmit={submit} encType="multipart/form-data" aria-busy={busy}>
+    <form
+      ref={formRef}
+      className={className}
+      onSubmit={(event) => void submit(event)}
+      encType="multipart/form-data"
+      aria-busy={busy}
+    >
       {children}
       <button type="submit" className="admin-btn" disabled={busy} aria-describedby={`${statusId}-upload-status`}>
         {busy ? (
           <>
             <span className="admin-spinner" aria-hidden="true" />
-            {phase === "uploading" ? `Uploading ${progress}%` : "Saving…"}
+            {phase === "preparing" ? "Preparing…" : phase === "uploading" ? `Uploading ${progress}%` : "Saving…"}
           </>
         ) : (
           submitLabel
@@ -119,6 +151,7 @@ export default function AdminUploadForm({
         role="status"
         aria-live="polite"
       >
+        {phase === "preparing" && <span>Resizing your photo…</span>}
         {phase === "uploading" && <progress className="admin-upload-progress" value={progress} max="100">Uploading {progress}%</progress>}
         {phase === "processing" && <span>{processingLabel}</span>}
         {phase === "success" && <span>{successLabel}</span>}

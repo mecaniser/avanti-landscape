@@ -1,13 +1,12 @@
 import { NextResponse } from "next/server";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
+import { TAGS } from "@/lib/content";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
 import { isCloudinaryConfigured, uploadImageBuffer, uploadVideoBuffer } from "@/lib/cloudinary";
+import { maxBytesFor, oversizeMessage } from "@/lib/uploads";
 
 export const runtime = "nodejs";
-
-const MAX_IMAGE_BYTES = 15 * 1024 * 1024;
-const MAX_VIDEO_BYTES = 100 * 1024 * 1024;
 
 class UploadError extends Error {}
 
@@ -30,9 +29,10 @@ function getFile(formData: FormData, name: string, required: boolean, kind: "ima
   if (!value.type.startsWith(`${kind}/`)) {
     throw new UploadError(`Choose a valid ${kind} file.`);
   }
-  const limit = kind === "image" ? MAX_IMAGE_BYTES : MAX_VIDEO_BYTES;
-  if (value.size > limit) {
-    throw new UploadError(`${kind === "image" ? "Images" : "Videos"} must be ${limit / 1024 / 1024} MB or smaller.`);
+  // The browser form shrinks images and checks this first; this is the backstop
+  // for anything that reaches the route another way.
+  if (value.size > maxBytesFor(kind)) {
+    throw new UploadError(oversizeMessage(kind, value.size));
   }
   return value;
 }
@@ -48,6 +48,7 @@ function requireCloudinary() {
 }
 
 function refreshGallery() {
+  revalidateTag(TAGS.gallery, "max");
   revalidatePath("/admin/gallery");
   revalidatePath("/gallery");
   revalidatePath("/");
@@ -139,6 +140,7 @@ async function updateContentImage(formData: FormData) {
   if (!block || block.type !== "image") throw new UploadError("That image field no longer exists.");
   const url = await storeImage(file, "avanti/content");
   await prisma.contentBlock.update({ where: { id: block.id }, data: { value: url } });
+  revalidateTag(TAGS.content, "max");
   revalidatePath(`/admin/content/${page}`);
   revalidatePath("/");
   revalidatePath(page === "home" ? "/" : `/${page}`);
@@ -153,6 +155,7 @@ async function uploadHeroVideo(formData: FormData) {
     update: { value: url, type: "text" },
     create: { page: "home", key: "hero_video", type: "text", value: url },
   });
+  revalidateTag(TAGS.content, "max");
   revalidatePath("/admin/content/home");
   revalidatePath("/");
 }
@@ -173,6 +176,7 @@ async function createBlogPost(formData: FormData) {
       publishedAt: formData.get("publish") === "on" ? new Date() : null,
     },
   });
+  revalidateTag(TAGS.blog, "max");
   revalidatePath("/admin/blog");
   revalidatePath("/blog");
   return "/admin/blog";
@@ -196,6 +200,7 @@ async function updateBlogPost(formData: FormData) {
       publishedAt: formData.get("publish") === "on" ? existing.publishedAt ?? new Date() : null,
     },
   });
+  revalidateTag(TAGS.blog, "max");
   revalidatePath("/admin/blog");
   revalidatePath("/blog");
   revalidatePath(`/blog/${post.slug}`);

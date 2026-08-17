@@ -21,7 +21,7 @@ export default async function CustomersPage({
   return (
     <>
       <h2>Customers</h2>
-      <p className="subtitle">All leads and customers in one place — filter by status below.</p>
+      <p className="subtitle">All leads and customers in one place. Filter by status below.</p>
 
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
         <div style={{ display: "flex", gap: 8 }}>
@@ -56,9 +56,9 @@ export default async function CustomersPage({
               {customers.map((c) => (
                 <tr key={c.id}>
                   <td><Link href={`/admin/customers/${c.id}`}>{c.name}</Link></td>
-                  <td>{c.phone || "—"}</td>
-                  <td>{c.email || "—"}</td>
-                  <td>{c.serviceType || "—"}</td>
+                  <td>{c.phone || "-"}</td>
+                  <td>{c.email || "-"}</td>
+                  <td>{c.serviceType || "-"}</td>
                   <td><span className={`admin-badge admin-badge--${c.status}`}>{STATUS_LABELS[c.status]}</span></td>
                   <td>{c.createdAt.toLocaleDateString()}</td>
                 </tr>

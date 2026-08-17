@@ -40,7 +40,7 @@ export default async function AdminOverviewPage() {
                 <tr key={lead.id}>
                   <td><Link href={`/admin/customers/${lead.id}`}>{lead.name}</Link></td>
                   <td>{lead.phone}</td>
-                  <td>{lead.serviceType || "—"}</td>
+                  <td>{lead.serviceType || "-"}</td>
                   <td>{lead.createdAt.toLocaleDateString()}</td>
                 </tr>
               ))}

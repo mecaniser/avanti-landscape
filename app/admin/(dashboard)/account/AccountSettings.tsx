@@ -119,14 +119,14 @@ export default function AccountSettings({
               {settings.facebookUrl ? (
                 <a className="account-settings__social-link" href={settings.facebookUrl} target="_blank" rel="noreferrer">Facebook</a>
               ) : (
-                <span className="account-settings__business-label">Facebook — not listed</span>
+                <span className="account-settings__business-label">Facebook: not listed</span>
               )}
             </div>
             <div className="account-settings__social">
               {settings.instagramUrl ? (
                 <a className="account-settings__social-link" href={settings.instagramUrl} target="_blank" rel="noreferrer">Instagram</a>
               ) : (
-                <span className="account-settings__business-label">Instagram — not listed</span>
+                <span className="account-settings__business-label">Instagram: not listed</span>
               )}
             </div>
           </div>
