@@ -310,6 +310,165 @@
 .admin-table tr:hover td { background: var(--bg-elev-2, #202415); }
 .admin-table a { color: var(--olive-light, #b3d15a); font-weight: 600; }
 
+/* ============================================
+   Responsive tables: shared pattern for admin-table
+   usage on narrow viewports. Two variants:
+
+   1. .admin-table-scroll — a wrapper div around a table
+      that still reads best in its native row/column shape
+      (Overview "Recent Leads", Blog posts). Enables
+      horizontal scrolling and paints a fade/shadow on
+      whichever edge still has hidden content, using the
+      background-attachment: local/scroll trick — no JS,
+      the shadow only appears where there's really more to
+      scroll. Reusable as-is for any future admin table
+      that doesn't need a full card rebuild.
+
+   2. .admin-table--stacked — applied directly to a table
+      that should collapse into cards below the stacked
+      breakpoint (Customers). Column order is remapped with
+      CSS grid-template-areas via :nth-child, so it's tuned
+      to the calling table's column order; the surrounding
+      card chrome (border, radius, spacing, label pattern)
+      is the reusable part for any future table that needs
+      the same "row becomes a card" treatment.
+   ============================================ */
+
+.admin-table-scroll {
+  overflow-x: auto;
+  border-radius: 8px;
+  background:
+    linear-gradient(to right, var(--bg-elev, #171a0f) 30%, rgba(23, 26, 15, 0)) left,
+    linear-gradient(to left, var(--bg-elev, #171a0f) 30%, rgba(23, 26, 15, 0)) right,
+    linear-gradient(to right, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0)) left,
+    linear-gradient(to left, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0)) right;
+  background-repeat: no-repeat;
+  background-color: var(--bg-elev, #171a0f);
+  background-size: 32px 100%, 32px 100%, 12px 100%, 12px 100%;
+  background-attachment: local, local, scroll, scroll;
+}
+@media (max-width: 640px) {
+  /* Below the breakpoint, let the table claim its natural (intrinsic)
+     width instead of being squeezed to the viewport — cells stop
+     wrapping/truncating, and if that natural width exceeds the screen the
+     wrapper scrolls with the shadow cue showing there's more off-edge.
+     Above 640px the table already fits its container, so none of this
+     applies and the wrapper's gradients sit flush with no visible shadow. */
+  .admin-table-scroll .admin-table { width: max-content; min-width: 100%; }
+  .admin-table-scroll .admin-table th,
+  .admin-table-scroll .admin-table td { white-space: nowrap; }
+}
+
+@media (max-width: 640px) {
+  .admin-table--stacked thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .admin-table--stacked,
+  .admin-table--stacked tbody { display: block; width: 100%; }
+  .admin-table--stacked tr {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "name   status"
+      "phone  phone"
+      "email  email"
+      "service service"
+      "added  added";
+    column-gap: 12px;
+    row-gap: 3px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    border: 1px solid var(--surface-line, #333825);
+    border-radius: 10px;
+    background: var(--bg-elev-2, #202415);
+  }
+  .admin-table--stacked tr:last-child { margin-bottom: 0; }
+  .admin-table--stacked tr:hover td { background: transparent; }
+  .admin-table--stacked td {
+    display: block;
+    padding: 0;
+    border-bottom: 0;
+    font-size: 0.86rem;
+  }
+  /* Name: card header, paired with the status badge on the same row. */
+  .admin-table--stacked td:nth-child(1) {
+    grid-area: name;
+    align-self: center;
+    font-size: 1rem;
+  }
+  .admin-table--stacked td:nth-child(1) a { font-weight: 700; }
+  /* Phone / Email / Service: labeled key-value rows. */
+  .admin-table--stacked td:nth-child(2) { grid-area: phone; }
+  .admin-table--stacked td:nth-child(3) { grid-area: email; overflow-wrap: anywhere; }
+  .admin-table--stacked td:nth-child(4) { grid-area: service; }
+  .admin-table--stacked td:nth-child(2)::before,
+  .admin-table--stacked td:nth-child(3)::before,
+  .admin-table--stacked td:nth-child(4)::before {
+    color: var(--text-soft, #a3a992);
+  }
+  .admin-table--stacked td:nth-child(2)::before { content: "Phone: "; }
+  .admin-table--stacked td:nth-child(3)::before { content: "Email: "; }
+  .admin-table--stacked td:nth-child(4)::before { content: "Service: "; }
+  /* Status: sits beside the name as the card header's second half. */
+  .admin-table--stacked td:nth-child(5) {
+    grid-area: status;
+    justify-self: end;
+    align-self: center;
+  }
+  /* Added: secondary metadata, tucked bottom-right of the card. */
+  .admin-table--stacked td:nth-child(6) {
+    grid-area: added;
+    justify-self: end;
+    margin-top: 6px;
+    color: var(--text-soft, #a3a992);
+    font-size: 0.76rem;
+  }
+}
+
+/* Overview stat cards (New Leads / Active Customers): side-by-side is fine
+   down through 375px since each card only holds a short label and a number
+   (2 * 160px + 16px gap = 336px, comfortably under the narrowest target
+   viewport). flex-wrap is a deliberate safety net for anything narrower or
+   for future cards being added, not the primary responsive behavior. */
+.admin-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.admin-stats > .admin-card {
+  flex: 1 1 160px;
+  margin-bottom: 0;
+}
+.admin-stats__label { margin-bottom: 4px; }
+.admin-stats__value { font-size: 2rem; font-weight: 700; }
+
+/* Customers toolbar: status-filter pills + "Add Customer". At 375px the 4
+   pills (All/Lead/Active/Inactive) plus the button don't fit on one line
+   (roughly 4 * ~64px pills + gaps + a ~140px button > 375px), so this wraps
+   onto a second line rather than squeezing — the pills wrap together as a
+   group and the Add button drops to its own row, both staying full-size and
+   tappable instead of shrinking or overlapping. */
+.customers-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 16px;
+  margin-bottom: 16px;
+}
+.customers-toolbar__pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.customers-toolbar__pill {
+  padding: 6px 14px;
+  font-size: 0.85rem;
+}
+.customers-toolbar__pill--active {
+  background: var(--dark-green, #345126);
+  color: #fff;
+}
+
 .blog-body-editor { margin-bottom: 16px; }
 .blog-body-editor__head {
   display: flex;
