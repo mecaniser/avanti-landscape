@@ -7,6 +7,11 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false, nocache: true },
 };
 
+// Admin is behind auth and must never be statically prerendered. Without this,
+// Next prerenders the form pages (/admin/blog/new, /admin/customers/new) at
+// build time, which drags the root layout's database read into the build.
+export const dynamic = "force-dynamic";
+
 export default function AdminLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {

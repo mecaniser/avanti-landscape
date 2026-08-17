@@ -18,7 +18,17 @@ const STATE_CODE: Record<string, string> = {
  * renders, so the towns cannot drift out of sync with the /areas page.
  */
 export async function buildLocalBusinessSchema() {
-  const g = await getGlobalContent();
+  // The root layout renders this on every route, including the pages Next
+  // prerenders at build time. Railway runs `next build` before the database is
+  // reachable, so a hard dependency here fails the whole build. It would also
+  // turn a transient database blip in production into a 500 on every page.
+  // Structured data is worth having but never worth taking the site down for.
+  let g: Record<string, string>;
+  try {
+    g = await getGlobalContent();
+  } catch {
+    return null;
+  }
 
   // The admin stores the display phone in whatever shape reads well -
   // currently "(980) 328-7141". Schema wants an unambiguous dialable number,
