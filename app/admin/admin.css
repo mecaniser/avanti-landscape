@@ -89,6 +89,23 @@
 .admin-main:has(.account-settings),
 .admin-main:has(.content-admin) { max-width: none; }
 
+@media (max-width: 700px) {
+  .admin-shell { flex-direction: column; min-height: auto; }
+  .admin-sidebar {
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+    padding: 14px 16px;
+  }
+  .admin-sidebar h1 { width: 100%; padding: 0 0 12px; margin-bottom: 4px; }
+  .admin-sidebar a { padding: 8px 10px; font-size: 0.86rem; }
+  .admin-view-site { margin: 0 0 0 auto; }
+  .admin-sidebar form { width: 100%; margin-top: 4px; padding-top: 10px; }
+  .admin-main { padding: 20px 16px; }
+}
+
 .admin-main h2 {
   color: var(--heading, #f2f4e8);
   margin-bottom: 6px;
@@ -199,7 +216,7 @@
 .blog-body-editor__block-head > div { display: flex; flex-wrap: wrap; gap: 6px; }
 .blog-body-editor__block-head button { min-height: 28px; padding: 3px 7px; font-size: .74rem; }
 .blog-body-editor__block-head button:disabled { cursor: not-allowed; opacity: .38; }
-.blog-body-editor__block-head .blog-body-editor__remove { color: #ffab98; }
+.blog-body-editor__block-head .blog-body-editor__remove { color: var(--danger, #f0a08e); }
 .blog-body-editor__block textarea,
 .blog-body-editor__block input {
   width: 100%;
@@ -381,7 +398,7 @@
   color: var(--olive-light, #b3d15a);
   font-size: .88rem;
 }
-.customer-record__save-status--error { color: #f0a08e; }
+.customer-record__save-status--error { color: var(--danger, #f0a08e); }
 .customer-record__delete {
   display: flex;
   align-items: center;
@@ -400,6 +417,22 @@
   color: var(--text-soft, #a3a992);
   font-size: .86rem;
 }
+.customer-record__delete-confirm {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+.customer-record__delete-confirm > span {
+  color: var(--text, #e8ebdd);
+  font-size: 0.88rem;
+  text-align: right;
+}
+.customer-record__delete-confirm-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 @media (max-width: 700px) {
   .customer-record__summary-head { flex-direction: column; gap: 14px; }
   .customer-record__facts { grid-template-columns: 1fr; }
@@ -414,28 +447,48 @@
   .customer-record__delete { align-items: flex-start; flex-direction: column; }
 }
 
-/* Native file input, themed to match the dashboard */
+/* Native file input: drop the shared text-field chrome (border, fill, full
+   width) so only the button reads as a control — matching a bare label +
+   button pair instead of a boxed input with a button trapped inside it. */
 .admin-form input[type="file"] {
-  padding: 8px 10px;
+  width: auto;
+  padding: 0;
+  margin-bottom: 16px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
   color: var(--text-soft, #a3a992);
   cursor: pointer;
   font-size: 0.85rem;
 }
+.admin-form input[type="file"]:focus {
+  outline: none;
+  box-shadow: none;
+}
+/* File-selector button is styled as the exact same component family as
+   .admin-btn--ghost (radius, padding, type scale), just a different element.
+   Ghost weight: choosing a file is a step toward the primary action below
+   it, not the action itself, so it shouldn't compete with the submit button. */
 .admin-form input[type="file"]::file-selector-button {
+  display: inline-block;
   font-family: var(--font-head), "Segoe UI", sans-serif;
   font-weight: 600;
-  font-size: 0.82rem;
-  background: var(--olive-deep, #5f7d28);
-  color: #ffffff;
-  border: none;
-  border-radius: 6px;
-  padding: 8px 14px;
+  font-size: 0.9rem;
+  background: transparent;
+  color: var(--olive-light, #b3d15a);
+  border: 1px solid var(--surface-line, #333825);
+  border-radius: 8px;
+  padding: 10px 20px;
   margin-right: 12px;
   cursor: pointer;
-  transition: background .15s ease;
+  transition: border-color .15s ease, background .15s ease, transform .16s cubic-bezier(.23, 1, .32, 1);
 }
 .admin-form input[type="file"]::file-selector-button:hover {
-  background: #6f9130;
+  border-color: var(--olive, #8fae3c);
+  background: rgba(139, 174, 60, 0.08);
+}
+.admin-form input[type="file"]::file-selector-button:active {
+  transform: scale(.97);
 }
 
 /* Two-column field layout for grouped content sections */
@@ -603,8 +656,11 @@
   opacity: 0.7;
   cursor: progress;
 }
+/* Disabled but not busy (e.g. no file chosen yet): "can't", not "loading". */
+.admin-btn:disabled:not([aria-busy="true"]) { cursor: not-allowed; }
 .admin-btn:disabled:hover { background: var(--olive-deep, #5f7d28); }
 .admin-btn--danger:disabled:hover { background: transparent; }
+.admin-btn--ghost:disabled:hover { background: transparent; }
 
 /* Pending indicator for server action submissions */
 .admin-spinner {
@@ -648,7 +704,7 @@
 .admin-upload-progress::-webkit-progress-bar { background: rgba(179, 209, 90, .16); }
 .admin-upload-progress::-webkit-progress-value { background: var(--olive-light, #b3d15a); }
 .admin-upload-progress::-moz-progress-bar { background: var(--olive-light, #b3d15a); }
-.admin-upload-status--error { color: #f0a08e; }
+.admin-upload-status--error { color: var(--danger, #f0a08e); }
 
 .admin-loading {
   display: flex;
@@ -668,10 +724,38 @@
 
 .admin-btn--danger {
   background: transparent;
-  color: #f0a08e;
-  border: 1px solid rgba(224, 101, 78, 0.4);
+  color: var(--danger, #f0a08e);
+  border: 1px solid rgba(var(--danger-rgb, 224, 101, 78), 0.4);
 }
-.admin-btn--danger:hover { background: rgba(224, 101, 78, 0.12); border-color: #e0654e; }
+.admin-btn--danger:hover { background: rgba(var(--danger-rgb, 224, 101, 78), 0.12); border-color: var(--danger-border, #e0654e); }
+
+/* Shared inline delete-confirm (AdminDeleteConfirm): a message plus Yes/Cancel
+   that replaces the trigger button in place, sized to sit naturally in a
+   row of other row-level actions rather than opening a modal. */
+.admin-delete-confirm {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+.admin-delete-confirm > span {
+  color: var(--text, #e8ebdd);
+  font-size: 0.86rem;
+}
+.admin-delete-confirm__actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Lowest emphasis: dismissing a panel is never the point of a form, so it
+   shouldn't read as a peer of the primary or destructive actions beside it. */
+.admin-btn--plain {
+  background: transparent;
+  border-color: transparent;
+  color: var(--text-soft, #a3a992);
+}
+.admin-btn--plain:hover { color: var(--olive-light, #b3d15a); background: transparent; text-decoration: underline; }
 
 .admin-grid-list {
   display: grid;
@@ -796,11 +880,11 @@
 .service-admin-item__summary {
   display: flex;
   align-items: flex-start;
-  justify-content: space-between;
   gap: 24px;
-  padding: 16px 4px;
+  padding: 16px 4px 0;
 }
 .service-admin-item__summary > div { min-width: 0; }
+.service-admin-item__summary > .service-admin-item__text { flex: 1; }
 .service-admin-item h4 {
   margin: 0;
   color: var(--text, #e8ebdd);
@@ -814,7 +898,7 @@
   font-size: .9rem;
   line-height: 1.5;
 }
-.service-admin-item__edit { flex: 0 0 auto; }
+.service-admin-item__edit { display: block; padding: 8px 4px 16px; }
 .service-admin-item__edit summary {
   display: inline-flex;
   align-items: center;
@@ -831,16 +915,20 @@
   outline: 2px solid var(--olive-light, #b3d15a);
   outline-offset: 3px;
 }
+/* Wider than tall: the photo sits in its own column next to Save/Close
+   rather than stacked below them, so the panel reads as one horizontal
+   block instead of a tall narrow column with room to spare beside it. */
 .service-admin-item__edit-body {
   display: grid;
   grid-template-areas:
     "fields fields"
-    "save delete"
-    "feedback feedback";
-  grid-template-columns: max-content 1fr;
-  align-items: end;
-  column-gap: 10px;
-  width: min(720px, calc(100vw - 120px));
+    "photo  actions"
+    "photo  feedback"
+    "delete delete";
+  grid-template-columns: 168px 1fr;
+  column-gap: 20px;
+  row-gap: 4px;
+  width: min(640px, 100%);
   margin-top: 6px;
   padding: 14px;
   border: 1px solid var(--surface-line, #333825);
@@ -856,23 +944,218 @@
   margin: 0;
 }
 .service-admin-item__update-form > .service-admin-item__actions {
-  grid-area: save;
-  justify-self: start;
+  /* No justify-self: start here — a wrapping flex row as a grid item with
+     start-alignment sizes to its narrowest child's min-content in some
+     browsers, wrapping "Close" onto its own line even with room to spare.
+     Left stretched, the flex container's own justify-content keeps the
+     buttons left-aligned without that bug. */
+  grid-area: actions;
+  margin-top: 4px;
 }
 .service-admin-item__update-form > .service-admin-item__feedback {
   grid-area: feedback;
-}
-.service-admin-item__delete {
-  grid-area: delete;
-  margin: 12px 0 0;
-  justify-self: start;
 }
 .service-admin-item__feedback {
   margin: 10px 0 0;
   color: var(--olive-light, #b3d15a);
   font-size: .88rem;
 }
-.service-admin-item__feedback--error { color: #ffab98; }
+.service-admin-item__feedback--error { color: var(--danger, #f0a08e); }
+
+/* Photo: same panel as the name/description fields beside it, not a boxed-off
+   subsection, so it reads as part of the same edit rather than a separate task.
+   No divider here — a border-top under just this column, next to an actions
+   column with no matching line, would read as lopsided rather than as a
+   shared row; the grid's own row-gap already separates it from fields above. */
+.service-admin-item__photo-field {
+  grid-area: photo;
+  margin-top: 10px;
+}
+.service-admin-item__photo-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--text, #e8ebdd);
+  font-family: var(--font-head), "Segoe UI", sans-serif;
+}
+/* The photo owns a fixed-size card; Replace and Delete sit as corner overlays
+   on the photo itself rather than as separate buttons in a row, so it reads
+   as "these controls act on this photo" instead of a peer button cluster. */
+.service-admin-item__photo-card {
+  position: relative;
+  width: 140px;
+  height: 140px;
+}
+.service-admin-item__photo-card-media {
+  position: absolute;
+  inset: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--surface-line, #333825);
+  background: var(--bg-elev, #202415);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.service-admin-item__photo-card-media span {
+  font-size: 0.72rem;
+  color: var(--text-soft, #a3a992);
+}
+/* The upload form still posts separately (it needs XHR for progress and
+   client-side compression); with its own submit button hidden, the label
+   below is the only visible trigger and doubles as the corner control. */
+.service-admin-item__photo-replace {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  max-width: calc(100% - 12px);
+}
+.service-admin-item__photo-replace-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--bg, #12140b);
+  color: var(--olive-light, #b3d15a);
+  border: 1px solid var(--surface-line, #333825);
+  font-size: 0.95rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.service-admin-item__photo-replace-btn:hover { background: var(--bg-elev-2, #16190f); border-color: var(--olive, #8fae3c); }
+.service-admin-item__photo-replace:focus-within .service-admin-item__photo-replace-btn {
+  outline: 2px solid var(--olive-light, #b3d15a);
+  outline-offset: 2px;
+}
+/* The visible circle stays 26px — growing it would crowd the 140px photo —
+   but the tappable area quietly reaches the 44px touch-target floor via an
+   invisible pseudo-element, the same trick noted in the audit that flagged
+   this. inset(-9px) on a 26px box nets 44px on each axis. */
+.service-admin-item__photo-replace-btn::after {
+  content: "";
+  position: absolute;
+  inset: -9px;
+}
+.service-admin-item__photo-replace .admin-upload-status {
+  margin-top: 0;
+  min-height: 0;
+  max-width: 128px;
+  padding: 3px 7px;
+  border-radius: 6px;
+  background: var(--bg, #12140b);
+  font-size: 0.72rem;
+}
+.service-admin-item__photo-replace .admin-upload-progress { width: 100%; }
+.service-admin-item__photo-delete {
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+}
+.service-admin-item__photo-delete-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--bg, #12140b);
+  color: var(--danger, #f0a08e);
+  border: 1px solid rgba(var(--danger-rgb, 224, 101, 78), 0.4);
+  font-size: 1rem;
+  line-height: 1;
+}
+.service-admin-item__photo-delete-btn:hover { background: rgba(var(--danger-rgb, 224, 101, 78), 0.16); border-color: var(--danger-border, #e0654e); }
+.service-admin-item__photo-delete-btn:focus-visible {
+  outline: 2px solid var(--danger, #f0a08e);
+  outline-offset: 2px;
+}
+/* Same invisible hit-area expansion as the replace button beside it, for the
+   same reason: a 26px visual circle stays a 44px tap target. */
+.service-admin-item__photo-delete-btn::after {
+  content: "";
+  position: absolute;
+  inset: -9px;
+}
+.service-admin-item__photo-hint {
+  margin: 10px 0 0;
+  font-size: 0.82rem;
+  color: var(--text-soft, #a3a992);
+}
+
+/* Shared subtle trigger for actions that shouldn't compete visually with
+   Save/Close: Remove photo and Delete service. Text, not a bordered button. */
+.service-admin-item__text-btn {
+  background: none;
+  border: none;
+  padding: 4px 0;
+  font-family: var(--font-head), "Segoe UI", sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-soft, #a3a992);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.service-admin-item__text-btn:hover { color: var(--text, #e8ebdd); }
+.service-admin-item__text-btn--danger { color: var(--danger-dim, #d98a76); }
+.service-admin-item__text-btn--danger:hover { color: var(--danger, #f0a08e); }
+
+.service-admin-item__delete {
+  grid-area: delete;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--surface-line, #333825);
+  justify-self: start;
+  width: 100%;
+}
+.service-admin-item__delete-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.service-admin-item__delete-confirm > span {
+  color: var(--text, #e8ebdd);
+  font-size: 0.88rem;
+}
+.service-admin-item__delete-confirm-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* Collapsed row: a thumbnail (or an explicit "No photo" placeholder) makes
+   photo coverage visible across a whole category without opening each item. */
+.service-admin-item__summary { gap: 14px; }
+.service-admin-item__thumb {
+  position: relative;
+  flex: 0 0 auto;
+  width: 48px;
+  height: 48px;
+  margin-top: 2px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--surface-line, #333825);
+  background: var(--bg-elev, #202415);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.service-admin-item__thumb span {
+  font-size: 0.56rem;
+  line-height: 1.2;
+  color: var(--text-soft, #a3a992);
+  text-align: center;
+}
+.service-admin-item__text { min-width: 0; flex: 1; }
 
 /* Blog posts are records first; an explicit action removes ambiguity around editing. */
 .blog-admin__toolbar {
@@ -972,7 +1255,7 @@
   color: var(--olive-light, #b3d15a);
   font-size: .88rem;
 }
-.content-admin-item__form-feedback--error { color: #ffab98; }
+.content-admin-item__form-feedback--error { color: var(--danger, #f0a08e); }
 .content-admin-section__group { border-top: 1px solid var(--surface-line, #333825); }
 .content-admin-section__preview { padding: 16px 0 8px; }
 .content-admin-section__preview p {
@@ -1099,7 +1382,7 @@
 .content-admin-item__edit-body .admin-form { max-width: 760px; }
 .content-admin-item__unavailable {
   margin: -3px 0 16px;
-  color: #f0a08e;
+  color: var(--danger, #f0a08e);
   font-size: .85rem;
 }
 .content-admin-item__hint { margin: -4px 0 12px; color: var(--text-soft, #a3a992); font-size: .82rem; }
@@ -1121,6 +1404,23 @@
   background: #080c08;
 }
 .content-admin-hero-video__actions { display: flex; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+.content-admin-hero-bg__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.content-admin-hero-bg__item { min-width: 0; }
+.content-admin-hero-bg__item + .content-admin-hero-bg__item { padding-left: 24px; border-left: 1px solid rgba(255, 255, 255, .08); }
+.content-admin-hero-bg__item-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+.content-admin-hero-bg__item-head h4 {
+  margin: 0;
+  color: var(--text-soft, #a3a992);
+  font-family: var(--font-head), "Segoe UI", sans-serif;
+  font-size: .78rem;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.content-admin-hero-bg__item .content-admin-hero-video__preview { width: 100%; }
+.content-admin-hero-bg__grid--4 { row-gap: 28px; }
+.content-admin-hero-bg__grid--4 .content-admin-hero-bg__item { padding-left: 0; border-left: none; }
+.content-admin-hero-bg__grid--4 .content-admin-hero-bg__item:nth-child(even) { padding-left: 24px; border-left: 1px solid rgba(255, 255, 255, .08); }
 .content-admin-areas { display: flex; gap: 8px; flex-wrap: wrap; margin: 0 0 12px; }
 .content-admin-areas span {
   padding: 5px 9px;
@@ -1136,6 +1436,9 @@
   .content-admin-item__summary { flex-direction: column; gap: 10px; }
   .content-admin-item__thumb { width: 100%; height: auto; aspect-ratio: 4 / 3; }
   .content-admin-hero-video__head { flex-direction: column; gap: 8px; }
+  .content-admin-hero-bg__grid { grid-template-columns: 1fr; gap: 20px; }
+  .content-admin-hero-bg__item + .content-admin-hero-bg__item { padding-left: 0; border-left: none; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, .08); }
+  .content-admin-hero-bg__grid--4 .content-admin-hero-bg__item:nth-child(even) { padding-left: 0; border-left: none; }
 }
 @media (max-width: 700px) {
   .blog-admin__toolbar { align-items: flex-start; flex-direction: column; }
@@ -1152,16 +1455,13 @@
   .service-admin-item__actions { align-items: stretch; flex-direction: column; }
   .service-admin-category__create-actions .admin-btn,
   .service-admin-item__actions .admin-btn { width: 100%; }
+  /* The two-column photo/actions layout needs the width a wide screen has
+     to spare; below that, fall back to the original single stacked column. */
   .service-admin-item__edit-body {
-    grid-template-areas:
-      "fields"
-      "save"
-      "delete"
-      "feedback";
+    grid-template-areas: "fields" "photo" "actions" "feedback" "delete";
     grid-template-columns: 1fr;
+    width: 100%;
   }
-  .service-admin-item__delete { width: 100%; }
-  .service-admin-item__edit-body { width: 100%; }
 }
 
 .admin-flash {
@@ -1172,7 +1472,7 @@
 }
 
 .admin-flash--success { background: rgba(139, 174, 60, 0.16); color: #b3d15a; }
-.admin-flash--error { background: rgba(224, 101, 78, 0.14); color: #f0a08e; }
+.admin-flash--error { background: rgba(var(--danger-rgb, 224, 101, 78), 0.14); color: var(--danger, #f0a08e); }
 
 /* ---------- Login screen (dark, matches public site) ---------- */
 .admin-login-wrap {

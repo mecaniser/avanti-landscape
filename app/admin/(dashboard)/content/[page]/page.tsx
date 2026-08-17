@@ -4,14 +4,16 @@ import { prisma } from "@/lib/db";
 import { isCloudinaryConfigured } from "@/lib/cloudinary";
 import { parseAreaList } from "@/lib/content";
 import SubmitButton from "../../SubmitButton";
-import { clearHeroVideo } from "../actions";
+import { clearHeroVideo, clearHeroImage } from "../actions";
 import { ContentSectionForm, ContentTextForm, ServiceAreaForm } from "../ContentForms";
 import AdminUploadForm from "@/components/AdminUploadForm";
 import DetailsCloseButton from "@/components/DetailsCloseButton";
+import { SERVICE_CATEGORIES, categoryImageKey } from "@/lib/services";
 
 // These fields belong to dedicated owner workflows, not this generic page editor.
 const MANAGED_ELSEWHERE = new Set([
   "hero_video",
+  "hero_image",
   "ba_before_image",
   "ba_after_image",
   "ba_caption_title",
@@ -22,6 +24,11 @@ const MANAGED_ELSEWHERE = new Set([
   "hours",
   "facebook_url",
   "instagram_url",
+  "card_lawncare_image",
+  "card_landscaping_image",
+  "card_hardscaping_image",
+  "card_maintenance_image",
+  ...SERVICE_CATEGORIES.map((cat) => categoryImageKey(cat.slug)),
 ]);
 
 // The property-plan homepage intentionally supplies these pieces from its fixed design system.
@@ -31,10 +38,20 @@ const HOME_LEGACY_FIELDS = new Set([
   "hero_paragraph",
   "services_heading",
   "services_paragraph",
-  "card_lawncare_image",
-  "card_landscaping_image",
-  "card_maintenance_image",
 ]);
+
+const ROUTE_IMAGES: { key: string; label: string; fallback: string }[] = [
+  { key: "card_lawncare_image", label: "Lawn care", fallback: "/assets/img/card-lawncare.jpg" },
+  { key: "card_landscaping_image", label: "Landscaping", fallback: "/assets/img/card-landscaping.jpg" },
+  { key: "card_hardscaping_image", label: "Hardscaping", fallback: "/assets/img/gallery-drainage.jpg" },
+  { key: "card_maintenance_image", label: "Maintenance", fallback: "/assets/img/card-maintenance.jpg" },
+];
+
+const CATEGORY_IMAGES: { key: string; label: string; fallback: string }[] = SERVICE_CATEGORIES.map((cat) => ({
+  key: categoryImageKey(cat.slug),
+  label: cat.label,
+  fallback: cat.image,
+}));
 
 const PAGES = [
   { id: "home", label: "Home" },
@@ -199,50 +216,183 @@ function ContentSection({ page, title, blocks, uploadsEnabled }: { page: string;
   );
 }
 
-function HeroVideoControl({ block, uploadsEnabled }: { block: ContentBlock | undefined; uploadsEnabled: boolean }) {
+function HeroBackgroundControl({
+  imageBlock,
+  videoBlock,
+  uploadsEnabled,
+}: {
+  imageBlock: ContentBlock | undefined;
+  videoBlock: ContentBlock | undefined;
+  uploadsEnabled: boolean;
+}) {
   return (
     <section className="admin-card content-admin-section content-admin-hero-video">
       <div className="content-admin-hero-video__head">
         <div>
-          <h3>Hero background video</h3>
-          <p>Plays once, muted, behind the homepage headline. A wide MP4 works best.</p>
+          <h3>Hero background</h3>
+          <p>Shown behind the homepage headline. Add a photo, a video, or both — the photo also serves as the video&apos;s poster and as the fallback whenever the video doesn&apos;t play.</p>
         </div>
-        {block?.value && <span className="admin-badge admin-badge--active">Video set</span>}
       </div>
 
-      {block?.value ? (
-        <>
-          <video src={block.value} muted playsInline controls className="content-admin-hero-video__preview" />
-          <details className="content-admin-item__edit">
-            <summary>Replace or remove video</summary>
-            <div className="content-admin-item__edit-body content-admin-hero-video__actions">
-              {uploadsEnabled && (
-                <AdminUploadForm operation="hero-video" submitLabel="Replace video" processingLabel="Saving video…" className="admin-form">
-                  <label htmlFor="hero-video-file">Choose replacement video</label>
+      <div className="content-admin-hero-bg__grid">
+        <div className="content-admin-hero-bg__item">
+          <div className="content-admin-hero-bg__item-head">
+            <h4>Photo</h4>
+            {imageBlock?.value && <span className="admin-badge admin-badge--active">Photo set</span>}
+          </div>
+
+          {imageBlock?.value ? (
+            <>
+              <img
+                src={imageBlock.value}
+                alt="Current hero background photo"
+                className="content-admin-hero-video__preview"
+                style={{ aspectRatio: "21 / 9", objectFit: "cover" }}
+              />
+              <details className="content-admin-item__edit">
+                <summary>Replace or remove photo</summary>
+                <div className="content-admin-item__edit-body content-admin-hero-video__actions">
+                  {uploadsEnabled && (
+                    <AdminUploadForm operation="hero-image" submitLabel="Replace photo" processingLabel="Saving photo…" className="admin-form">
+                      <label htmlFor="hero-image-file">Choose replacement photo</label>
+                      <input type="file" id="hero-image-file" name="file" accept="image/*" required />
+                    </AdminUploadForm>
+                  )}
+                  <form action={clearHeroImage}>
+                    <SubmitButton className="admin-btn admin-btn--danger" pendingLabel="Removing photo…">Remove photo</SubmitButton>
+                  </form>
+                  <DetailsCloseButton>Close</DetailsCloseButton>
+                </div>
+              </details>
+            </>
+          ) : uploadsEnabled ? (
+            <details className="content-admin-item__edit">
+              <summary>Add photo</summary>
+              <div className="content-admin-item__edit-body content-admin-hero-video__actions">
+                <AdminUploadForm operation="hero-image" submitLabel="Upload photo" processingLabel="Saving photo…" className="admin-form">
+                  <label htmlFor="hero-image-file">Choose photo</label>
+                  <input type="file" id="hero-image-file" name="file" accept="image/*" required />
+                </AdminUploadForm>
+                <DetailsCloseButton>Close</DetailsCloseButton>
+              </div>
+            </details>
+          ) : (
+            <p className="content-admin-item__unavailable">Photo upload is unavailable until Cloudinary is configured.</p>
+          )}
+        </div>
+
+        <div className="content-admin-hero-bg__item">
+          <div className="content-admin-hero-bg__item-head">
+            <h4>Video</h4>
+            {videoBlock?.value && <span className="admin-badge admin-badge--active">Video set</span>}
+          </div>
+
+          {videoBlock?.value ? (
+            <>
+              <video
+                src={videoBlock.value}
+                muted
+                playsInline
+                controls
+                className="content-admin-hero-video__preview"
+                style={{ aspectRatio: "21 / 9", objectFit: "cover" }}
+              />
+              <details className="content-admin-item__edit">
+                <summary>Replace or remove video</summary>
+                <div className="content-admin-item__edit-body content-admin-hero-video__actions">
+                  {uploadsEnabled && (
+                    <AdminUploadForm operation="hero-video" submitLabel="Replace video" processingLabel="Saving video…" className="admin-form">
+                      <label htmlFor="hero-video-file">Choose replacement video</label>
+                      <input type="file" id="hero-video-file" name="file" accept="video/*" required />
+                    </AdminUploadForm>
+                  )}
+                  <form action={clearHeroVideo}>
+                    <SubmitButton className="admin-btn admin-btn--danger" pendingLabel="Removing video…">Remove video</SubmitButton>
+                  </form>
+                  <DetailsCloseButton>Close</DetailsCloseButton>
+                </div>
+              </details>
+            </>
+          ) : uploadsEnabled ? (
+            <details className="content-admin-item__edit">
+              <summary>Add video</summary>
+              <div className="content-admin-item__edit-body content-admin-hero-video__actions">
+                <AdminUploadForm operation="hero-video" submitLabel="Upload video" processingLabel="Saving video…" className="admin-form">
+                  <label htmlFor="hero-video-file">Choose MP4 video</label>
                   <input type="file" id="hero-video-file" name="file" accept="video/*" required />
                 </AdminUploadForm>
+                <DetailsCloseButton>Close</DetailsCloseButton>
+              </div>
+            </details>
+          ) : (
+            <p className="content-admin-item__unavailable">Video upload is unavailable until Cloudinary is configured. The homepage will use its background photo instead.</p>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ImageSetControl({
+  title,
+  description,
+  operation,
+  items,
+  blocksByKey,
+  uploadsEnabled,
+  aspectRatio,
+}: {
+  title: string;
+  description: string;
+  operation: string;
+  items: { key: string; label: string; fallback: string }[];
+  blocksByKey: Record<string, ContentBlock | undefined>;
+  uploadsEnabled: boolean;
+  /** Matches the crop used on the public page, so the thumbnail previews what's actually being changed. */
+  aspectRatio: string;
+}) {
+  return (
+    <section className="admin-card content-admin-section content-admin-hero-video">
+      <div className="content-admin-hero-video__head">
+        <div>
+          <h3>{title}</h3>
+          <p>{description}</p>
+        </div>
+      </div>
+
+      <div className="content-admin-hero-bg__grid content-admin-hero-bg__grid--4">
+        {items.map((item) => {
+          const src = blocksByKey[item.key]?.value || item.fallback;
+          return (
+            <div className="content-admin-hero-bg__item" key={item.key}>
+              <div className="content-admin-hero-bg__item-head">
+                <h4>{item.label}</h4>
+              </div>
+              <img
+                src={src}
+                alt={`Current ${item.label.toLowerCase()} photo`}
+                className="content-admin-hero-video__preview"
+                style={{ aspectRatio, objectFit: "cover" }}
+              />
+              {uploadsEnabled ? (
+                <details className="content-admin-item__edit">
+                  <summary>Replace photo</summary>
+                  <div className="content-admin-item__edit-body content-admin-hero-video__actions">
+                    <AdminUploadForm operation={operation} submitLabel="Replace photo" processingLabel="Saving photo…" className="admin-form">
+                      <input type="hidden" name="key" value={item.key} />
+                      <label htmlFor={`${item.key}-file`}>Choose replacement photo</label>
+                      <input type="file" id={`${item.key}-file`} name="file" accept="image/*" required />
+                    </AdminUploadForm>
+                    <DetailsCloseButton>Close</DetailsCloseButton>
+                  </div>
+                </details>
+              ) : (
+                <p className="content-admin-item__unavailable">Photo upload is unavailable until Cloudinary is configured.</p>
               )}
-              <form action={clearHeroVideo}>
-                <SubmitButton className="admin-btn admin-btn--danger" pendingLabel="Removing video…">Remove video</SubmitButton>
-              </form>
-              <DetailsCloseButton>Close</DetailsCloseButton>
             </div>
-          </details>
-        </>
-      ) : uploadsEnabled ? (
-        <details className="content-admin-item__edit">
-          <summary>Add video</summary>
-          <div className="content-admin-item__edit-body">
-            <AdminUploadForm operation="hero-video" submitLabel="Upload video" processingLabel="Saving video…" className="admin-form">
-              <label htmlFor="hero-video-file">Choose MP4 video</label>
-              <input type="file" id="hero-video-file" name="file" accept="video/*" required />
-            </AdminUploadForm>
-            <DetailsCloseButton>Close</DetailsCloseButton>
-          </div>
-        </details>
-      ) : (
-        <p className="content-admin-item__unavailable">Video upload is unavailable until Cloudinary is configured. The homepage will use its background image instead.</p>
-      )}
+          );
+        })}
+      </div>
     </section>
   );
 }
@@ -284,7 +434,11 @@ export default async function ContentEditorPage({
   const allBlocks = await prisma.contentBlock.findMany({ where: { page }, orderBy: { key: "asc" } });
   const uploadsEnabled = isCloudinaryConfigured();
   const heroVideo = allBlocks.find((block) => block.key === "hero_video");
+  const heroImage = allBlocks.find((block) => block.key === "hero_image");
   const areaList = allBlocks.find((block) => block.key === "area_list");
+  const blockByKey = Object.fromEntries(allBlocks.map((block) => [block.key, block]));
+  const routeImageBlocks = Object.fromEntries(ROUTE_IMAGES.map((item) => [item.key, blockByKey[item.key]]));
+  const categoryImageBlocks = Object.fromEntries(CATEGORY_IMAGES.map((item) => [item.key, blockByKey[item.key]]));
   const blocks = allBlocks.filter((block) => {
     if (MANAGED_ELSEWHERE.has(block.key)) return false;
     if (page === "home" && HOME_LEGACY_FIELDS.has(block.key)) return false;
@@ -319,8 +473,29 @@ export default async function ContentEditorPage({
       {page === "home" && (
         <>
           <p className="content-admin__notice">Only content used by the current property-plan homepage is shown below. Gallery projects and service details have their own management pages.</p>
-          <HeroVideoControl block={heroVideo} uploadsEnabled={uploadsEnabled} />
+          <HeroBackgroundControl imageBlock={heroImage} videoBlock={heroVideo} uploadsEnabled={uploadsEnabled} />
+          <ImageSetControl
+            title="Property route photos"
+            description="Shown one at a time as visitors switch between Lawn Care, Landscaping, Hardscaping, and Maintenance below the hero."
+            operation="route-image"
+            items={ROUTE_IMAGES}
+            blocksByKey={routeImageBlocks}
+            uploadsEnabled={uploadsEnabled}
+            aspectRatio="4 / 5"
+          />
         </>
+      )}
+
+      {page === "services" && (
+        <ImageSetControl
+          title="Service category photos"
+          description="Shown on each category's page as the photo linking to the other three service categories."
+          operation="category-image"
+          items={CATEGORY_IMAGES}
+          blocksByKey={categoryImageBlocks}
+          uploadsEnabled={uploadsEnabled}
+          aspectRatio="16 / 10"
+        />
       )}
 
       {page === "global" ? (

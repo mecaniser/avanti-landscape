@@ -39,6 +39,11 @@ export async function clearHeroVideo() {
   revalidateHome();
 }
 
+export async function clearHeroImage() {
+  await prisma.contentBlock.deleteMany({ where: { page: "home", key: "hero_image" } });
+  revalidateHome();
+}
+
 export async function updateContentBlock(
   page: string,
   key: string,

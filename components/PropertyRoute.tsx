@@ -62,11 +62,12 @@ function RouteIcon({ type }: { type: Route["marker"] }) {
   return <svg viewBox="0 0 32 32" aria-hidden="true"><path d="m7 7 5 5M5 10l6-6 4 4-6 6zM13 15l11 11M21 20l5 5M13 15l-3 3" /></svg>;
 }
 
-export default function PropertyRoute() {
+export default function PropertyRoute({ images }: { images?: Partial<Record<RouteKey, string>> }) {
   const [active, setActive] = useState<RouteKey>("lawn");
   const [entryState, setEntryState] = useState<"static" | "pending" | "revealed">("static");
   const sectionRef = useRef<HTMLElement>(null);
   const selected = routes.find((route) => route.id === active) ?? routes[0];
+  const selectedImage = images?.[selected.id] ?? selected.image;
 
   useEffect(() => {
     const syncFromHash = () => {
@@ -167,7 +168,7 @@ export default function PropertyRoute() {
             <a href={selected.href} className="route-link">Explore {selected.name}<span aria-hidden="true">→</span></a>
           </div>
           <div className="route-image">
-            <Image src={selected.image} alt={selected.alt} fill sizes="(max-width: 980px) calc(100vw - 48px), 54vw" />
+            <Image src={selectedImage} alt={selected.alt} fill sizes="(max-width: 980px) calc(100vw - 48px), 54vw" />
           </div>
         </div>
       </div>

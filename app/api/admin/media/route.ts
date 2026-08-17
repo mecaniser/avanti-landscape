@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { TAGS } from "@/lib/content";
+import { SERVICE_CATEGORIES, categoryImageKey } from "@/lib/services";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
 import { isCloudinaryConfigured, uploadImageBuffer, uploadVideoBuffer } from "@/lib/cloudinary";
@@ -146,6 +147,24 @@ async function updateContentImage(formData: FormData) {
   revalidatePath(page === "home" ? "/" : `/${page}`);
 }
 
+async function updateServiceImage(formData: FormData) {
+  requireCloudinary();
+  const id = getRequiredText(formData, "id");
+  const service = await prisma.service.findUnique({ where: { id } });
+  if (!service) throw new UploadError("That service no longer exists.");
+  const file = getFile(formData, "file", true, "image")!;
+  const url = await storeImage(file, "avanti/services");
+  await prisma.service.update({ where: { id }, data: { image: url } });
+  refreshServices();
+}
+
+function refreshServices() {
+  revalidateTag(TAGS.services, "max");
+  revalidatePath("/admin/services");
+  revalidatePath("/services");
+  for (const category of SERVICE_CATEGORIES) revalidatePath(`/services/${category.slug}`);
+}
+
 async function uploadHeroVideo(formData: FormData) {
   requireCloudinary();
   const file = getFile(formData, "file", true, "video")!;
@@ -158,6 +177,62 @@ async function uploadHeroVideo(formData: FormData) {
   revalidateTag(TAGS.content, "max");
   revalidatePath("/admin/content/home");
   revalidatePath("/");
+}
+
+async function uploadHeroImage(formData: FormData) {
+  requireCloudinary();
+  const file = getFile(formData, "file", true, "image")!;
+  const url = await storeImage(file, "avanti/hero");
+  await prisma.contentBlock.upsert({
+    where: { page_key: { page: "home", key: "hero_image" } },
+    update: { value: url, type: "image" },
+    create: { page: "home", key: "hero_image", type: "image", value: url },
+  });
+  revalidateTag(TAGS.content, "max");
+  revalidatePath("/admin/content/home");
+  revalidatePath("/");
+}
+
+const ROUTE_IMAGE_KEYS = new Set([
+  "card_lawncare_image",
+  "card_landscaping_image",
+  "card_hardscaping_image",
+  "card_maintenance_image",
+]);
+
+async function uploadRouteImage(formData: FormData) {
+  requireCloudinary();
+  const key = getRequiredText(formData, "key");
+  if (!ROUTE_IMAGE_KEYS.has(key)) throw new UploadError("That homepage photo field doesn't exist.");
+  const file = getFile(formData, "file", true, "image")!;
+  const url = await storeImage(file, "avanti/home");
+  await prisma.contentBlock.upsert({
+    where: { page_key: { page: "home", key } },
+    update: { value: url, type: "image" },
+    create: { page: "home", key, type: "image", value: url },
+  });
+  revalidateTag(TAGS.content, "max");
+  revalidatePath("/admin/content/home");
+  revalidatePath("/");
+}
+
+const CATEGORY_IMAGE_KEYS = new Set(SERVICE_CATEGORIES.map((cat) => categoryImageKey(cat.slug)));
+
+async function uploadCategoryImage(formData: FormData) {
+  requireCloudinary();
+  const key = getRequiredText(formData, "key");
+  if (!CATEGORY_IMAGE_KEYS.has(key)) throw new UploadError("That service category photo field doesn't exist.");
+  const file = getFile(formData, "file", true, "image")!;
+  const url = await storeImage(file, "avanti/services");
+  await prisma.contentBlock.upsert({
+    where: { page_key: { page: "services", key } },
+    update: { value: url, type: "image" },
+    create: { page: "services", key, type: "image", value: url },
+  });
+  revalidateTag(TAGS.content, "max");
+  revalidatePath("/admin/content/services");
+  revalidatePath("/services");
+  for (const cat of SERVICE_CATEGORIES) revalidatePath(`/services/${cat.slug}`);
 }
 
 async function createBlogPost(formData: FormData) {
@@ -224,7 +299,11 @@ export async function POST(request: Request) {
       case "before-after-create": await addBeforeAfterProject(formData); break;
       case "before-after-update": await updateBeforeAfterProject(formData); break;
       case "content-image": await updateContentImage(formData); break;
+      case "service-image": await updateServiceImage(formData); break;
       case "hero-video": await uploadHeroVideo(formData); break;
+      case "hero-image": await uploadHeroImage(formData); break;
+      case "route-image": await uploadRouteImage(formData); break;
+      case "category-image": await uploadCategoryImage(formData); break;
       case "blog-create": redirectTo = await createBlogPost(formData); break;
       case "blog-update": redirectTo = await updateBlogPost(formData); break;
       default: throw new UploadError("That upload action is not supported.");

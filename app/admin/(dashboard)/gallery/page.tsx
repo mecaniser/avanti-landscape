@@ -1,8 +1,8 @@
 import { prisma } from "@/lib/db";
 import { isCloudinaryConfigured } from "@/lib/cloudinary";
-import SubmitButton from "../SubmitButton";
 import AdminUploadForm from "@/components/AdminUploadForm";
 import DetailsCloseButton from "@/components/DetailsCloseButton";
+import AdminDeleteConfirm from "@/components/AdminDeleteConfirm";
 import {
   deleteGalleryImage,
   deleteBeforeAfterProject,
@@ -155,11 +155,9 @@ export default async function GalleryAdminPage() {
                       </AdminUploadForm>
                       <DetailsCloseButton>Close</DetailsCloseButton>
 
-                      <form action={del} className="ba-admin-item__delete">
-                        <SubmitButton className="admin-btn admin-btn--danger" pendingLabel="Deleting…">
-                          Delete Project
-                        </SubmitButton>
-                      </form>
+                      <div className="ba-admin-item__delete">
+                        <AdminDeleteConfirm action={del} itemLabel={proj.caption} triggerLabel="Delete Project" />
+                      </div>
                     </div>
                   </details>
                 </div>
@@ -226,15 +224,15 @@ export default async function GalleryAdminPage() {
                           )}
                         </AdminUploadForm>
                         <DetailsCloseButton>Close</DetailsCloseButton>
-                        <form action={del} className="gallery-photo-card__delete">
-                          <SubmitButton
-                            className="admin-btn admin-btn--danger"
-                            style={{ fontSize: "0.75rem", padding: "4px 10px" }}
-                            pendingLabel="Deleting…"
-                          >
-                            Delete photo
-                          </SubmitButton>
-                        </form>
+                        <div className="gallery-photo-card__delete">
+                          <AdminDeleteConfirm
+                            action={del}
+                            itemLabel={img.caption || "this photo"}
+                            triggerLabel="Delete photo"
+                            triggerStyle={{ fontSize: "0.75rem", padding: "4px 10px" }}
+                            submitStyle={{ fontSize: "0.75rem", padding: "4px 10px" }}
+                          />
+                        </div>
                       </div>
                     </details>
                   </div>

@@ -75,3 +75,8 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [
 export function getServiceCategory(slug: string) {
   return SERVICE_CATEGORIES.find((c) => c.slug === slug);
 }
+
+/** ContentBlock key (page: "services") an admin can use to override a category's default image. */
+export function categoryImageKey(slug: string) {
+  return `category_${slug.replace(/-/g, "_")}_image`;
+}
