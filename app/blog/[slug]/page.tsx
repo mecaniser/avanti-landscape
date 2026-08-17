@@ -1,10 +1,53 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+import JsonLd from "@/components/JsonLd";
+import { buildBreadcrumbSchema } from "@/lib/schema";
+import { absoluteImage, absoluteUrl, SITE_NAME, SITE_URL } from "@/lib/site";
 import { prisma } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const post = await prisma.blogPost.findUnique({ where: { slug } });
+
+  // Unpublished and missing posts 404 in the page below; give the crawler
+  // nothing to index in the meantime.
+  if (!post || !post.publishedAt) {
+    return { title: "Post Not Found", robots: { index: false, follow: false } };
+  }
+
+  const description =
+    post.excerpt ?? `Lawn and landscape advice from the Avanti Landscaping crew in Waxhaw, NC.`;
+
+  return {
+    title: post.title,
+    description,
+    alternates: { canonical: `/blog/${post.slug}` },
+    openGraph: {
+      type: "article",
+      url: `/blog/${post.slug}`,
+      title: `${post.title} | ${SITE_NAME}`,
+      description,
+      publishedTime: post.publishedAt.toISOString(),
+      modifiedTime: post.updatedAt.toISOString(),
+      images: [{ url: absoluteImage(post.coverImage) }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${post.title} | ${SITE_NAME}`,
+      description,
+      images: [absoluteImage(post.coverImage)],
+    },
+  };
+}
 
 export default async function BlogPostPage({
   params,
@@ -15,10 +58,32 @@ export default async function BlogPostPage({
   const post = await prisma.blogPost.findUnique({ where: { slug } });
   if (!post || !post.publishedAt) notFound();
 
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.excerpt ?? undefined,
+    image: absoluteImage(post.coverImage),
+    // Raw ISO timestamps, not the "Month YYYY" display string below.
+    datePublished: post.publishedAt.toISOString(),
+    dateModified: post.updatedAt.toISOString(),
+    mainEntityOfPage: { "@type": "WebPage", "@id": absoluteUrl(`/blog/${post.slug}`) },
+    author: { "@id": `${SITE_URL}/#business` },
+    publisher: { "@id": `${SITE_URL}/#business` },
+  };
+
   const dateLabel = post.publishedAt.toLocaleDateString("en-US", { month: "long", year: "numeric" });
 
   return (
     <>
+      <JsonLd data={articleSchema} />
+      <JsonLd
+        data={buildBreadcrumbSchema([
+          { name: "Home", path: "/" },
+          { name: "Blog", path: "/blog" },
+          { name: post.title, path: `/blog/${post.slug}` },
+        ])}
+      />
       <SiteHeader active="blog" />
       <main id="main-content" tabIndex={-1}>
         <section className="page-hero">

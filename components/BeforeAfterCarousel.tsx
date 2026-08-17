@@ -29,8 +29,8 @@ export default function BeforeAfterCarousel({ projects }: { projects: BAProject[
           key={project.id}
           beforeSrc={project.beforeUrl}
           afterSrc={project.afterUrl}
-          beforeAlt={`Before work began — ${project.caption}`}
-          afterAlt={`Completed work — ${project.caption}`}
+          beforeAlt={`Before work began: ${project.caption}`}
+          afterAlt={`Completed work: ${project.caption}`}
         />
         <div className="ba-caption" aria-live="polite">
           {project.caption}

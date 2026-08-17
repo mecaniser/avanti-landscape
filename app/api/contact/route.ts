@@ -38,8 +38,10 @@ export async function POST(request: Request) {
   try {
     await sendLeadNotification({ name, phone, email, address, serviceType: service, message });
   } catch (err) {
-    console.error("Failed to send lead notification email:", err);
-    // The lead is already saved — don't fail the request over email delivery.
+    // The lead is already saved: don't fail the request over email delivery.
+    // Log the customer id so a missed notification can be traced back to the
+    // row that was captured anyway.
+    console.error(`Failed to send lead notification email for customer ${customer.id}:`, err);
   }
 
   return NextResponse.json({ ok: true, id: customer.id });

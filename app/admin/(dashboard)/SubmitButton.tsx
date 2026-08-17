@@ -4,7 +4,7 @@ import { useFormStatus } from "react-dom";
 
 /**
  * Server action forms give no feedback while they run, and a two-photo upload
- * takes several seconds — long enough for the owner to assume nothing happened
+ * takes several seconds: long enough for the owner to assume nothing happened
  * and click again. useFormStatus reports the parent form's pending state, so
  * the button can disable itself and say what it is doing.
  */

@@ -70,7 +70,7 @@ export default async function GalleryAdminPage() {
                 <div className="content-grid-2">
                   <div>
                     <label htmlFor="ba-caption">Caption</label>
-                    <input type="text" id="ba-caption" name="caption" placeholder="e.g. Foundation Bed Renovation — Waxhaw, NC" required />
+                    <input type="text" id="ba-caption" name="caption" placeholder="e.g. Foundation Bed Renovation, Waxhaw, NC" required />
                   </div>
                   <div>
                     <label htmlFor="subtext">Subtext</label>
@@ -96,7 +96,7 @@ export default async function GalleryAdminPage() {
                   </div>
                   <div className="ba-admin-preview" aria-label={`Preview of ${proj.caption}`}>
                     <figure>
-                      <img src={proj.beforeUrl} alt={`Before — ${proj.caption}`} style={thumbStyle} />
+                      <img src={proj.beforeUrl} alt={`Before: ${proj.caption}`} style={thumbStyle} />
                       <figcaption>Before</figcaption>
                     </figure>
                     <div className="ba-admin-preview__copy">
@@ -104,7 +104,7 @@ export default async function GalleryAdminPage() {
                       {proj.subtext && <p>{proj.subtext}</p>}
                     </div>
                     <figure>
-                      <img src={proj.afterUrl} alt={`After — ${proj.caption}`} style={thumbStyle} />
+                      <img src={proj.afterUrl} alt={`After: ${proj.caption}`} style={thumbStyle} />
                       <figcaption>After</figcaption>
                     </figure>
                   </div>
@@ -122,14 +122,14 @@ export default async function GalleryAdminPage() {
                         <div className="content-grid-2">
                           <div>
                             <label htmlFor={`before-${proj.id}`}>Replace before photo</label>
-                            <img src={proj.beforeUrl} alt={`Current before — ${proj.caption}`} style={thumbStyle} />
+                            <img src={proj.beforeUrl} alt={`Current before: ${proj.caption}`} style={thumbStyle} />
                             {uploadsEnabled && (
                               <input type="file" id={`before-${proj.id}`} name="before_file" accept="image/*" />
                             )}
                           </div>
                           <div>
                             <label htmlFor={`after-${proj.id}`}>Replace after photo</label>
-                            <img src={proj.afterUrl} alt={`Current after — ${proj.caption}`} style={thumbStyle} />
+                            <img src={proj.afterUrl} alt={`Current after: ${proj.caption}`} style={thumbStyle} />
                             {uploadsEnabled && (
                               <input type="file" id={`after-${proj.id}`} name="after_file" accept="image/*" />
                             )}

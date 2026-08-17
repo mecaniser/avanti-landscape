@@ -78,7 +78,7 @@ export default async function HomePage() {
             <div className="field-proof-list">
               <div><span>01</span><strong>One accountable crew</strong><p>Regular care and larger outdoor work can stay with the same local team.</p></div>
               <div><span>02</span><strong>Real property work</strong><p>See the actual details behind the services before you decide to call.</p></div>
-              <div><span>03</span><strong>Clear next step</strong><p>Request a free quote, call, or text—whichever works best for you.</p></div>
+              <div><span>03</span><strong>Clear next step</strong><p>Request a free quote, call, or text, whichever works best for you.</p></div>
             </div>
           </div>
         </section>

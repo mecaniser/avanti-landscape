@@ -15,7 +15,7 @@ async function resolveCoverImage(formData: FormData, existing?: string | null) {
   const file = formData.get("coverImageFile");
   if (file instanceof File && file.size > 0) {
     if (!isCloudinaryConfigured()) {
-      throw new Error("Cloudinary isn't configured yet — set CLOUDINARY_* env vars to enable uploads.");
+      throw new Error("Cloudinary isn't configured yet: set CLOUDINARY_* env vars to enable uploads.");
     }
     const buffer = Buffer.from(await file.arrayBuffer());
     return uploadImageBuffer(buffer, "avanti/blog");

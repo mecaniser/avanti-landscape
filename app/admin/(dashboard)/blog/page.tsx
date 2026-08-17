@@ -31,7 +31,7 @@ export default async function BlogAdminPage() {
                     <strong className="blog-admin__post-title">{post.title}</strong>
                     {post.excerpt && <p className="blog-admin__excerpt">{post.excerpt}</p>}
                   </td>
-                  <td>{post.tag || "—"}</td>
+                  <td>{post.tag || "-"}</td>
                   <td>
                     <span className={`admin-badge admin-badge--${post.publishedAt ? "active" : "lead"}`}>
                       {post.publishedAt ? "Published" : "Draft"}

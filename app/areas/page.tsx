@@ -1,7 +1,18 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+import JsonLd from "@/components/JsonLd";
 import { getContent, getGlobalContent, parseAreaList } from "@/lib/content";
+import { buildBreadcrumbSchema } from "@/lib/schema";
+import { pageMetadata } from "@/lib/site";
+
+export const metadata: Metadata = pageMetadata({
+  title: "Service Areas in Waxhaw, Marvin, Weddington & Nearby NC/SC",
+  description:
+    "Avanti Landscaping serves Waxhaw, Marvin, Weddington, Matthews, and nearby North and South Carolina communities. Not sure if we reach your street? Ask about your address.",
+  path: "/areas",
+});
 
 export const dynamic = "force-dynamic";
 
@@ -11,6 +22,12 @@ export default async function AreasPage() {
 
   return (
     <>
+      <JsonLd
+        data={buildBreadcrumbSchema([
+          { name: "Home", path: "/" },
+          { name: "Service Areas", path: "/areas" },
+        ])}
+      />
       <SiteHeader active="areas" />
       <main id="main-content" tabIndex={-1}>
         <section className="page-hero">

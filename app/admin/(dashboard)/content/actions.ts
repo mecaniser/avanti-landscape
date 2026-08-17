@@ -17,7 +17,7 @@ export async function uploadHeroVideo(formData: FormData) {
     throw new Error("Choose a video file to upload.");
   }
   if (!isCloudinaryConfigured()) {
-    throw new Error("Cloudinary isn't configured yet — add the CLOUDINARY_* keys to enable video uploads.");
+    throw new Error("Cloudinary isn't configured yet: add the CLOUDINARY_* keys to enable video uploads.");
   }
 
   const buffer = Buffer.from(await file.arrayBuffer());

@@ -9,8 +9,8 @@ type RouteContinuityTraceProps = {
 
 /**
  * Draw one route across the hero/section seam. The source spine and destination
- * heading live in independent layout contexts, so their rendered geometry—not
- * viewport percentages—defines this path.
+ * heading live in independent layout contexts, so their rendered geometry-not
+ * viewport percentages-defines this path.
  */
 export default function RouteContinuityTrace({ sectionRef, revealed }: RouteContinuityTraceProps) {
   const [path, setPath] = useState("");

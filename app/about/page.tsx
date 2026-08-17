@@ -1,7 +1,19 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+import JsonLd from "@/components/JsonLd";
 import { getContent } from "@/lib/content";
+import { buildBreadcrumbSchema } from "@/lib/schema";
+import { absoluteUrl, pageMetadata } from "@/lib/site";
+
+export const metadata: Metadata = pageMetadata({
+  title: "About Our Waxhaw Landscaping Crew",
+  description:
+    "Avanti Landscaping is a locally owned, owner-involved crew serving Waxhaw, NC and nearby communities. One accountable team for lawn care, landscaping, hardscaping, and maintenance.",
+  path: "/about",
+  image: absoluteUrl("/assets/img/about-crew.jpg"),
+});
 
 export const dynamic = "force-dynamic";
 
@@ -10,6 +22,12 @@ export default async function AboutPage() {
 
   return (
     <>
+      <JsonLd
+        data={buildBreadcrumbSchema([
+          { name: "Home", path: "/" },
+          { name: "About", path: "/about" },
+        ])}
+      />
       <SiteHeader active="about" />
       <main id="main-content" tabIndex={-1}>
         <section className="page-hero">

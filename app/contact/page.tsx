@@ -1,8 +1,19 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import ContactForm from "@/components/ContactForm";
+import JsonLd from "@/components/JsonLd";
 import { getContent, getGlobalContent } from "@/lib/content";
+import { buildBreadcrumbSchema } from "@/lib/schema";
+import { pageMetadata } from "@/lib/site";
+
+export const metadata: Metadata = pageMetadata({
+  title: "Get a Free Landscaping Quote in Waxhaw, NC",
+  description:
+    "Request a free, no-pressure quote from Avanti Landscaping. Call or text 980-328-7141, or send us a message. Serving Waxhaw, Marvin, Weddington, Matthews, and nearby communities.",
+  path: "/contact",
+});
 
 export const dynamic = "force-dynamic";
 
@@ -15,6 +26,12 @@ export default async function ContactPage() {
 
   return (
     <>
+      <JsonLd
+        data={buildBreadcrumbSchema([
+          { name: "Home", path: "/" },
+          { name: "Contact", path: "/contact" },
+        ])}
+      />
       <SiteHeader active="contact" />
       <main id="main-content" tabIndex={-1}>
         <section className="page-hero">
