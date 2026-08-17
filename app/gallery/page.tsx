@@ -8,7 +8,7 @@ import JsonLd from "@/components/JsonLd";
 import { getContent, getGlobalContent } from "@/lib/content";
 import { buildBreadcrumbSchema } from "@/lib/schema";
 import { absoluteUrl, pageMetadata } from "@/lib/site";
-import { prisma } from "@/lib/db";
+import { getBeforeAfterProjects, getGalleryImages } from "@/lib/queries";
 
 export const metadata: Metadata = pageMetadata({
   title: "Project Gallery: Before & After Landscaping Work",
@@ -24,8 +24,8 @@ export default async function GalleryPage() {
   const [c, g, images, projects] = await Promise.all([
     getContent("gallery"),
     getGlobalContent(),
-    prisma.galleryImage.findMany({ orderBy: { sortOrder: "asc" } }),
-    prisma.beforeAfterProject.findMany({ orderBy: { sortOrder: "asc" } }),
+    getGalleryImages(),
+    getBeforeAfterProjects(),
   ]);
 
   return (

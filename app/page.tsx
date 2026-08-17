@@ -8,7 +8,7 @@ import HeroServiceRoute from "@/components/HeroServiceRoute";
 import PropertyRoute from "@/components/PropertyRoute";
 import WebsiteFlowTrace from "@/components/WebsiteFlowTrace";
 import { getContent, getGlobalContent, parseAreaList } from "@/lib/content";
-import { prisma } from "@/lib/db";
+import { getBeforeAfterProjects } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
 
@@ -16,7 +16,7 @@ export default async function HomePage() {
   const [c, g, projects] = await Promise.all([
     getContent("home"),
     getGlobalContent(),
-    prisma.beforeAfterProject.findMany({ orderBy: { sortOrder: "asc" } }),
+    getBeforeAfterProjects(),
   ]);
   const areas = parseAreaList(g.area_list);
   const phoneTel = g.phone_tel ?? "9803287141";

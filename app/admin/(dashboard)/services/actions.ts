@@ -1,11 +1,13 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { prisma } from "@/lib/db";
+import { TAGS } from "@/lib/content";
 
 export type ServiceActionState = { ok?: boolean; error?: string; message?: string };
 
 function refresh() {
+  updateTag(TAGS.services);
   revalidatePath("/admin/services");
   revalidatePath("/services");
 }

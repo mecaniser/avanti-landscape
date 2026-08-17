@@ -1,12 +1,14 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { prisma } from "@/lib/db";
+import { TAGS } from "@/lib/content";
 import { uploadImageBuffer, uploadVideoBuffer, isCloudinaryConfigured } from "@/lib/cloudinary";
 
 export type ContentActionState = { ok?: boolean; error?: string; message?: string };
 
 function revalidateHome() {
+  updateTag(TAGS.content);
   revalidatePath("/admin/content/home");
   revalidatePath("/");
 }
@@ -64,6 +66,7 @@ export async function updateContentBlock(
       data: { value },
     });
 
+    updateTag(TAGS.content);
     revalidatePath(`/admin/content/${page}`);
     revalidatePath("/");
     revalidatePath(`/${page === "home" ? "" : page}`);
@@ -87,6 +90,7 @@ export async function updateContentSection(
       where: { page_key: { page, key: update.key } },
       data: { value: update.value },
     })));
+    updateTag(TAGS.content);
     revalidatePath(`/admin/content/${page}`);
     revalidatePath("/");
     revalidatePath(`/${page === "home" ? "" : page}`);
@@ -121,6 +125,7 @@ export async function updateServiceAreaList(_previousState: ContentActionState, 
       update: { value: JSON.stringify(areas), type: "text" },
       create: { page: "global", key: "area_list", value: JSON.stringify(areas), type: "text" },
     });
+    updateTag(TAGS.content);
     revalidatePath("/admin/content/global");
     revalidatePath("/");
     revalidatePath("/areas");

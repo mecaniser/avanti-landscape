@@ -3,7 +3,8 @@
 import bcrypt from "bcryptjs";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
+import { TAGS } from "@/lib/content";
 import { formatUsPhone, isValidUsPhone, phoneDigits } from "@/lib/phone";
 
 export type ChangePwState = { ok?: boolean; error?: string };
@@ -25,6 +26,7 @@ function isValidOptionalUrl(value: string) {
 }
 
 function refreshPublicBusinessDetails() {
+  updateTag(TAGS.content);
   revalidatePath("/", "layout");
   revalidatePath("/");
   revalidatePath("/contact");

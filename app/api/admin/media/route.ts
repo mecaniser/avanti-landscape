@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
+import { TAGS } from "@/lib/content";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
 import { isCloudinaryConfigured, uploadImageBuffer, uploadVideoBuffer } from "@/lib/cloudinary";
@@ -48,6 +49,7 @@ function requireCloudinary() {
 }
 
 function refreshGallery() {
+  revalidateTag(TAGS.gallery, "max");
   revalidatePath("/admin/gallery");
   revalidatePath("/gallery");
   revalidatePath("/");
@@ -139,6 +141,7 @@ async function updateContentImage(formData: FormData) {
   if (!block || block.type !== "image") throw new UploadError("That image field no longer exists.");
   const url = await storeImage(file, "avanti/content");
   await prisma.contentBlock.update({ where: { id: block.id }, data: { value: url } });
+  revalidateTag(TAGS.content, "max");
   revalidatePath(`/admin/content/${page}`);
   revalidatePath("/");
   revalidatePath(page === "home" ? "/" : `/${page}`);
@@ -153,6 +156,7 @@ async function uploadHeroVideo(formData: FormData) {
     update: { value: url, type: "text" },
     create: { page: "home", key: "hero_video", type: "text", value: url },
   });
+  revalidateTag(TAGS.content, "max");
   revalidatePath("/admin/content/home");
   revalidatePath("/");
 }
@@ -173,6 +177,7 @@ async function createBlogPost(formData: FormData) {
       publishedAt: formData.get("publish") === "on" ? new Date() : null,
     },
   });
+  revalidateTag(TAGS.blog, "max");
   revalidatePath("/admin/blog");
   revalidatePath("/blog");
   return "/admin/blog";
@@ -196,6 +201,7 @@ async function updateBlogPost(formData: FormData) {
       publishedAt: formData.get("publish") === "on" ? existing.publishedAt ?? new Date() : null,
     },
   });
+  revalidateTag(TAGS.blog, "max");
   revalidatePath("/admin/blog");
   revalidatePath("/blog");
   revalidatePath(`/blog/${post.slug}`);

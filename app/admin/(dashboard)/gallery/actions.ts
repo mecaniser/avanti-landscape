@@ -1,7 +1,8 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { prisma } from "@/lib/db";
+import { TAGS } from "@/lib/content";
 import { uploadImageBuffer, isCloudinaryConfigured } from "@/lib/cloudinary";
 
 export async function addGalleryImage(formData: FormData) {
@@ -29,12 +30,14 @@ export async function addGalleryImage(formData: FormData) {
     },
   });
 
+  updateTag(TAGS.gallery);
   revalidatePath("/admin/gallery");
   revalidatePath("/gallery");
 }
 
 export async function deleteGalleryImage(id: string) {
   await prisma.galleryImage.delete({ where: { id } });
+  updateTag(TAGS.gallery);
   revalidatePath("/admin/gallery");
   revalidatePath("/gallery");
 }
@@ -70,6 +73,7 @@ export async function addBeforeAfterProject(formData: FormData) {
     },
   });
 
+  updateTag(TAGS.gallery);
   revalidatePath("/admin/gallery");
   revalidatePath("/gallery");
   revalidatePath("/");
@@ -108,6 +112,7 @@ export async function updateBeforeAfterProject(id: string, formData: FormData) {
     },
   });
 
+  updateTag(TAGS.gallery);
   revalidatePath("/admin/gallery");
   revalidatePath("/gallery");
   revalidatePath("/");
@@ -115,6 +120,7 @@ export async function updateBeforeAfterProject(id: string, formData: FormData) {
 
 export async function deleteBeforeAfterProject(id: string) {
   await prisma.beforeAfterProject.delete({ where: { id } });
+  updateTag(TAGS.gallery);
   revalidatePath("/admin/gallery");
   revalidatePath("/gallery");
   revalidatePath("/");

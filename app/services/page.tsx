@@ -7,7 +7,7 @@ import { getContent } from "@/lib/content";
 import { buildBreadcrumbSchema } from "@/lib/schema";
 import { absoluteUrl, pageMetadata } from "@/lib/site";
 import { SERVICE_CATEGORIES } from "@/lib/services";
-import { prisma } from "@/lib/db";
+import { getServices } from "@/lib/queries";
 
 export const metadata: Metadata = pageMetadata({
   title: "Lawn Care, Landscaping & Hardscaping Services",
@@ -22,7 +22,7 @@ export const dynamic = "force-dynamic";
 export default async function ServicesPage() {
   const [c, services] = await Promise.all([
     getContent("services"),
-    prisma.service.findMany({ orderBy: { sortOrder: "asc" } }),
+    getServices(),
   ]);
 
   return (

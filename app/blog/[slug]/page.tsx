@@ -6,7 +6,7 @@ import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
 import { buildBreadcrumbSchema } from "@/lib/schema";
 import { absoluteImage, absoluteUrl, SITE_NAME, SITE_URL } from "@/lib/site";
-import { prisma } from "@/lib/db";
+import { getPostBySlug } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
 
@@ -16,7 +16,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const post = await prisma.blogPost.findUnique({ where: { slug } });
+  const post = await getPostBySlug(slug);
 
   // Unpublished and missing posts 404 in the page below; give the crawler
   // nothing to index in the meantime.
@@ -55,7 +55,7 @@ export default async function BlogPostPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const post = await prisma.blogPost.findUnique({ where: { slug } });
+  const post = await getPostBySlug(slug);
   if (!post || !post.publishedAt) notFound();
 
   const articleSchema = {

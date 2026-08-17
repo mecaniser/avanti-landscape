@@ -5,7 +5,7 @@ import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
 import { buildBreadcrumbSchema } from "@/lib/schema";
 import { absoluteUrl, pageMetadata } from "@/lib/site";
-import { prisma } from "@/lib/db";
+import { getPublishedPosts } from "@/lib/queries";
 
 export const metadata: Metadata = pageMetadata({
   title: "Lawn & Landscape Tips for Waxhaw-Area Yards",
@@ -18,10 +18,7 @@ export const metadata: Metadata = pageMetadata({
 export const dynamic = "force-dynamic";
 
 export default async function BlogPage() {
-  const posts = await prisma.blogPost.findMany({
-    where: { publishedAt: { not: null } },
-    orderBy: { publishedAt: "desc" },
-  });
+  const posts = await getPublishedPosts();
 
   return (
     <>

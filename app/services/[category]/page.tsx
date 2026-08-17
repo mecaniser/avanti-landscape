@@ -8,7 +8,7 @@ import JsonLd from "@/components/JsonLd";
 import { buildBreadcrumbSchema } from "@/lib/schema";
 import { absoluteUrl, pageMetadata, SITE_URL } from "@/lib/site";
 import { getServiceCategory, SERVICE_CATEGORIES } from "@/lib/services";
-import { prisma } from "@/lib/db";
+import { getServicesByCategory } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
 
@@ -38,10 +38,7 @@ export default async function ServiceCategoryPage({
   const cat = getServiceCategory(category);
   if (!cat) notFound();
 
-  const services = await prisma.service.findMany({
-    where: { category: cat.slug },
-    orderBy: { sortOrder: "asc" },
-  });
+  const services = await getServicesByCategory(cat.slug);
 
   const others = SERVICE_CATEGORIES.filter((c) => c.slug !== cat.slug);
 
