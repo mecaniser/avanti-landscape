@@ -1404,6 +1404,7 @@
   background: #080c08;
 }
 .content-admin-hero-video__actions { display: flex; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+.content-admin-hero-video__toggle { margin-bottom: 14px; }
 .content-admin-hero-bg__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
 .content-admin-hero-bg__item { min-width: 0; }
 .content-admin-hero-bg__item + .content-admin-hero-bg__item { padding-left: 24px; border-left: 1px solid rgba(255, 255, 255, .08); }

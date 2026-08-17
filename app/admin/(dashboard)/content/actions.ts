@@ -44,6 +44,25 @@ export async function clearHeroImage() {
   revalidateHome();
 }
 
+// A row (any value) means "photo only"; no row is the default, video-if-present
+// behavior. This has to be independent of hero_video itself: clearing an
+// uploaded video falls back to the committed default clip, not to no video at
+// all, so silencing the default requires its own flag rather than reusing
+// hero_video's presence.
+export async function disableHeroVideo() {
+  await prisma.contentBlock.upsert({
+    where: { page_key: { page: "home", key: "hero_video_disabled" } },
+    update: { value: "true" },
+    create: { page: "home", key: "hero_video_disabled", type: "text", value: "true" },
+  });
+  revalidateHome();
+}
+
+export async function enableHeroVideo() {
+  await prisma.contentBlock.deleteMany({ where: { page: "home", key: "hero_video_disabled" } });
+  revalidateHome();
+}
+
 export async function updateContentBlock(
   page: string,
   key: string,
