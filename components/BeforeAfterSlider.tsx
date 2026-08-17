@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function BeforeAfterSlider({
   beforeSrc,
@@ -16,7 +16,47 @@ export default function BeforeAfterSlider({
 }) {
   const sliderRef = useRef<HTMLDivElement>(null);
   const [pos, setPos] = useState(50);
+  const [ratio, setRatio] = useState<number | null>(null);
   const dragging = useRef(false);
+  const beforeTagRef = useRef<HTMLSpanElement>(null);
+  const afterTagRef = useRef<HTMLSpanElement>(null);
+  // The divider position, in percent, past which each label would sit over the
+  // photo it does not describe. Measured rather than assumed, because the same
+  // label eats a very different share of the frame on a phone and on a desktop.
+  const [tagLimits, setTagLimits] = useState({ before: 0, after: 100 });
+
+  useEffect(() => {
+    const slider = sliderRef.current;
+    const beforeTag = beforeTagRef.current;
+    const afterTag = afterTagRef.current;
+    if (!slider || !beforeTag || !afterTag) return;
+
+    const GAP = 8;
+    const measure = () => {
+      const width = slider.getBoundingClientRect().width;
+      if (!width) return;
+      setTagLimits({
+        before: ((beforeTag.offsetLeft + beforeTag.offsetWidth + GAP) / width) * 100,
+        after: ((afterTag.offsetLeft - GAP) / width) * 100,
+      });
+    };
+
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(slider);
+    return () => observer.disconnect();
+  }, [ratio]);
+
+  const showBefore = pos >= tagLimits.before;
+  const showAfter = pos <= tagLimits.after;
+
+  // Projects are shot on whatever was in hand, so the pair may be portrait or
+  // landscape. The frame takes its shape from the after photo — the result is
+  // what the section is selling — instead of forcing every pair into one box.
+  function adoptRatio(event: { currentTarget: HTMLImageElement }) {
+    const { naturalWidth, naturalHeight } = event.currentTarget;
+    if (naturalWidth > 0 && naturalHeight > 0) setRatio(naturalWidth / naturalHeight);
+  }
 
   function setPosFromClientX(clientX: number) {
     const rect = sliderRef.current?.getBoundingClientRect();
@@ -28,7 +68,10 @@ export default function BeforeAfterSlider({
     <div
       ref={sliderRef}
       className="ba-slider"
-      style={{ ["--pos" as string]: `${pos}%` }}
+      style={{
+        ["--pos" as string]: `${pos}%`,
+        ...(ratio ? { ["--ba-ar" as string]: ratio.toFixed(4) } : {}),
+      }}
       onPointerDown={(event) => {
         dragging.current = true;
         event.currentTarget.setPointerCapture(event.pointerId);
@@ -45,17 +88,23 @@ export default function BeforeAfterSlider({
         src={afterSrc}
         alt={afterAlt}
         fill
-        sizes="(max-width: 688px) calc(100vw - 48px), 900px"
+        priority
+        onLoad={adoptRatio}
+        sizes="(max-width: 800px) 100vw, 1180px"
       />
       <Image
         className="ba-img ba-before"
         src={beforeSrc}
         alt={beforeAlt}
         fill
-        sizes="(max-width: 688px) calc(100vw - 48px), 900px"
+        sizes="(max-width: 800px) 100vw, 1180px"
       />
-      <span className="ba-tag ba-tag--before">Before</span>
-      <span className="ba-tag ba-tag--after">After</span>
+      <span className="ba-tag ba-tag--before" ref={beforeTagRef} data-hidden={!showBefore} aria-hidden={!showBefore}>
+        Before
+      </span>
+      <span className="ba-tag ba-tag--after" ref={afterTagRef} data-hidden={!showAfter} aria-hidden={!showAfter}>
+        After
+      </span>
       <div
         className="ba-handle"
         role="slider"
