@@ -23,19 +23,15 @@ export default async function CustomersPage({
       <h2>Customers</h2>
       <p className="subtitle">All leads and customers in one place. Filter by status below.</p>
 
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-        <div style={{ display: "flex", gap: 8 }}>
+      <div className="customers-toolbar">
+        <div className="customers-toolbar__pills">
           {["all", "lead", "active", "inactive"].map((s) => (
             <Link
               key={s}
               href={s === "all" ? "/admin/customers" : `/admin/customers?status=${s}`}
-              className="admin-btn admin-btn--ghost"
-              style={{
-                padding: "6px 14px",
-                fontSize: "0.85rem",
-                background: (status ?? "all") === s ? "var(--dark-green, #345126)" : "transparent",
-                color: (status ?? "all") === s ? "#fff" : undefined,
-              }}
+              className={`admin-btn admin-btn--ghost customers-toolbar__pill${
+                (status ?? "all") === s ? " customers-toolbar__pill--active" : ""
+              }`}
             >
               {s === "all" ? "All" : STATUS_LABELS[s]}
             </Link>
@@ -48,7 +44,7 @@ export default async function CustomersPage({
         {customers.length === 0 ? (
           <p className="subtitle">No customers here yet.</p>
         ) : (
-          <table className="admin-table">
+          <table className="admin-table admin-table--stacked">
             <thead>
               <tr><th>Name</th><th>Phone</th><th>Email</th><th>Service</th><th>Status</th><th>Added</th></tr>
             </thead>
