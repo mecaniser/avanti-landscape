@@ -43,3 +43,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 avanti-audit/
+
+# agent worktrees (each is its own nested git repo — must never be staged into this one)
+.claude/worktrees/
