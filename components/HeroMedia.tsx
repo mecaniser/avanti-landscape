@@ -5,7 +5,6 @@ import { useEffect, useRef, useState } from "react";
 
 export default function HeroMedia({ poster, video }: { poster: string; video: string }) {
   const ref = useRef<HTMLVideoElement>(null);
-  const [muted, setMuted] = useState(true);
   const [ended, setEnded] = useState(false);
   const [paused, setPaused] = useState(false);
   const [canPlayVideo, setCanPlayVideo] = useState(false);
@@ -35,14 +34,6 @@ export default function HeroMedia({ poster, video }: { poster: string; video: st
   useEffect(() => {
     if (canPlayVideo && ref.current) ref.current.muted = true;
   }, [canPlayVideo]);
-
-  function toggleSound() {
-    const v = ref.current;
-    if (!v) return;
-    const next = !muted;
-    v.muted = next;
-    setMuted(next);
-  }
 
   function togglePlayback() {
     const v = ref.current;
@@ -106,34 +97,19 @@ export default function HeroMedia({ poster, video }: { poster: string; video: st
               </svg>
             </button>
           ) : (
-            <>
-              <button type="button" className="hero-control" onClick={togglePlayback} aria-label={paused ? "Play background video" : "Pause background video"}>
-                {paused ? (
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                    <path d="M8 5v14l11-7z" />
-                  </svg>
-                ) : (
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                    <path d="M6 5h4v14H6zM14 5h4v14h-4z" />
-                  </svg>
-                )}
-              </button>
-              <button type="button" className="hero-control" onClick={toggleSound} aria-label={muted ? "Turn video sound on" : "Mute video"}>
-                {muted ? (
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <path d="M11 5 6 9H2v6h4l5 4V5z" />
-                    <line x1="23" y1="9" x2="17" y2="15" />
-                    <line x1="17" y1="9" x2="23" y2="15" />
-                  </svg>
-                ) : (
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <path d="M11 5 6 9H2v6h4l5 4V5z" />
-                    <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
-                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
-                  </svg>
-                )}
-              </button>
-            </>
+            // The hero clip carries no audio track, so there is nothing to
+            // unmute and no sound control to offer.
+            <button type="button" className="hero-control" onClick={togglePlayback} aria-label={paused ? "Play background video" : "Pause background video"}>
+              {paused ? (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              ) : (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M6 5h4v14H6zM14 5h4v14h-4z" />
+                </svg>
+              )}
+            </button>
           )}
         </div>
       )}
