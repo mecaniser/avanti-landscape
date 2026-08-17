@@ -7,8 +7,9 @@ import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
 import { buildBreadcrumbSchema } from "@/lib/schema";
 import { absoluteUrl, pageMetadata, SITE_URL } from "@/lib/site";
-import { getServiceCategory, SERVICE_CATEGORIES } from "@/lib/services";
+import { getServiceCategory, SERVICE_CATEGORIES, categoryImageKey } from "@/lib/services";
 import { getServicesByCategory } from "@/lib/queries";
+import { getContent } from "@/lib/content";
 
 export const dynamic = "force-dynamic";
 
@@ -21,11 +22,14 @@ export async function generateMetadata({
   const cat = getServiceCategory(category);
   if (!cat) return { title: "Service Not Found", robots: { index: false, follow: false } };
 
+  const c = await getContent("services");
+  const image = c[categoryImageKey(cat.slug)] || cat.image;
+
   return pageMetadata({
     title: cat.title,
     description: cat.description,
     path: `/services/${cat.slug}`,
-    image: absoluteUrl(cat.image),
+    image: absoluteUrl(image),
   });
 }
 
@@ -38,7 +42,12 @@ export default async function ServiceCategoryPage({
   const cat = getServiceCategory(category);
   if (!cat) notFound();
 
-  const services = await getServicesByCategory(cat.slug);
+  const [services, c] = await Promise.all([
+    getServicesByCategory(cat.slug),
+    getContent("services"),
+  ]);
+  const withPhotos = services.filter((s) => s.image);
+  const textOnly = services.filter((s) => !s.image);
 
   const others = SERVICE_CATEGORIES.filter((c) => c.slug !== cat.slug);
 
@@ -92,17 +101,42 @@ export default async function ServiceCategoryPage({
                   <h2>{cat.label} services</h2>
                 </div>
               </div>
+              {/* Services with a photo of their own work lead the list as image
+                  cards. The rest keep the text card: borrowing a photo of
+                  different work would show a lawn on a patio listing. */}
               <div className="service-row">
-                {services.map((s) => (
-                  <div className="service-item" key={s.id}>
-                    <span className="dot"></span>
-                    <div>
+                {withPhotos.map((s) => (
+                  <article className="service-card" key={s.id}>
+                    <div className="service-card__media">
+                      <Image
+                        src={s.image!}
+                        alt={`${s.name} by Avanti Landscaping in Waxhaw, NC`}
+                        fill
+                        sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 33vw"
+                        style={{ objectFit: "cover" }}
+                      />
+                    </div>
+                    <div className="service-card__body">
                       <h3>{s.name}</h3>
                       <p>{s.description}</p>
                     </div>
-                  </div>
+                  </article>
                 ))}
               </div>
+
+              {textOnly.length > 0 && (
+                <div className="service-row service-row--text">
+                  {textOnly.map((s) => (
+                    <div className="service-item" key={s.id}>
+                      <span className="dot"></span>
+                      <div>
+                        <h3>{s.name}</h3>
+                        <p>{s.description}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </section>
@@ -118,7 +152,7 @@ export default async function ServiceCategoryPage({
                 <Link href={`/services/${o.slug}`} className="blog-card" key={o.slug} style={{ textDecoration: "none" }}>
                   <div className="thumb" style={{ position: "relative" }}>
                     <Image
-                      src={o.image}
+                      src={c[categoryImageKey(o.slug)] || o.image}
                       alt={`${o.label} work by Avanti Landscaping`}
                       fill
                       sizes="(max-width: 900px) 100vw, 33vw"

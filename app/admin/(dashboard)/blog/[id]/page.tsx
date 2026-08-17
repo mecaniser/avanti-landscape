@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { deleteBlogPost } from "../actions";
 import AdminUploadForm from "@/components/AdminUploadForm";
 import BlogBodyEditor from "@/components/BlogBodyEditor";
+import AdminDeleteConfirm from "@/components/AdminDeleteConfirm";
 
 export const dynamic = "force-dynamic";
 
@@ -57,9 +58,7 @@ export default async function EditBlogPostPage({
 
       <div className="blog-editor__footer">
         <Link href="/admin/blog" className="admin-btn admin-btn--ghost">Cancel</Link>
-        <form action={del}>
-          <button type="submit" className="admin-btn admin-btn--danger">Delete Post</button>
-        </form>
+        <AdminDeleteConfirm action={del} itemLabel={post.title} triggerLabel="Delete Post" />
       </div>
     </section>
   );

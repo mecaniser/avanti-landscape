@@ -3,6 +3,7 @@
 import { revalidatePath, updateTag } from "next/cache";
 import { prisma } from "@/lib/db";
 import { TAGS } from "@/lib/content";
+import { SERVICE_CATEGORIES } from "@/lib/services";
 
 export type ServiceActionState = { ok?: boolean; error?: string; message?: string };
 
@@ -10,6 +11,17 @@ function refresh() {
   updateTag(TAGS.services);
   revalidatePath("/admin/services");
   revalidatePath("/services");
+  for (const category of SERVICE_CATEGORIES) revalidatePath(`/services/${category.slug}`);
+}
+
+export async function removeServiceImage(id: string, _previousState: ServiceActionState, _formData: FormData): Promise<ServiceActionState> {
+  try {
+    await prisma.service.update({ where: { id }, data: { image: null } });
+    refresh();
+    return { ok: true, message: "Photo removed." };
+  } catch {
+    return { error: "The photo could not be removed. Please try again." };
+  }
 }
 
 export async function updateService(id: string, _previousState: ServiceActionState, formData: FormData): Promise<ServiceActionState> {

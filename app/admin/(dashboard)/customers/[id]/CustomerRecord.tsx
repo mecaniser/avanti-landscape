@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import SubmitButton from "../../SubmitButton";
 import { formatUsPhone } from "@/lib/phone";
@@ -44,6 +44,16 @@ export default function CustomerRecord({
   const [editing, setEditing] = useState(false);
   const [saveState, setSaveState] = useState<SaveState>("idle");
   const [saveError, setSaveError] = useState<string | null>(null);
+  // A one-click delete with no confirmation of any kind risks permanently
+  // destroying a customer record and its notes from a stray click. This
+  // inline step (rather than window.confirm, which browsers can silently
+  // auto-suppress after repeated dialogs) mirrors the pattern already
+  // shipped for services.
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const cancelDeleteRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (confirmingDelete) cancelDeleteRef.current?.focus();
+  }, [confirmingDelete]);
 
   async function saveCustomer(formData: FormData) {
     setSaveState("saving");
@@ -185,13 +195,38 @@ export default function CustomerRecord({
             </div>
           )}
 
-          <form action={deleteAction} className="customer-record__delete">
+          <div className="customer-record__delete">
             <div>
               <strong>Remove this customer</strong>
               <p>This permanently removes this lead and its notes.</p>
             </div>
-            <SubmitButton className="admin-btn admin-btn--danger" pendingLabel="Deleting customer…">Delete customer</SubmitButton>
-          </form>
+            {confirmingDelete ? (
+              <form
+                action={deleteAction}
+                role="group"
+                aria-label={`Confirm delete for ${customer.name}`}
+                className="customer-record__delete-confirm"
+              >
+                <span id="customer-delete-confirm-message">Delete &ldquo;{customer.name}&rdquo;? This can&rsquo;t be undone.</span>
+                <div className="customer-record__delete-confirm-actions">
+                  <SubmitButton className="admin-btn admin-btn--danger" pendingLabel="Deleting…">Yes, delete</SubmitButton>
+                  <button
+                    ref={cancelDeleteRef}
+                    type="button"
+                    className="admin-btn admin-btn--ghost"
+                    aria-describedby="customer-delete-confirm-message"
+                    onClick={() => setConfirmingDelete(false)}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <button type="button" className="admin-btn admin-btn--danger" onClick={() => setConfirmingDelete(true)}>
+                Delete customer
+              </button>
+            )}
+          </div>
         </>
       )}
     </section>

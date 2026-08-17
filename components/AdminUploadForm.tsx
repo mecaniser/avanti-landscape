@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, type FormEvent, type ReactNode } from "react";
+import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { compressImage } from "@/lib/compress-image";
 import { maxBytesFor, oversizeMessage, type UploadKind } from "@/lib/uploads";
@@ -17,6 +17,10 @@ type AdminUploadFormProps = {
   resetOnSuccess?: boolean;
   redirectTo?: string;
   statusId?: string;
+  /** Skip the built-in submit button for a caller providing its own trigger
+   *  (e.g. a file input that submits itself on change). The status region
+   *  still renders, so upload progress and errors remain visible. */
+  hideDefaultButton?: boolean;
 };
 
 /**
@@ -38,14 +42,35 @@ export default function AdminUploadForm({
   resetOnSuccess = false,
   redirectTo,
   statusId = operation,
+  hideDefaultButton = false,
 }: AdminUploadFormProps) {
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
   const [phase, setPhase] = useState<UploadPhase>("idle");
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  // Optimistic until the mount effect checks the DOM, so a required file
+  // input renders disabled instead of flashing enabled-then-disabled.
+  const [hasRequiredFiles, setHasRequiredFiles] = useState(true);
 
   const busy = phase === "preparing" || phase === "uploading" || phase === "processing";
+
+  // A submit button that looks enabled but silently fails (or trips the
+  // browser's native "select a file" bubble) reads as broken. Disable it
+  // until every required file input actually has a file, so the button's
+  // state always matches what clicking it will do.
+  function refreshRequiredFiles() {
+    const form = formRef.current;
+    if (!form) return;
+    const requiredFileInputs = Array.from(
+      form.querySelectorAll<HTMLInputElement>('input[type="file"][required]')
+    );
+    setHasRequiredFiles(requiredFileInputs.every((input) => (input.files?.length ?? 0) > 0));
+  }
+
+  useEffect(() => {
+    refreshRequiredFiles();
+  }, []);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -115,7 +140,10 @@ export default function AdminUploadForm({
         return;
       }
 
-      if (resetOnSuccess) formRef.current?.reset();
+      if (resetOnSuccess) {
+        formRef.current?.reset();
+        refreshRequiredFiles();
+      }
       setPhase("success");
       setProgress(100);
       router.refresh();
@@ -126,25 +154,45 @@ export default function AdminUploadForm({
     request.send(data);
   }
 
+  // With no visible submit button, the caller's file input is the only
+  // trigger: picking a file submits the form immediately.
+  function handleChange(event: FormEvent<HTMLFormElement>) {
+    refreshRequiredFiles();
+    if (!hideDefaultButton || busy) return;
+    const target = event.target;
+    if (target instanceof HTMLInputElement && target.type === "file" && target.files?.length) {
+      formRef.current?.requestSubmit();
+    }
+  }
+
   return (
     <form
       ref={formRef}
       className={className}
       onSubmit={(event) => void submit(event)}
+      onChange={handleChange}
       encType="multipart/form-data"
       aria-busy={busy}
     >
       {children}
-      <button type="submit" className="admin-btn" disabled={busy} aria-describedby={`${statusId}-upload-status`}>
-        {busy ? (
-          <>
-            <span className="admin-spinner" aria-hidden="true" />
-            {phase === "preparing" ? "Preparing…" : phase === "uploading" ? `Uploading ${progress}%` : "Saving…"}
-          </>
-        ) : (
-          submitLabel
-        )}
-      </button>
+      {!hideDefaultButton && (
+        <button
+          type="submit"
+          className="admin-btn"
+          disabled={busy || !hasRequiredFiles}
+          aria-busy={busy}
+          aria-describedby={`${statusId}-upload-status`}
+        >
+          {busy ? (
+            <>
+              <span className="admin-spinner" aria-hidden="true" />
+              {phase === "preparing" ? "Preparing…" : phase === "uploading" ? `Uploading ${progress}%` : "Saving…"}
+            </>
+          ) : (
+            submitLabel
+          )}
+        </button>
+      )}
       <div
         id={`${statusId}-upload-status`}
         className="admin-upload-status"

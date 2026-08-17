@@ -16,6 +16,16 @@
   --ink-soft: #55604c;
   --border: #e3e0d3;
 
+  /* Danger/error, dark theme. Three near-identical hex literals were drifting
+     around admin.css for this one semantic; --danger-dim is the deliberate
+     quiet resting state for text-only danger buttons that brightens to
+     --danger on hover, not more drift. --danger-rgb backs the translucent
+     tints (rgba(var(--danger-rgb), alpha)) that share --danger-border's hue. */
+  --danger: #f0a08e;
+  --danger-dim: #d98a76;
+  --danger-border: #e0654e;
+  --danger-rgb: 224, 101, 78;
+
   /* Dark theme surfaces */
   --bg: #0e1007;
   --bg-elev: #171a0f;
@@ -40,6 +50,20 @@
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* Visually hidden but present for screen readers, e.g. a form control's
+   accessible name when a visible label would repeat context already shown. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
 
 html { scroll-behavior: smooth; }
 
@@ -957,6 +981,40 @@ p { color: var(--text-soft); }
 }
 .service-item h4 { font-size: 1rem; margin-bottom: 4px; color: var(--heading); }
 .service-item p { font-size: 0.88rem; margin: 0; }
+.service-item h3 { font-size: 1rem; margin-bottom: 4px; color: var(--heading); }
+
+/* Services that have a photo of their own work. Three across so the photos
+   carry the section, dropping to two and then one as the column narrows. */
+.service-row:has(.service-card) { grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.service-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--bg-elev);
+  border: 1px solid var(--surface-line);
+}
+.service-card__media {
+  position: relative;
+  width: 100%;
+  /* Fixed ratio here, unlike the before/after frame: these sit in a grid, and
+     rows only line up if every card's photo is the same shape. */
+  aspect-ratio: 4 / 3;
+  background: var(--bg-elev-2);
+}
+.service-card__body { padding: 16px 18px 18px; }
+.service-card__body h3 { font-size: 1.02rem; margin-bottom: 6px; color: var(--heading); }
+.service-card__body p { font-size: 0.88rem; margin: 0; }
+/* Text-only services sit below the photo cards, and read as a secondary list. */
+.service-row--text { margin-top: 16px; }
+
+@media (max-width: 1100px) {
+  .service-row:has(.service-card) { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 700px) {
+  .service-row,
+  .service-row:has(.service-card) { grid-template-columns: 1fr; }
+}
 
 /* Areas */
 .area-chip-grid {

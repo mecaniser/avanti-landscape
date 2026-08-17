@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { prisma } from "@/lib/db";
 import { AddServiceForm, EditServiceForm } from "./ServiceForms";
 
@@ -47,17 +48,37 @@ export default async function ServicesAdminPage() {
                   return (
                     <article className="service-admin-item" key={service.id}>
                       <div className="service-admin-item__summary">
-                        <div>
+                        {/* Shows at a glance which services already have a photo, without
+                            opening each one to check. */}
+                        <div className="service-admin-item__thumb" aria-hidden={!service.image}>
+                          {service.image ? (
+                            <Image src={service.image} alt="" fill sizes="48px" style={{ objectFit: "cover" }} />
+                          ) : (
+                            <span>No photo</span>
+                          )}
+                        </div>
+                        <div className="service-admin-item__text">
                           <h4>{service.name}</h4>
                           <p>{service.description}</p>
                         </div>
-                        <details className="service-admin-item__edit">
-                          <summary>Edit service</summary>
-                          <div className="service-admin-item__edit-body">
-                            <EditServiceForm id={service.id} name={service.name} description={service.description} />
-                          </div>
-                        </details>
                       </div>
+                      {/* A full-width block below the summary row, not an inline sibling
+                          of the short name/description text: fixed to that row's width
+                          via flex, the panel used to get pushed hard right by space-between
+                          with a wide empty gap between it and the text. A shared `name`
+                          makes these an exclusive group natively: opening one edit panel
+                          closes whichever other one was open. */}
+                      <details className="service-admin-item__edit" name="service-edit">
+                        <summary>Edit service</summary>
+                        <div className="service-admin-item__edit-body">
+                          <EditServiceForm
+                            id={service.id}
+                            name={service.name}
+                            description={service.description}
+                            image={service.image}
+                          />
+                        </div>
+                      </details>
                     </article>
                   );
                 })}

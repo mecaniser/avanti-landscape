@@ -10,7 +10,7 @@ export default function DetailsCloseButton({ children = "Close" }: { children?: 
   }
 
   return (
-    <button type="button" className="admin-btn admin-btn--ghost" onClick={closeDetails}>
+    <button type="button" className="admin-btn admin-btn--plain" onClick={closeDetails}>
       {children}
     </button>
   );

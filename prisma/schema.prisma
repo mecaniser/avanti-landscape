@@ -59,6 +59,10 @@ model Service {
   category    String
   name        String
   description String
+  /// Cloudinary URL of a photo of this specific work. Optional: a service
+  /// without one keeps the text-only card rather than borrowing a photo of
+  /// different work, which would misrepresent the job being described.
+  image       String?
   sortOrder   Int      @default(0)
 
   @@index([category])

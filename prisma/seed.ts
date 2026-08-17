@@ -59,6 +59,7 @@ async function main() {
     { page: "home", key: "cta_paragraph", type: "text", value: "Get a free, no-pressure quote for your property today." },
     { page: "home", key: "card_lawncare_image", type: "image", value: "/assets/img/card-lawncare.jpg" },
     { page: "home", key: "card_landscaping_image", type: "image", value: "/assets/img/card-landscaping.jpg" },
+    { page: "home", key: "card_hardscaping_image", type: "image", value: "/assets/img/gallery-drainage.jpg" },
     { page: "home", key: "card_maintenance_image", type: "image", value: "/assets/img/card-maintenance.jpg" },
     { page: "home", key: "about_teaser_image", type: "image", value: "/assets/img/about-crew.jpg" },
 
@@ -80,6 +81,10 @@ async function main() {
     { page: "services", key: "hero_paragraph", type: "text", value: "Everything your lawn and landscape need, from routine care to full outdoor builds." },
     { page: "services", key: "cta_heading", type: "text", value: "Not sure what your property needs?" },
     { page: "services", key: "cta_paragraph", type: "text", value: "Tell us what you're looking for and we'll recommend the right services." },
+    { page: "services", key: "category_lawn_care_image", type: "image", value: "/assets/img/card-lawncare.jpg" },
+    { page: "services", key: "category_landscaping_image", type: "image", value: "/assets/img/card-landscaping.jpg" },
+    { page: "services", key: "category_hardscaping_image", type: "image", value: "/assets/img/hero-mulch-wide.jpg" },
+    { page: "services", key: "category_maintenance_image", type: "image", value: "/assets/img/card-maintenance.jpg" },
 
     // Gallery
     { page: "gallery", key: "hero_paragraph", type: "text", value: "Real photos from real properties across the Waxhaw area." },

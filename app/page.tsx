@@ -24,6 +24,12 @@ export default async function HomePage() {
   const heroPoster = c.hero_image || "/assets/img/hero-mulch-wide.jpg";
   // Admin-uploaded video (Cloudinary) wins; otherwise the committed default clip.
   const heroVideo = c.hero_video || "/assets/hero.mp4";
+  const routeImages = {
+    lawn: c.card_lawncare_image,
+    landscaping: c.card_landscaping_image,
+    hardscaping: c.card_hardscaping_image,
+    maintenance: c.card_maintenance_image,
+  };
 
   return (
     <>
@@ -51,7 +57,7 @@ export default async function HomePage() {
           </div>
         </section>
 
-        <PropertyRoute />
+        <PropertyRoute images={routeImages} />
 
         {projects.length > 0 && (
         <section className="section results-section" id="results-section">

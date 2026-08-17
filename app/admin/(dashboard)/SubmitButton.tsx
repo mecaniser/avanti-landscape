@@ -13,16 +13,19 @@ export default function SubmitButton({
   pendingLabel,
   className = "admin-btn",
   style,
+  disabled = false,
 }: {
   children: React.ReactNode;
   pendingLabel: string;
   className?: string;
   style?: React.CSSProperties;
+  /** Combined with the form's own pending state; either one disables the button. */
+  disabled?: boolean;
 }) {
   const { pending } = useFormStatus();
 
   return (
-    <button type="submit" className={className} style={style} disabled={pending} aria-busy={pending}>
+    <button type="submit" className={className} style={style} disabled={pending || disabled} aria-busy={pending}>
       {pending ? (
         <>
           <span className="admin-spinner" aria-hidden="true" />
