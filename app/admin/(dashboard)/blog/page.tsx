@@ -1,15 +1,18 @@
 import Link from "next/link";
 import { prisma } from "@/lib/db";
+import { formatUpdatedAt, latestUpdatedAt } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
 
 export default async function BlogAdminPage() {
   const posts = await prisma.blogPost.findMany({ orderBy: { createdAt: "desc" } });
+  const lastUpdated = latestUpdatedAt(posts);
 
   return (
     <section className="blog-admin">
       <h2>Blog</h2>
       <p className="subtitle">Create and manage blog posts.</p>
+      {lastUpdated && <p className="admin-last-updated">Last updated {formatUpdatedAt(lastUpdated)}</p>}
 
       <div className="blog-admin__toolbar">
         <p>Choose a post to edit its copy, cover image, and publication status.</p>
@@ -38,7 +41,7 @@ export default async function BlogAdminPage() {
                         {post.publishedAt ? "Published" : "Draft"}
                       </span>
                     </td>
-                    <td>{post.updatedAt.toLocaleDateString()}</td>
+                    <td>{formatUpdatedAt(post.updatedAt)}</td>
                     <td className="blog-admin__actions-cell">
                       <Link href={`/admin/blog/${post.id}`} className="admin-btn admin-btn--ghost blog-admin__edit">Edit post</Link>
                     </td>

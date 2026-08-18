@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
+import { formatUpdatedAt } from "@/lib/format";
 import { updateCustomer, deleteCustomer } from "../actions";
 import CustomerRecord from "./CustomerRecord";
 
@@ -13,11 +14,19 @@ export default async function CustomerDetailPage({
   const { id } = await params;
   const customer = await prisma.customer.findUnique({ where: { id } });
   if (!customer) notFound();
+  // @updatedAt stamps updatedAt equal to createdAt on the row's initial
+  // insert, so a lead nobody has touched yet would otherwise show "Added
+  // Aug 17 · Last updated Aug 17" — two identical facts stated as if they
+  // were two different ones. Only show the second once it's true.
+  const wasEdited = customer.updatedAt.getTime() !== customer.createdAt.getTime();
 
   return (
     <>
       <h2>{customer.name}</h2>
-      <p className="subtitle">Added {customer.createdAt.toLocaleDateString()}</p>
+      <p className="subtitle">
+        Added {customer.createdAt.toLocaleDateString()}
+        {wasEdited && <> · Last updated {formatUpdatedAt(customer.updatedAt)}</>}
+      </p>
       <CustomerRecord
         customer={{
           name: customer.name,

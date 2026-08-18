@@ -15,6 +15,7 @@ const businessInitial: BusinessSettingsState = {};
 
 export default function AccountSettings({
   settings,
+  businessSettingsUpdatedAt,
 }: {
   settings: {
     phone: string;
@@ -23,6 +24,7 @@ export default function AccountSettings({
     facebookUrl: string;
     instagramUrl: string;
   };
+  businessSettingsUpdatedAt: string | null;
 }) {
   const [passwordState, passwordAction, passwordPending] = useActionState(changePassword, passwordInitial);
   const [businessState, businessAction, businessPending] = useActionState(updateBusinessSettings, businessInitial);
@@ -38,6 +40,9 @@ export default function AccountSettings({
           <div>
             <h3 id="business-settings-heading">Business settings</h3>
             <p>These details appear across the website’s header, footer, contact page, and social links.</p>
+            {businessSettingsUpdatedAt && (
+              <p className="admin-last-updated" style={{ margin: "4px 0 0" }}>Last updated {businessSettingsUpdatedAt}</p>
+            )}
           </div>
           {!isEditingBusiness && (
             <button type="button" className="admin-btn admin-btn--ghost" onClick={() => setIsEditingBusiness(true)}>

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { prisma } from "@/lib/db";
+import { formatUpdatedAt, latestUpdatedAt } from "@/lib/format";
 import { AddServiceForm, EditServiceForm } from "./ServiceForms";
 
 export const dynamic = "force-dynamic";
@@ -13,11 +14,13 @@ const CATEGORIES = [
 
 export default async function ServicesAdminPage() {
   const services = await prisma.service.findMany({ orderBy: [{ category: "asc" }, { sortOrder: "asc" }] });
+  const lastUpdated = latestUpdatedAt(services);
 
   return (
     <section className="services-admin">
       <h2>Services</h2>
       <p className="subtitle">Manage the service list displayed on the public Services page.</p>
+      {lastUpdated && <p className="admin-last-updated">Last updated {formatUpdatedAt(lastUpdated)}</p>}
 
       {CATEGORIES.map((category) => {
         const categoryServices = services.filter((service) => service.category === category.id);

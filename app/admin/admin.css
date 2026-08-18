@@ -441,6 +441,42 @@
 .admin-stats__label { margin-bottom: 4px; }
 .admin-stats__value { font-size: 2rem; font-weight: 700; }
 
+/* "Last updated" caption under a section's heading (Services, Gallery, Blog,
+   Page Content). Quiet by design — it's a passive fact, not a call to action. */
+.admin-last-updated {
+  margin: -12px 0 20px;
+  color: var(--text-soft, #a3a992);
+  font-size: 0.82rem;
+}
+
+/* Overview's "Recent Activity" list: one row per content section, each a
+   link into that section plus its own last-updated caption. Wraps to a
+   second line at narrow widths instead of truncating the timestamp. */
+.admin-activity { margin-bottom: 24px; }
+.admin-activity__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.admin-activity__list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 16px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--surface-line, #333825);
+}
+.admin-activity__list li:last-child { border-bottom: none; }
+.admin-activity__list a { font-weight: 600; }
+.admin-activity__timestamp {
+  color: var(--text-soft, #a3a992);
+  font-size: 0.84rem;
+}
+
 /* Customers toolbar: status-filter pills + "Add Customer". At 375px the 4
    pills (All/Lead/Active/Inactive) plus the button don't fit on one line
    (roughly 4 * ~64px pills + gaps + a ~140px button > 375px), so this wraps

@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/db";
+import { formatUpdatedAt, latestUpdatedAt } from "@/lib/format";
 import AccountSettings from "./AccountSettings";
 
 export const dynamic = "force-dynamic";
@@ -14,6 +15,7 @@ const DEFAULTS = {
 export default async function AccountPage() {
   const blocks = await prisma.contentBlock.findMany({ where: { page: "global" } });
   const values = Object.fromEntries(blocks.map((block) => [block.key, block.value]));
+  const lastUpdated = latestUpdatedAt(blocks);
 
   return (
     <AccountSettings
@@ -24,6 +26,7 @@ export default async function AccountPage() {
         facebookUrl: values.facebook_url ?? DEFAULTS.facebookUrl,
         instagramUrl: values.instagram_url ?? DEFAULTS.instagramUrl,
       }}
+      businessSettingsUpdatedAt={lastUpdated ? formatUpdatedAt(lastUpdated) : null}
     />
   );
 }
