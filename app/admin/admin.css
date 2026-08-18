@@ -175,29 +175,6 @@
     color: var(--heading, #f2f4e8);
   }
 
-  .admin-topbar-actions {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .admin-topbar-signout {
-    background: transparent;
-    border: 1px solid var(--surface-line, #333825);
-    color: var(--text-soft, #a3a992);
-    padding: 10px 12px;
-    min-height: 44px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 0.86rem;
-    font-family: inherit;
-    transition: border-color .15s ease, color .15s ease;
-  }
-  .admin-topbar-signout:hover {
-    border-color: var(--olive, #8fae3c);
-    color: var(--olive-light, #b3d15a);
-  }
-
   .admin-menu-btn {
     width: 44px;
     height: 44px;
@@ -290,11 +267,49 @@
     background: rgba(139, 174, 60, 0.12);
     color: var(--olive-light, #b3d15a);
   }
+  /* Pre-existing gap, caught while already in this file for the Sign Out
+     move: no drawer link ever had its own focus ring, falling back to
+     the browser default — the same class of miss fixed a few times
+     already this session on other custom controls. */
+  .admin-drawer-nav a:focus-visible {
+    outline: 2px solid var(--olive-light, #b3d15a);
+    outline-offset: -2px;
+  }
   .admin-drawer-nav a.admin-view-site {
     margin-top: 8px;
     color: var(--olive-light, #b3d15a) !important;
     font-weight: 600;
   }
+
+  /* Matches .admin-sidebar form on desktop: separated by a rule, bordered
+     rather than filled, so Sign Out reads as a distinct, deliberate action
+     at the bottom of the list rather than another destination in it. */
+  .admin-drawer-signout {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--surface-line, #333825);
+  }
+  .admin-drawer-signout button {
+    width: 100%;
+    min-height: 48px;
+    background: transparent;
+    border: 1px solid var(--surface-line, #333825);
+    border-radius: 8px;
+    color: var(--text-soft, #a3a992);
+    font-family: inherit;
+    font-size: 0.92rem;
+    cursor: pointer;
+    transition: border-color 150ms ease, color 150ms ease, transform 160ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+  .admin-drawer-signout button:hover {
+    border-color: var(--olive, #8fae3c);
+    color: var(--olive-light, #b3d15a);
+  }
+  .admin-drawer-signout button:focus-visible {
+    outline: 2px solid var(--olive-light, #b3d15a);
+    outline-offset: 2px;
+  }
+  .admin-drawer-signout button:active { transform: scale(0.98); }
 }
 
 .admin-main h2 {
@@ -902,12 +917,29 @@
 }
 
 /* Saved before/after slides read as their public proof first; editing is opt-in. */
+/* Same technique as .service-admin-list, sized for what this card actually
+   needs: .ba-admin-preview (the before/after comparison row) alone wants
+   ~476px, and the edit form's two-column layout wants comparable room, so
+   the floor here is ~520px rather than Services' 320px — a narrower one
+   would just force the preview grid to fight the card for space. Before/
+   after pairs take real work to produce and stay in the single digits, so
+   this mainly buys 2 columns on a wide monitor rather than Services' 3-4;
+   real but smaller, which is why it waited until Services was proven. */
+.ba-admin-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(520px, 100%), 1fr));
+  gap: 14px;
+}
 .ba-admin-item {
   padding: 16px;
   border: 1px solid var(--surface-line, #333825);
   border-radius: 10px;
   background: var(--bg-elev-2, #16190f);
 }
+/* The edit form (two photo-replace fields plus caption/subtext) needs more
+   room than a single grid column comfortably gives — same full-width-on-
+   open mechanism as Services' :has(.service-admin-item__edit[open]). */
+.ba-admin-item:has(.ba-admin-edit[open]) { grid-column: 1 / -1; }
 .ba-admin-item__head {
   display: flex;
   align-items: center;
@@ -1147,7 +1179,13 @@
 
 .admin-grid-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  /* min(160px, 100%): safe today since 160px fits any realistic mobile
+     container, but a bare 160px minimum can force real overflow on a
+     narrower one — measured and confirmed for the same pattern at 320px
+     on the Services grid (27px of actual overflow at 375px). Guarding it
+     here too rather than leaving the same fragile pattern for the next
+     person to raise past 160px without knowing why it matters. */
+  grid-template-columns: repeat(auto-fill, minmax(min(160px, 100%), 1fr));
   gap: 16px;
 }
 

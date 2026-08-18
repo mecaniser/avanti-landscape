@@ -113,25 +113,25 @@ export default function AdminNav({ signOutAction }: { signOutAction: () => Promi
         </form>
       </aside>
 
-      {/* Mobile top bar */}
+      {/* Mobile top bar. Sign Out used to live here, always visible next to
+          the hamburger — but that's not where it belongs: it's a rare,
+          consequential action, not a frequent one, and the desktop sidebar
+          already treats it that way, tucked at the bottom of the nav list
+          behind a border, not pinned to the header. Moved into the drawer
+          to match. */}
       <div className="admin-topbar">
         <span className="admin-topbar-title">Avanti Admin</span>
-        <div className="admin-topbar-actions">
-          <form action={signOutAction}>
-            <button type="submit" className="admin-topbar-signout">Sign Out</button>
-          </form>
-          <button
-            ref={menuBtnRef}
-            type="button"
-            className="admin-menu-btn"
-            aria-expanded={open}
-            aria-controls="admin-mobile-drawer"
-            onClick={() => setOpen((v) => !v)}
-          >
-            <span className="admin-menu-btn-bars" aria-hidden="true" />
-            <span className="sr-only">{open ? "Close menu" : "Open menu"}</span>
-          </button>
-        </div>
+        <button
+          ref={menuBtnRef}
+          type="button"
+          className="admin-menu-btn"
+          aria-expanded={open}
+          aria-controls="admin-mobile-drawer"
+          onClick={() => setOpen((v) => !v)}
+        >
+          <span className="admin-menu-btn-bars" aria-hidden="true" />
+          <span className="sr-only">{open ? "Close menu" : "Open menu"}</span>
+        </button>
       </div>
 
       {/* Mobile drawer */}
@@ -150,6 +150,9 @@ export default function AdminNav({ signOutAction }: { signOutAction: () => Promi
         inert={!open}
       >
         <nav className="admin-drawer-nav">{links}</nav>
+        <form action={signOutAction} className="admin-drawer-signout">
+          <button type="submit">Sign Out</button>
+        </form>
       </div>
       {open && (
         <button
