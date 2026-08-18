@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { getGlobalContent } from "@/lib/content";
 import { SERVICE_CATEGORIES } from "@/lib/services";
 
@@ -16,7 +17,8 @@ export default async function SiteFooter() {
         <div className="footer-grid">
           <div>
             <div className="footer-brand">
-              <img src="/assets/avanti-wordmark.png" alt="Avanti Lawn & Landscaping" />
+              <Image src="/assets/avanti-wordmark.png" alt="Avanti Lawn & Landscaping"
+                width={146} height={68} sizes="146px" />
             </div>
             <p>Locally owned lawn care, landscaping, and hardscaping serving Waxhaw, NC and the surrounding communities.</p>
           </div>

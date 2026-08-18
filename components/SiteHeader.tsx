@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { getGlobalContent } from "@/lib/content";
 import { SERVICE_CATEGORIES } from "@/lib/services";
 import MobileNavToggle from "@/components/MobileNavToggle";
@@ -35,7 +36,8 @@ export default async function SiteHeader({ active }: { active: string }) {
       <div className="container">
         <nav className="navbar" aria-label="Primary navigation">
           <Link href="/" className="brand">
-            <img src="/assets/avanti-wordmark.png" alt="Avanti Lawn & Landscaping" />
+            <Image src="/assets/avanti-wordmark.png" alt="Avanti Lawn & Landscaping"
+              width={132} height={62} priority sizes="132px" />
           </Link>
 
           <ul className="nav-links">

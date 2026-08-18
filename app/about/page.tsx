@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
@@ -50,7 +51,8 @@ export default async function AboutPage() {
               </div>
             </div>
             <div className="card-photo" style={{ aspectRatio: "4/3.2", marginBottom: 0 }}>
-              <img src={c.photo_image} alt="Avanti Landscaping crew member pruning shrubs beside a patio" />
+              <Image src={c.photo_image} alt="Avanti Landscaping crew member pruning shrubs beside a patio"
+                fill sizes="(max-width: 900px) 100vw, 50vw" style={{ objectFit: "cover" }} />
             </div>
           </div>
         </section>

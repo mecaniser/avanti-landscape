@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
@@ -106,7 +107,8 @@ export default async function BlogPostPage({
 
             {post.coverImage && (
               <div className="thumb">
-                <img src={post.coverImage} alt={post.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                <Image src={post.coverImage} alt={post.title} fill priority
+                  sizes="(max-width: 800px) 100vw, 760px" style={{ objectFit: "cover" }} />
               </div>
             )}
 
