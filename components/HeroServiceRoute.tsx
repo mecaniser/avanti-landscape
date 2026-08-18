@@ -1,14 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import StaggeredText from "@/components/StaggeredText";
 
 type RouteKey = "lawn" | "landscaping" | "hardscaping" | "maintenance";
 
-const routes: Array<{ id: RouteKey; label: string; position: string; number: string }> = [
-  { id: "lawn", label: "Lawn Care", position: "plot-marker--lawn", number: "01" },
-  { id: "landscaping", label: "Landscaping", position: "plot-marker--landscaping", number: "02" },
-  { id: "hardscaping", label: "Hardscaping", position: "plot-marker--hardscaping", number: "03" },
-  { id: "maintenance", label: "Maintenance", position: "plot-marker--maintenance", number: "04" },
+const routes: Array<{ id: RouteKey; label: string; position: string; number: string; revealDelay: number }> = [
+  { id: "lawn", label: "Lawn Care", position: "plot-marker--lawn", number: "01", revealDelay: 760 },
+  { id: "landscaping", label: "Landscaping", position: "plot-marker--landscaping", number: "02", revealDelay: 830 },
+  { id: "hardscaping", label: "Hardscaping", position: "plot-marker--hardscaping", number: "03", revealDelay: 900 },
+  { id: "maintenance", label: "Maintenance", position: "plot-marker--maintenance", number: "04", revealDelay: 970 },
 ];
 
 function routeFromHash() {
@@ -18,12 +19,38 @@ function routeFromHash() {
 
 export default function HeroServiceRoute() {
   const [active, setActive] = useState<RouteKey>("lawn");
+  const [labelsRevealed, setLabelsRevealed] = useState<Record<RouteKey, boolean>>({
+    lawn: false,
+    landscaping: false,
+    hardscaping: false,
+    maintenance: false,
+  });
 
   useEffect(() => {
     const syncRoute = () => setActive(routeFromHash());
     syncRoute();
     window.addEventListener("hashchange", syncRoute);
     return () => window.removeEventListener("hashchange", syncRoute);
+  }, []);
+
+  useEffect(() => {
+    // Each label's letters stagger in right as its own marker fades in
+    // (matching .plot-marker's --marker-delay in globals.css), not before —
+    // starting sooner would finish revealing the text while it's still
+    // hidden behind the marker's own opacity transition.
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      const skip = window.setTimeout(
+        () => setLabelsRevealed({ lawn: true, landscaping: true, hardscaping: true, maintenance: true }),
+        0
+      );
+      return () => window.clearTimeout(skip);
+    }
+    const timers = routes.map((route) =>
+      window.setTimeout(() => {
+        setLabelsRevealed((prev) => ({ ...prev, [route.id]: true }));
+      }, route.revealDelay)
+    );
+    return () => timers.forEach((timer) => window.clearTimeout(timer));
   }, []);
 
   function selectRoute(event: React.MouseEvent<HTMLAnchorElement>, id: RouteKey) {
@@ -51,7 +78,16 @@ export default function HeroServiceRoute() {
           aria-current={active === route.id ? "true" : undefined}
           onClick={(event) => selectRoute(event, route.id)}
         >
-          <span>{route.number}</span><strong>{route.label}</strong>
+          <span>{route.number}</span>
+          <StaggeredText
+            as="strong"
+            text={route.label}
+            segmentBy="characters"
+            direction="top"
+            delay={26}
+            duration={0.36}
+            trigger={labelsRevealed[route.id]}
+          />
         </a>
       ))}
       <div className="hero-route-line" data-hero-route-line aria-hidden="true"><i /></div>

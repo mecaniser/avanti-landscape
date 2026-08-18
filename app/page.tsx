@@ -3,8 +3,10 @@ import Image from "next/image";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import BeforeAfterCarousel from "@/components/BeforeAfterCarousel";
+import HeroEntrance from "@/components/HeroEntrance";
 import HeroMedia from "@/components/HeroMedia";
 import HeroServiceRoute from "@/components/HeroServiceRoute";
+import StaggeredText from "@/components/StaggeredText";
 import PropertyRoute from "@/components/PropertyRoute";
 import WebsiteFlowTrace from "@/components/WebsiteFlowTrace";
 import { getContent, getGlobalContent, parseAreaList } from "@/lib/content";
@@ -42,22 +44,24 @@ export default async function HomePage() {
         <section className="hero hero--property-plan">
           <HeroMedia poster={heroPoster} video={heroVideo} />
           <div className="container">
-            <div className="hero-copy">
-              <h1>One crew.<br />Your whole property.</h1>
-              <p>Lawn care, landscaping, hardscaping, and maintenance for homes and businesses across the Waxhaw area.</p>
-              <div className="hero-actions">
-                <Link href="/contact" className="btn btn--primary">Get a Free Quote</Link>
-                <a href={`tel:${phoneTel}`} className="btn btn--outline">Call {phone}</a>
-                <a href={`sms:${phoneTel}`} className="hero-text-link">Text us</a>
+            <HeroEntrance>
+              <div className="hero-copy">
+                <StaggeredText as="h1" text={"One crew.\nYour whole property."} direction="top" delay={70} duration={0.6} />
+                <p>Lawn care, landscaping, hardscaping, and maintenance for homes and businesses across the Waxhaw area.</p>
+                <div className="hero-actions">
+                  <Link href="/contact" className="btn btn--primary">Get a Free Quote</Link>
+                  <a href={`tel:${phoneTel}`} className="btn btn--outline">Call {phone}</a>
+                  <a href={`sms:${phoneTel}`} className="hero-text-link">Text us</a>
+                </div>
+                <div className="hero-owner-proof">
+                  <span aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="3" /><path d="M5 21c.7-4 3.1-6 7-6s6.3 2 7 6M3 5.5h3M18 5.5h3" /></svg>
+                  </span>
+                  <strong>100% owner-involved crews</strong>
+                </div>
               </div>
-              <div className="hero-owner-proof">
-                <span aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="3" /><path d="M5 21c.7-4 3.1-6 7-6s6.3 2 7 6M3 5.5h3M18 5.5h3" /></svg>
-                </span>
-                <strong>100% owner-involved crews</strong>
-              </div>
-            </div>
-            <HeroServiceRoute />
+              <HeroServiceRoute />
+            </HeroEntrance>
           </div>
         </section>
 
