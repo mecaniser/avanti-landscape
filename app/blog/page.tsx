@@ -50,8 +50,8 @@ export default async function BlogPage() {
                       <svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="250" fill="#8fae3c" /><g fill="#345126"><circle cx="60" cy="60" r="6" /><circle cx="90" cy="60" r="6" /><circle cx="120" cy="60" r="6" /><circle cx="60" cy="90" r="6" /><circle cx="90" cy="90" r="6" /><circle cx="120" cy="90" r="6" /><circle cx="200" cy="150" r="6" /><circle cx="230" cy="150" r="6" /><circle cx="260" cy="150" r="6" /><circle cx="200" cy="180" r="6" /><circle cx="230" cy="180" r="6" /><circle cx="260" cy="180" r="6" /></g></svg>
                     )}
                   </div>
-                  <div style={{ padding: "18px 4px 4px" }}>
-                    {post.tag && <span className="tag" style={{ color: "var(--olive)", fontWeight: 700, fontSize: "0.8rem" }}>{post.tag}</span>}
+                  <div className="body">
+                    {post.tag && <span className="tag">{post.tag}</span>}
                     <h3 style={{ marginTop: 8 }}>{post.title}</h3>
                     {post.excerpt && <p>{post.excerpt}</p>}
                     <Link href={`/blog/${post.slug}`} className="card-link" style={{ marginTop: 12, display: "inline-block" }}>Read More →</Link>
