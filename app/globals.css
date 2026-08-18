@@ -41,8 +41,8 @@
   --glow: 0 0 34px rgba(139, 174, 60, 0.16);
   --radius: 14px;
   --max-width: 1180px;
-  --font-head: "Barlow Condensed", "Arial Narrow", sans-serif;
-  --font-body: "Manrope", "Segoe UI", sans-serif;
+  --font-head: var(--font-head-nf), "Arial Narrow", sans-serif;
+  --font-body: var(--font-body-nf), "Segoe UI", sans-serif;
   --route-orange: #ef6a3a;
   --survey-paper: #e8e3d5;
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
