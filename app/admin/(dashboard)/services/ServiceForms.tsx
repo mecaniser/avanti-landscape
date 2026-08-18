@@ -196,7 +196,7 @@ export function EditServiceForm({
 
           {image && (
             <form action={removeImageAction} className="service-admin-item__photo-delete">
-              <SubmitButton className="service-admin-item__photo-delete-btn" pendingLabel="…">
+              <SubmitButton className="service-admin-item__photo-delete-btn" title="Remove photo" pendingLabel="…">
                 <CloseIcon />
                 <span className="sr-only">Remove photo for {name}</span>
               </SubmitButton>

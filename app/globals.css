@@ -494,6 +494,56 @@ p { color: var(--text-soft); }
   line-height: 1;
 }
 .hero-owner-proof svg { width: 19px; height: 19px; }
+
+/* Hero entrance: the headline reveals word by word (StaggeredText — each
+   word drops in with a blur), then the supporting copy, CTAs, badge, and
+   the four route markers accumulate underneath it in sequence. Always
+   above the fold on load, so this is time-triggered (see HeroEntrance)
+   rather than scroll-triggered like PropertyRoute's reveal further down
+   the page. Transitions (not keyframe animations) so nothing permanently
+   overrides .plot-marker's own hover transform once the sequence finishes. */
+.hero-entrance[data-entry="pending"] .hero-copy > p,
+.hero-entrance[data-entry="pending"] .hero-copy > .hero-actions,
+.hero-entrance[data-entry="pending"] .hero-copy > .hero-owner-proof,
+.hero-entrance[data-entry="pending"] .hero-plot .plot-marker {
+  opacity: 0;
+  transform: translateY(14px);
+}
+.hero-entrance[data-entry="revealed"] .hero-copy > p {
+  opacity: 1;
+  transform: translateY(0);
+  transition: transform 420ms var(--ease-out) 460ms, opacity 420ms var(--ease-out) 460ms;
+}
+.hero-entrance[data-entry="revealed"] .hero-copy > .hero-actions {
+  opacity: 1;
+  transform: translateY(0);
+  transition: transform 420ms var(--ease-out) 560ms, opacity 420ms var(--ease-out) 560ms;
+}
+.hero-entrance[data-entry="revealed"] .hero-copy > .hero-owner-proof {
+  opacity: 1;
+  transform: translateY(0);
+  transition: transform 420ms var(--ease-out) 660ms, opacity 420ms var(--ease-out) 660ms;
+}
+.hero-entrance[data-entry="revealed"] .hero-plot .plot-marker {
+  opacity: 1;
+  transform: translateY(0);
+  transition: transform 420ms var(--ease-out) var(--marker-delay, 760ms), opacity 420ms var(--ease-out) var(--marker-delay, 760ms), color 180ms ease;
+}
+.hero-entrance[data-entry="revealed"] .hero-plot .plot-marker--lawn { --marker-delay: 760ms; }
+.hero-entrance[data-entry="revealed"] .hero-plot .plot-marker--landscaping { --marker-delay: 830ms; }
+.hero-entrance[data-entry="revealed"] .hero-plot .plot-marker--hardscaping { --marker-delay: 900ms; }
+.hero-entrance[data-entry="revealed"] .hero-plot .plot-marker--maintenance { --marker-delay: 970ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-entrance[data-entry="pending"] .hero-copy > p,
+  .hero-entrance[data-entry="pending"] .hero-copy > .hero-actions,
+  .hero-entrance[data-entry="pending"] .hero-copy > .hero-owner-proof,
+  .hero-entrance[data-entry="pending"] .hero-plot .plot-marker {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 .hero-plot {
   position: relative;
   height: min(580px, 72svh);
@@ -539,7 +589,7 @@ p { color: var(--text-soft); }
   width: 67px;
   border-top: 1px solid rgba(232, 227, 213, .72);
 }
-.plot-marker span {
+.plot-marker > span {
   display: grid;
   width: 38px;
   height: 38px;
@@ -553,7 +603,7 @@ p { color: var(--text-soft); }
 }
 .plot-marker:hover { color: var(--olive-light); transform: translateX(7px); }
 .plot-marker.is-active { color: var(--olive-light); }
-.plot-marker.is-active span { border-color: var(--route-orange); background: var(--route-orange); color: #fffdf7; }
+.plot-marker.is-active > span { border-color: var(--route-orange); background: var(--route-orange); color: #fffdf7; }
 .plot-marker--lawn { top: 12%; left: 50%; }
 .plot-marker--landscaping { top: 31%; left: 37%; }
 .plot-marker--hardscaping { top: 53%; left: 57%; }
@@ -1326,16 +1376,16 @@ p { color: var(--text-soft); }
 .form-field input.invalid,
 .form-field select.invalid,
 .form-field textarea.invalid {
-  border-color: #e0654e;
+  border-color: var(--danger-border, #e0654e);
 }
 .form-field input.invalid:focus,
 .form-field select.invalid:focus,
 .form-field textarea.invalid:focus {
-  box-shadow: 0 0 0 3px rgba(224, 101, 78, 0.18);
+  box-shadow: 0 0 0 3px rgba(var(--danger-rgb, 224, 101, 78), 0.18);
 }
 .field-error {
   display: block;
-  color: #f0a08e;
+  color: var(--danger, #f0a08e);
   font-size: 0.8rem;
   margin-top: 6px;
   font-family: var(--font-body);
@@ -1347,9 +1397,9 @@ p { color: var(--text-soft); }
   font-size: 0.88rem;
 }
 .form-alert--error {
-  background: rgba(224, 101, 78, 0.12);
-  border: 1px solid rgba(224, 101, 78, 0.4);
-  color: #f0a08e;
+  background: rgba(var(--danger-rgb, 224, 101, 78), 0.12);
+  border: 1px solid rgba(var(--danger-rgb, 224, 101, 78), 0.4);
+  color: var(--danger, #f0a08e);
 }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 
@@ -1722,7 +1772,7 @@ p { color: var(--text-soft); }
   .hero-owner-proof span { width: 30px; height: 30px; }
   .hero-plot { height: 300px; margin: 15px -24px -40px; }
   .plot-marker { grid-template-columns: 30px auto; gap: 7px; font-size: 1rem; }
-  .plot-marker span { width: 30px; height: 30px; font-size: .56rem; }
+  .plot-marker > span { width: 30px; height: 30px; font-size: .56rem; }
   .plot-marker::before { inset-inline-start: -36px; width: 31px; }
   .plot-marker--lawn { top: 6%; left: 54%; }
   .plot-marker--landscaping { top: 28%; left: 28%; }
