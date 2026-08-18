@@ -9,22 +9,33 @@ const ACTIVITY_SECTIONS = [
   { label: "Services", href: "/admin/services" },
   { label: "Gallery", href: "/admin/gallery" },
   { label: "Blog", href: "/admin/blog" },
+  { label: "Customers", href: "/admin/customers" },
 ] as const;
 
 export default async function AdminOverviewPage() {
-  const [leadCount, activeCount, recentLeads, contentMax, serviceMax, galleryImageMax, beforeAfterMax, blogMax] =
-    await Promise.all([
-      prisma.customer.count({ where: { status: "lead" } }),
-      prisma.customer.count({ where: { status: "active" } }),
-      prisma.customer.findMany({ where: { status: "lead" }, orderBy: { createdAt: "desc" }, take: 5 }),
-      // One aggregate per section rather than fetching full rows: Overview
-      // only needs the single latest timestamp, not the records themselves.
-      prisma.contentBlock.aggregate({ _max: { updatedAt: true } }),
-      prisma.service.aggregate({ _max: { updatedAt: true } }),
-      prisma.galleryImage.aggregate({ _max: { updatedAt: true } }),
-      prisma.beforeAfterProject.aggregate({ _max: { updatedAt: true } }),
-      prisma.blogPost.aggregate({ _max: { updatedAt: true } }),
-    ]);
+  const [
+    leadCount,
+    activeCount,
+    recentLeads,
+    contentMax,
+    serviceMax,
+    galleryImageMax,
+    beforeAfterMax,
+    blogMax,
+    customerMax,
+  ] = await Promise.all([
+    prisma.customer.count({ where: { status: "lead" } }),
+    prisma.customer.count({ where: { status: "active" } }),
+    prisma.customer.findMany({ where: { status: "lead" }, orderBy: { createdAt: "desc" }, take: 5 }),
+    // One aggregate per section rather than fetching full rows: Overview
+    // only needs the single latest timestamp, not the records themselves.
+    prisma.contentBlock.aggregate({ _max: { updatedAt: true } }),
+    prisma.service.aggregate({ _max: { updatedAt: true } }),
+    prisma.galleryImage.aggregate({ _max: { updatedAt: true } }),
+    prisma.beforeAfterProject.aggregate({ _max: { updatedAt: true } }),
+    prisma.blogPost.aggregate({ _max: { updatedAt: true } }),
+    prisma.customer.aggregate({ _max: { updatedAt: true } }),
+  ]);
   // Gallery admin shows photo-grid images and before/after projects on one
   // screen, so its activity timestamp is whichever of the two is newer.
   const galleryMax =
@@ -36,6 +47,10 @@ export default async function AdminOverviewPage() {
     Services: serviceMax._max.updatedAt,
     Gallery: galleryMax,
     Blog: blogMax._max.updatedAt,
+    // Includes a brand-new lead coming in, not just an edit to an existing
+    // customer — consistent with every other section here, where adding a
+    // new item counts as activity the same as editing one.
+    Customers: customerMax._max.updatedAt,
   };
 
   return (
