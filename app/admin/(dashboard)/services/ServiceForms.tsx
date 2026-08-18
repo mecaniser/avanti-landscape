@@ -13,9 +13,18 @@ const initialState: ServiceActionState = {};
 // Plain geometry instead of a Unicode glyph (⟳, +, ×): symbol characters carry
 // their own font-dependent optical offset, so flexbox centers the character's
 // line box but not the mark inside it. An SVG path has no such offset.
+//
+// 14px, not 13: the containing circle is 26px, and (26-13)/2 = 6.5 — a
+// fractional margin the browser has to round to the actual device pixel
+// grid, landing on 6px one side and 7px the other. That's a real, physically
+// rendered 1px asymmetry, invisible to getBoundingClientRect() (which
+// reports the ideal laid-out geometry, not the painted result) but visible
+// to an eye looking at the rendered icon. (26-14)/2 = 6 exactly, so there's
+// nothing left to round. CloseIcon at 12px was already even and never had
+// this problem — hence no complaints about that one specifically.
 function ReplaceIcon() {
   return (
-    <svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
       <path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.89" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
       <path d="M13.5 3v3.2h-3.2" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
@@ -24,7 +33,7 @@ function ReplaceIcon() {
 
 function PlusIcon() {
   return (
-    <svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
       <path d="M8 2.5v11M2.5 8h11" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
     </svg>
   );
