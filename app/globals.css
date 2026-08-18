@@ -1752,20 +1752,49 @@ p { color: var(--text-soft); }
 }
 
 /* Mobile nav panel */
+/* Covers the viewport rather than hanging off the header. dvh so mobile
+   browser chrome collapsing does not leave a gap at the bottom. */
 .mobile-nav {
-  position: absolute;
+  position: fixed;
   inset-inline: 0;
-  top: 100%;
+  top: var(--header-h, 64px);
+  bottom: 0;
+  z-index: 60;
   display: none;
   flex-direction: column;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   background: var(--bg-elev);
   border-top: 1px solid var(--surface-line);
-  padding: 10px 0;
+  padding: 10px 0 calc(10px + env(safe-area-inset-bottom));
+}
+
+.mobile-nav-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 55;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+/* The primary conversion action, which otherwise sits below the fold on every
+   page except the homepage. */
+.mobile-nav__cta {
+  margin: 14px 24px 0;
+  padding: 14px 18px !important;
+  border: 0 !important;
+  border-radius: 6px;
+  background: var(--rust, #c2622c);
+  color: #fff !important;
+  text-align: center;
+  min-height: 44px;
 }
 .mobile-nav[hidden] { display: none; }
 .mobile-nav.open { display: flex; }
 .mobile-nav a {
   padding: 14px 24px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
   font-family: var(--font-head);
   font-weight: 600;
   color: var(--text);
