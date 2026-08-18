@@ -3,6 +3,25 @@
    Matches the public site's design language.
    ============================================ */
 
+/* Breakpoint convention for this file: default to max-width: 700px for any
+   new mobile rule — it's already the established norm here (customer record,
+   content forms, before/after admin, account settings, blog toolbar, and the
+   services category/edit-panel collapse all use it). CSS custom properties
+   can't be read inside an @media condition, so this is a written convention
+   to match, not a token to import.
+
+   Two deliberate exceptions exist, each driven by that component's own real
+   constraint rather than an arbitrary choice — matched to 700px, not
+   generalized past it:
+   - 899px: the nav shell's drawer breakpoint. Chosen against the fixed
+     224px sidebar plus how much content-area width remains beside it, not
+     against phone/tablet size classes.
+   - 640px: the responsive-table breakpoint (scroll-shadow and stacked-card
+     variants). Chosen against where a real admin table's content stops
+     fitting its container, tighter than 700px would allow.
+   A fourth breakpoint should not get invented without the same kind of
+   reasoning — reach for 700px first. */
+
 .admin-shell {
   display: flex;
   min-height: 100vh;
@@ -111,7 +130,9 @@
 
 /* Breakpoint: below 900px the 224px fixed sidebar leaves too little room
    for content on phones/tablets-in-portrait, so we switch to a top bar
-   + slide-in drawer. At/above 900px the layout is unchanged from before. */
+   + slide-in drawer. At/above 900px the layout is unchanged from before.
+   Deliberately not this file's default 700px — see the breakpoint note
+   at the top of the file. */
 @media (max-width: 899px) {
   .admin-shell { flex-direction: column; min-height: auto; }
 
@@ -348,12 +369,14 @@
   background-attachment: local, local, scroll, scroll;
 }
 @media (max-width: 640px) {
-  /* Below the breakpoint, let the table claim its natural (intrinsic)
-     width instead of being squeezed to the viewport — cells stop
-     wrapping/truncating, and if that natural width exceeds the screen the
-     wrapper scrolls with the shadow cue showing there's more off-edge.
-     Above 640px the table already fits its container, so none of this
-     applies and the wrapper's gradients sit flush with no visible shadow. */
+  /* 640px, deliberately not this file's default 700px — see the breakpoint
+     note at the top of the file. Below the breakpoint, let the table claim
+     its natural (intrinsic) width instead of being squeezed to the viewport
+     — cells stop wrapping/truncating, and if that natural width exceeds the
+     screen the wrapper scrolls with the shadow cue showing there's more
+     off-edge. Above 640px the table already fits its container, so none of
+     this applies and the wrapper's gradients sit flush with no visible
+     shadow. */
   .admin-table-scroll .admin-table { width: max-content; min-width: 100%; }
   .admin-table-scroll .admin-table th,
   .admin-table-scroll .admin-table td { white-space: nowrap; }
@@ -1254,7 +1277,10 @@
 .service-admin-item__edit summary {
   display: inline-flex;
   align-items: center;
-  min-height: 34px;
+  /* This toggle is the only way into everything below it — the photo
+     controls two lines down were expanded to a real 44px hit area for
+     exactly this reason; the entry point deserves the same floor. */
+  min-height: 44px;
   color: var(--olive-light, #b3d15a);
   cursor: pointer;
   font-family: var(--font-head), "Segoe UI", sans-serif;
@@ -1478,7 +1504,7 @@
   color: var(--text, #e8ebdd);
   font-size: 0.88rem;
 }
-.service-admin-item__delete-confirm-actions {
+.service-admin-item__delete-confirm__actions {
   display: flex;
   align-items: center;
   gap: 14px;
@@ -1502,7 +1528,10 @@
   justify-content: center;
 }
 .service-admin-item__thumb span {
-  font-size: 0.56rem;
+  /* Matches .service-admin-item__photo-card-media span's empty-state size
+     (the larger 140px card) rather than its own arbitrary smaller value —
+     the same "No photo" label shouldn't be the smallest text on the page. */
+  font-size: 0.72rem;
   line-height: 1.2;
   color: var(--text-soft, #a3a992);
   text-align: center;

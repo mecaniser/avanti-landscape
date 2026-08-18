@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { useActionState, useEffect, useRef, useState } from "react";
+import { useActionState, useState } from "react";
+import AdminDeleteConfirm from "@/components/AdminDeleteConfirm";
 import AdminUploadForm from "@/components/AdminUploadForm";
 import DetailsCloseButton from "@/components/DetailsCloseButton";
 import SubmitButton from "../SubmitButton";
@@ -101,22 +102,6 @@ export function EditServiceForm({
   }
   const isDirty = nameValue !== name || descriptionValue !== description;
 
-  // window.confirm() is unreliable here: browsers auto-suppress repeated
-  // dialogs from the same page after the first one or two, so a second delete
-  // attempt can silently do nothing with no visible cause. An inline confirm
-  // step can't be suppressed and doubles as its own feedback.
-  const [confirmingDelete, setConfirmingDelete] = useState(false);
-  // The "Delete this service" button unmounts the instant this flips true,
-  // taking focus with it — left alone, a keyboard user's focus silently
-  // drops to <body> with no indication anything happened. Moving focus onto
-  // Cancel (the safe default, so a stray extra Enter can't confirm a delete)
-  // both keeps focus in the flow and is what gets the change announced to a
-  // screen reader, since there's a new focused element with a name to read.
-  const cancelDeleteRef = useRef<HTMLButtonElement>(null);
-  useEffect(() => {
-    if (confirmingDelete) cancelDeleteRef.current?.focus();
-  }, [confirmingDelete]);
-
   return (
     <>
       {/* Text fields, photo, and the two everyday actions (Save, Close) share one
@@ -214,39 +199,14 @@ export function EditServiceForm({
       </div>
 
       <div className="service-admin-item__delete">
-        {confirmingDelete ? (
-          <form
-            action={deleteAction}
-            className="service-admin-item__delete-confirm"
-            role="group"
-            aria-label={`Confirm delete for ${name}`}
-          >
-            <span id={`delete-confirm-message-${id}`}>Delete &ldquo;{name}&rdquo;? This can&rsquo;t be undone.</span>
-            <div className="service-admin-item__delete-confirm-actions">
-              <SubmitButton className="admin-btn admin-btn--danger" pendingLabel="Deleting…">
-                Yes, delete
-              </SubmitButton>
-              <button
-                ref={cancelDeleteRef}
-                type="button"
-                className="service-admin-item__text-btn"
-                aria-describedby={`delete-confirm-message-${id}`}
-                onClick={() => setConfirmingDelete(false)}
-              >
-                Cancel
-              </button>
-            </div>
-            {deleteState.error && <p className="service-admin-item__feedback service-admin-item__feedback--error" role="alert">{deleteState.error}</p>}
-          </form>
-        ) : (
-          <button
-            type="button"
-            className="service-admin-item__text-btn service-admin-item__text-btn--danger"
-            onClick={() => setConfirmingDelete(true)}
-          >
-            Delete this service
-          </button>
-        )}
+        <AdminDeleteConfirm
+          action={deleteAction}
+          itemLabel={name}
+          triggerLabel="Delete this service"
+          triggerClassName="service-admin-item__text-btn service-admin-item__text-btn--danger"
+          className="service-admin-item__delete-confirm"
+        />
+        {deleteState.error && <p className="service-admin-item__feedback service-admin-item__feedback--error" role="alert">{deleteState.error}</p>}
       </div>
     </>
   );
