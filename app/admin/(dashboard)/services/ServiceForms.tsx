@@ -104,9 +104,14 @@ export function EditServiceForm({
 
   return (
     <>
-      {/* Text fields, photo, and the two everyday actions (Save, Close) share one
-          panel and one visual rhythm. Delete sits apart, below, and reads as a
-          quieter, separate decision rather than a peer of the other buttons. */}
+      {/* In the panel's own corner, not beside Save: Close dismisses the
+          whole edit panel, which isn't what Save changes does (that only
+          ever touches name/description) — sitting next to it as a peer
+          action implied otherwise. */}
+      <DetailsCloseButton className="service-admin-item__edit-close" aria-label="Close edit panel">
+        <CloseIcon />
+      </DetailsCloseButton>
+
       <form action={saveAction} className="admin-form service-admin-item__update-form">
         <div className="content-grid-2">
           <div>
@@ -140,7 +145,6 @@ export function EditServiceForm({
           >
             Save changes
           </SubmitButton>
-          <DetailsCloseButton>Close</DetailsCloseButton>
         </div>
         <Feedback state={saveState} />
       </form>
