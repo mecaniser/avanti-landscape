@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { useActionState, useEffect, useRef, useState } from "react";
+import { useActionState, useState } from "react";
+import AdminDeleteConfirm from "@/components/AdminDeleteConfirm";
 import AdminUploadForm from "@/components/AdminUploadForm";
 import DetailsCloseButton from "@/components/DetailsCloseButton";
 import SubmitButton from "../SubmitButton";
@@ -12,9 +13,18 @@ const initialState: ServiceActionState = {};
 // Plain geometry instead of a Unicode glyph (⟳, +, ×): symbol characters carry
 // their own font-dependent optical offset, so flexbox centers the character's
 // line box but not the mark inside it. An SVG path has no such offset.
+//
+// 14px, not 13: the containing circle is 26px, and (26-13)/2 = 6.5 — a
+// fractional margin the browser has to round to the actual device pixel
+// grid, landing on 6px one side and 7px the other. That's a real, physically
+// rendered 1px asymmetry, invisible to getBoundingClientRect() (which
+// reports the ideal laid-out geometry, not the painted result) but visible
+// to an eye looking at the rendered icon. (26-14)/2 = 6 exactly, so there's
+// nothing left to round. CloseIcon at 12px was already even and never had
+// this problem — hence no complaints about that one specifically.
 function ReplaceIcon() {
   return (
-    <svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
       <path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.89" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
       <path d="M13.5 3v3.2h-3.2" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
@@ -23,7 +33,7 @@ function ReplaceIcon() {
 
 function PlusIcon() {
   return (
-    <svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
       <path d="M8 2.5v11M2.5 8h11" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
     </svg>
   );
@@ -101,27 +111,16 @@ export function EditServiceForm({
   }
   const isDirty = nameValue !== name || descriptionValue !== description;
 
-  // window.confirm() is unreliable here: browsers auto-suppress repeated
-  // dialogs from the same page after the first one or two, so a second delete
-  // attempt can silently do nothing with no visible cause. An inline confirm
-  // step can't be suppressed and doubles as its own feedback.
-  const [confirmingDelete, setConfirmingDelete] = useState(false);
-  // The "Delete this service" button unmounts the instant this flips true,
-  // taking focus with it — left alone, a keyboard user's focus silently
-  // drops to <body> with no indication anything happened. Moving focus onto
-  // Cancel (the safe default, so a stray extra Enter can't confirm a delete)
-  // both keeps focus in the flow and is what gets the change announced to a
-  // screen reader, since there's a new focused element with a name to read.
-  const cancelDeleteRef = useRef<HTMLButtonElement>(null);
-  useEffect(() => {
-    if (confirmingDelete) cancelDeleteRef.current?.focus();
-  }, [confirmingDelete]);
-
   return (
     <>
-      {/* Text fields, photo, and the two everyday actions (Save, Close) share one
-          panel and one visual rhythm. Delete sits apart, below, and reads as a
-          quieter, separate decision rather than a peer of the other buttons. */}
+      {/* In the panel's own corner, not beside Save: Close dismisses the
+          whole edit panel, which isn't what Save changes does (that only
+          ever touches name/description) — sitting next to it as a peer
+          action implied otherwise. */}
+      <DetailsCloseButton className="service-admin-item__edit-close" aria-label="Close edit panel">
+        <CloseIcon />
+      </DetailsCloseButton>
+
       <form action={saveAction} className="admin-form service-admin-item__update-form">
         <div className="content-grid-2">
           <div>
@@ -155,7 +154,6 @@ export function EditServiceForm({
           >
             Save changes
           </SubmitButton>
-          <DetailsCloseButton>Close</DetailsCloseButton>
         </div>
         <Feedback state={saveState} />
       </form>
@@ -214,39 +212,14 @@ export function EditServiceForm({
       </div>
 
       <div className="service-admin-item__delete">
-        {confirmingDelete ? (
-          <form
-            action={deleteAction}
-            className="service-admin-item__delete-confirm"
-            role="group"
-            aria-label={`Confirm delete for ${name}`}
-          >
-            <span id={`delete-confirm-message-${id}`}>Delete &ldquo;{name}&rdquo;? This can&rsquo;t be undone.</span>
-            <div className="service-admin-item__delete-confirm-actions">
-              <SubmitButton className="admin-btn admin-btn--danger" pendingLabel="Deleting…">
-                Yes, delete
-              </SubmitButton>
-              <button
-                ref={cancelDeleteRef}
-                type="button"
-                className="service-admin-item__text-btn"
-                aria-describedby={`delete-confirm-message-${id}`}
-                onClick={() => setConfirmingDelete(false)}
-              >
-                Cancel
-              </button>
-            </div>
-            {deleteState.error && <p className="service-admin-item__feedback service-admin-item__feedback--error" role="alert">{deleteState.error}</p>}
-          </form>
-        ) : (
-          <button
-            type="button"
-            className="service-admin-item__text-btn service-admin-item__text-btn--danger"
-            onClick={() => setConfirmingDelete(true)}
-          >
-            Delete this service
-          </button>
-        )}
+        <AdminDeleteConfirm
+          action={deleteAction}
+          itemLabel={name}
+          triggerLabel="Delete this service"
+          triggerClassName="service-admin-item__text-btn service-admin-item__text-btn--danger"
+          className="service-admin-item__delete-confirm"
+        />
+        {deleteState.error && <p className="service-admin-item__feedback service-admin-item__feedback--error" role="alert">{deleteState.error}</p>}
       </div>
     </>
   );

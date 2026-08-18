@@ -43,6 +43,14 @@ export default async function ServicesAdminPage() {
               </div>
             </details>
 
+            {/* A responsive grid, not a collapse: the real waste here was
+                horizontal, not vertical. .admin-main:has(.services-admin)
+                already drops this page's width cap, so a single column was
+                sitting in a narrow strip while a wide monitor went unused.
+                auto-fill/minmax naturally goes to 1 column on a phone and
+                2-4 on a desktop with no separate breakpoint needed, and
+                nothing is ever hidden — every service stays visible at
+                every width. */}
             {categoryServices.length === 0 ? (
               <p className="subtitle" style={{ margin: 0 }}>No services in this category yet.</p>
             ) : (

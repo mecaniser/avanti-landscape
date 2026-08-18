@@ -3,6 +3,25 @@
    Matches the public site's design language.
    ============================================ */
 
+/* Breakpoint convention for this file: default to max-width: 700px for any
+   new mobile rule — it's already the established norm here (customer record,
+   content forms, before/after admin, account settings, blog toolbar, and the
+   services category/edit-panel collapse all use it). CSS custom properties
+   can't be read inside an @media condition, so this is a written convention
+   to match, not a token to import.
+
+   Two deliberate exceptions exist, each driven by that component's own real
+   constraint rather than an arbitrary choice — matched to 700px, not
+   generalized past it:
+   - 899px: the nav shell's drawer breakpoint. Chosen against the fixed
+     224px sidebar plus how much content-area width remains beside it, not
+     against phone/tablet size classes.
+   - 640px: the responsive-table breakpoint (scroll-shadow and stacked-card
+     variants). Chosen against where a real admin table's content stops
+     fitting its container, tighter than 700px would allow.
+   A fourth breakpoint should not get invented without the same kind of
+   reasoning — reach for 700px first. */
+
 .admin-shell {
   display: flex;
   min-height: 100vh;
@@ -20,6 +39,19 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
+  /* .admin-shell is a row flex container, whose default align-items:
+     stretch makes every direct child match the tallest sibling's height.
+     With enough services listed, .admin-main grows taller than the
+     viewport, and the sidebar stretched right along with it — pinning
+     Sign Out (margin-top: auto below) to the bottom of that stretched
+     height instead of the bottom of the *screen*, so reaching it meant
+     scrolling through the entire services list first. Sticky decouples
+     the sidebar's effective height from its sibling's, so it — and Sign
+     Out — stay reachable within one viewport regardless of content length. */
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
 }
 
 .admin-sidebar h1 {
@@ -111,7 +143,9 @@
 
 /* Breakpoint: below 900px the 224px fixed sidebar leaves too little room
    for content on phones/tablets-in-portrait, so we switch to a top bar
-   + slide-in drawer. At/above 900px the layout is unchanged from before. */
+   + slide-in drawer. At/above 900px the layout is unchanged from before.
+   Deliberately not this file's default 700px — see the breakpoint note
+   at the top of the file. */
 @media (max-width: 899px) {
   .admin-shell { flex-direction: column; min-height: auto; }
 
@@ -139,29 +173,6 @@
     font-family: var(--font-head), "Segoe UI", sans-serif;
     font-size: 1rem;
     color: var(--heading, #f2f4e8);
-  }
-
-  .admin-topbar-actions {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .admin-topbar-signout {
-    background: transparent;
-    border: 1px solid var(--surface-line, #333825);
-    color: var(--text-soft, #a3a992);
-    padding: 10px 12px;
-    min-height: 44px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 0.86rem;
-    font-family: inherit;
-    transition: border-color .15s ease, color .15s ease;
-  }
-  .admin-topbar-signout:hover {
-    border-color: var(--olive, #8fae3c);
-    color: var(--olive-light, #b3d15a);
   }
 
   .admin-menu-btn {
@@ -256,11 +267,49 @@
     background: rgba(139, 174, 60, 0.12);
     color: var(--olive-light, #b3d15a);
   }
+  /* Pre-existing gap, caught while already in this file for the Sign Out
+     move: no drawer link ever had its own focus ring, falling back to
+     the browser default — the same class of miss fixed a few times
+     already this session on other custom controls. */
+  .admin-drawer-nav a:focus-visible {
+    outline: 2px solid var(--olive-light, #b3d15a);
+    outline-offset: -2px;
+  }
   .admin-drawer-nav a.admin-view-site {
     margin-top: 8px;
     color: var(--olive-light, #b3d15a) !important;
     font-weight: 600;
   }
+
+  /* Matches .admin-sidebar form on desktop: separated by a rule, bordered
+     rather than filled, so Sign Out reads as a distinct, deliberate action
+     at the bottom of the list rather than another destination in it. */
+  .admin-drawer-signout {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--surface-line, #333825);
+  }
+  .admin-drawer-signout button {
+    width: 100%;
+    min-height: 48px;
+    background: transparent;
+    border: 1px solid var(--surface-line, #333825);
+    border-radius: 8px;
+    color: var(--text-soft, #a3a992);
+    font-family: inherit;
+    font-size: 0.92rem;
+    cursor: pointer;
+    transition: border-color 150ms ease, color 150ms ease, transform 160ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+  .admin-drawer-signout button:hover {
+    border-color: var(--olive, #8fae3c);
+    color: var(--olive-light, #b3d15a);
+  }
+  .admin-drawer-signout button:focus-visible {
+    outline: 2px solid var(--olive-light, #b3d15a);
+    outline-offset: 2px;
+  }
+  .admin-drawer-signout button:active { transform: scale(0.98); }
 }
 
 .admin-main h2 {
@@ -348,12 +397,14 @@
   background-attachment: local, local, scroll, scroll;
 }
 @media (max-width: 640px) {
-  /* Below the breakpoint, let the table claim its natural (intrinsic)
-     width instead of being squeezed to the viewport — cells stop
-     wrapping/truncating, and if that natural width exceeds the screen the
-     wrapper scrolls with the shadow cue showing there's more off-edge.
-     Above 640px the table already fits its container, so none of this
-     applies and the wrapper's gradients sit flush with no visible shadow. */
+  /* 640px, deliberately not this file's default 700px — see the breakpoint
+     note at the top of the file. Below the breakpoint, let the table claim
+     its natural (intrinsic) width instead of being squeezed to the viewport
+     — cells stop wrapping/truncating, and if that natural width exceeds the
+     screen the wrapper scrolls with the shadow cue showing there's more
+     off-edge. Above 640px the table already fits its container, so none of
+     this applies and the wrapper's gradients sit flush with no visible
+     shadow. */
   .admin-table-scroll .admin-table { width: max-content; min-width: 100%; }
   .admin-table-scroll .admin-table th,
   .admin-table-scroll .admin-table td { white-space: nowrap; }
@@ -866,12 +917,29 @@
 }
 
 /* Saved before/after slides read as their public proof first; editing is opt-in. */
+/* Same technique as .service-admin-list, sized for what this card actually
+   needs: .ba-admin-preview (the before/after comparison row) alone wants
+   ~476px, and the edit form's two-column layout wants comparable room, so
+   the floor here is ~520px rather than Services' 320px — a narrower one
+   would just force the preview grid to fight the card for space. Before/
+   after pairs take real work to produce and stay in the single digits, so
+   this mainly buys 2 columns on a wide monitor rather than Services' 3-4;
+   real but smaller, which is why it waited until Services was proven. */
+.ba-admin-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(520px, 100%), 1fr));
+  gap: 14px;
+}
 .ba-admin-item {
   padding: 16px;
   border: 1px solid var(--surface-line, #333825);
   border-radius: 10px;
   background: var(--bg-elev-2, #16190f);
 }
+/* The edit form (two photo-replace fields plus caption/subtext) needs more
+   room than a single grid column comfortably gives — same full-width-on-
+   open mechanism as Services' :has(.service-admin-item__edit[open]). */
+.ba-admin-item:has(.ba-admin-edit[open]) { grid-column: 1 / -1; }
 .ba-admin-item__head {
   display: flex;
   align-items: center;
@@ -1111,7 +1179,13 @@
 
 .admin-grid-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  /* min(160px, 100%): safe today since 160px fits any realistic mobile
+     container, but a bare 160px minimum can force real overflow on a
+     narrower one — measured and confirmed for the same pattern at 320px
+     on the Services grid (27px of actual overflow at 375px). Guarding it
+     here too rather than leaving the same fragile pattern for the next
+     person to raise past 160px without knowing why it matters. */
+  grid-template-columns: repeat(auto-fill, minmax(min(160px, 100%), 1fr));
   gap: 16px;
 }
 
@@ -1226,14 +1300,39 @@
   gap: 10px;
   margin-top: 12px;
 }
-.service-admin-list { border-top: 1px solid var(--surface-line, #333825); }
-.service-admin-item { border-bottom: 1px solid var(--surface-line, #333825); }
-.service-admin-item:last-child { border-bottom: 0; }
+/* A grid, not a stacked list with dividers: .admin-main:has(.services-admin)
+   already removes this page's width cap, so on a real desktop monitor a
+   single column sat in a narrow strip while most of the screen went
+   unused. auto-fill/minmax goes to 1 column on a phone and 2-4 on a wide
+   desktop with no separate breakpoint, and nothing is ever hidden to get
+   there — every service in a category stays visible at every width. */
+.service-admin-list {
+  display: grid;
+  /* min(320px, 100%), not a bare 320px: a container narrower than the
+     stated minimum (a real case here — .admin-card's 24px horizontal
+     padding leaves well under 320px at a 375px viewport) can force the
+     track to overflow rather than shrink, a known gotcha of this pattern.
+     Clamping the minimum to the container's own width removes the
+     possibility entirely, with no media query needed either way. */
+  grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr));
+  gap: 14px;
+}
+.service-admin-item {
+  border: 1px solid var(--surface-line, #333825);
+  border-radius: 10px;
+  padding: 14px;
+  background: var(--bg-elev, #171a0f);
+}
+/* The edit panel needs ~640px, wider than one grid column. Rather than
+   fight the grid or duplicate the panel's width logic here, the card
+   itself spans every column the moment its own edit panel opens — :has()
+   is already an established technique in this file
+   (.admin-main:has(.services-admin) above), not a new dependency. */
+.service-admin-item:has(.service-admin-item__edit[open]) { grid-column: 1 / -1; }
 .service-admin-item__summary {
   display: flex;
   align-items: flex-start;
   gap: 24px;
-  padding: 16px 4px 0;
 }
 .service-admin-item__summary > div { min-width: 0; }
 .service-admin-item__summary > .service-admin-item__text { flex: 1; }
@@ -1250,11 +1349,16 @@
   font-size: .9rem;
   line-height: 1.5;
 }
-.service-admin-item__edit { display: block; padding: 8px 4px 16px; }
+/* Horizontal padding dropped to 0: the card itself now supplies it (14px),
+   where before the card had none and each inner element padded itself. */
+.service-admin-item__edit { display: block; padding: 8px 0 0; }
 .service-admin-item__edit summary {
   display: inline-flex;
   align-items: center;
-  min-height: 34px;
+  /* This toggle is the only way into everything below it — the photo
+     controls two lines down were expanded to a real 44px hit area for
+     exactly this reason; the entry point deserves the same floor. */
+  min-height: 44px;
   color: var(--olive-light, #b3d15a);
   cursor: pointer;
   font-family: var(--font-head), "Segoe UI", sans-serif;
@@ -1273,12 +1377,11 @@
 .service-admin-item__edit-body {
   display: grid;
   grid-template-areas:
-    "fields fields"
-    "photo  actions"
-    "photo  feedback"
-    "delete delete";
-  grid-template-columns: 168px 1fr;
-  column-gap: 20px;
+    "fields"
+    "actions"
+    "feedback"
+    "photo"
+    "delete";
   row-gap: 4px;
   width: min(640px, 100%);
   margin-top: 6px;
@@ -1286,21 +1389,71 @@
   border: 1px solid var(--surface-line, #333825);
   border-radius: 10px;
   background: var(--bg-elev-2, #16190f);
+  /* Anchors the corner close button (.service-admin-item__edit-close),
+     which is rendered as EditServiceForm's first element rather than a
+     sibling of Save — Close now dismisses the panel from its own corner,
+     not from beside an action it isn't part of. */
+  position: relative;
+  /* Native <details> can't animate its own open/close height — kept native
+     here regardless, for its exclusive-accordion name="service-edit" group
+     behavior, which a controlled/JS version would have to reimplement by
+     hand. This can't smooth the outer snap, but it can soften the content
+     appearing instantly inside it: a 640px panel with a full form, photo
+     controls, and delete, all popping into place at once, otherwise.
+     @starting-style animates the moment content the UA stylesheet had
+     display:none goes visible — exactly what opening <details> triggers.
+     No JS fallback: unsupported browsers just skip the fade, the panel
+     still opens and works, so this stays pure CSS. */
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 200ms ease-out, transform 200ms ease-out;
+
+  @starting-style {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
 }
 .service-admin-item__update-form { display: contents; }
 .service-admin-item__edit-body .content-grid-2 {
   grid-area: fields;
   gap: 0 16px;
+  /* Clears .service-admin-item__edit-close (top: 10px; right: 10px; 28px
+     wide), the same reserved-corner technique already used for
+     .service-admin-category__head against its own floating Add-service
+     button — otherwise the close button sits directly on top of the
+     Short description label. */
+  padding-right: 40px;
+}
+.service-admin-item__edit-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: transparent;
+  border: 1px solid var(--surface-line, #333825);
+  color: var(--text-soft, #a3a992);
+  cursor: pointer;
+  transition: background 150ms ease, border-color 150ms ease, color 150ms ease, transform 160ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+.service-admin-item__edit-close:hover {
+  border-color: var(--olive, #8fae3c);
+  color: var(--olive-light, #b3d15a);
+  background: rgba(139, 174, 60, 0.08);
+}
+.service-admin-item__edit-close:active { transform: scale(0.92); }
+.service-admin-item__edit-close:focus-visible {
+  outline: 2px solid var(--olive-light, #b3d15a);
+  outline-offset: 2px;
 }
 .service-admin-item__update-form > .admin-btn {
   margin: 0;
 }
 .service-admin-item__update-form > .service-admin-item__actions {
-  /* No justify-self: start here — a wrapping flex row as a grid item with
-     start-alignment sizes to its narrowest child's min-content in some
-     browsers, wrapping "Close" onto its own line even with room to spare.
-     Left stretched, the flex container's own justify-content keeps the
-     buttons left-aligned without that bug. */
   grid-area: actions;
   margin-top: 4px;
 }
@@ -1314,14 +1467,16 @@
 }
 .service-admin-item__feedback--error { color: var(--danger, #f0a08e); }
 
-/* Photo: same panel as the name/description fields beside it, not a boxed-off
-   subsection, so it reads as part of the same edit rather than a separate task.
-   No divider here — a border-top under just this column, next to an actions
-   column with no matching line, would read as lopsided rather than as a
-   shared row; the grid's own row-gap already separates it from fields above. */
+/* A separate block from the fields/Save above it, with its own divider —
+   deliberately, not merely a leftover row: Photo saves itself the instant a
+   file is picked (via its own Replace/Remove controls), independently of
+   Save changes, which only ever touches name/description. Sitting beside
+   Save used to blur that; a full-width block below a rule states it. */
 .service-admin-item__photo-field {
   grid-area: photo;
-  margin-top: 10px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--surface-line, #333825);
 }
 .service-admin-item__photo-label {
   display: block;
@@ -1380,9 +1535,15 @@
   border: 1px solid var(--surface-line, #333825);
   font-size: 0.95rem;
   line-height: 1;
+  transition: background 150ms ease, border-color 150ms ease, transform 160ms cubic-bezier(0.23, 1, 0.32, 1);
   cursor: pointer;
 }
 .service-admin-item__photo-replace-btn:hover { background: var(--bg-elev-2, #16190f); border-color: var(--olive, #8fae3c); }
+/* Deliberately stronger than the usual 0.95-0.98: at 26px, a 3-5% scale
+   change is sub-pixel and unregisterable — the whole point of press
+   feedback (confirming the tap landed) needs more reduction to read at all
+   on a control this small. */
+.service-admin-item__photo-replace-btn:active { transform: scale(0.92); }
 .service-admin-item__photo-replace:focus-within .service-admin-item__photo-replace-btn {
   outline: 2px solid var(--olive-light, #b3d15a);
   outline-offset: 2px;
@@ -1395,6 +1556,18 @@
   content: "";
   position: absolute;
   inset: -9px;
+}
+/* AdminUploadForm always renders this status region, even when idle and
+   empty — most call sites are invisible at rest because they carry no
+   padding/background of their own, but this page's compact styling gave
+   it both. An empty div with padding+background still paints a visible
+   box: the stray mark under the photo's Replace button. Scoped to :empty
+   so it only collapses when there's genuinely nothing to show, not
+   during an actual upload. */
+.service-admin-item__photo-replace .admin-upload-status:empty {
+  padding: 0;
+  min-height: 0;
+  background: transparent;
 }
 .service-admin-item__photo-replace .admin-upload-status {
   margin-top: 0;
@@ -1424,8 +1597,21 @@
   border: 1px solid rgba(var(--danger-rgb, 224, 101, 78), 0.4);
   font-size: 1rem;
   line-height: 1;
+  overflow: hidden;
+  transition: background 150ms ease, border-color 150ms ease, transform 160ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 .service-admin-item__photo-delete-btn:hover { background: rgba(var(--danger-rgb, 224, 101, 78), 0.16); border-color: var(--danger-border, #e0654e); }
+.service-admin-item__photo-delete-btn:active { transform: scale(0.92); }
+/* SubmitButton's pending state is a 13px spinner plus an 8px margin plus the
+   pendingLabel text — sized for a normal button, not this 26px icon circle.
+   Together they're wider than the circle itself, and nothing here clips
+   them, so the spinner would visibly break out of its own circular shape
+   at the exact moment a user is watching for feedback. The icon-sized
+   circle only has room for one pending cue; drop the spinner graphic and
+   let the "…" pendingLabel alone signal pending, centered like the icon
+   it replaces. overflow: hidden above is the backstop if this is ever
+   reused with a longer pendingLabel. */
+.service-admin-item__photo-delete-btn .admin-spinner { display: none; }
 .service-admin-item__photo-delete-btn:focus-visible {
   outline: 2px solid var(--danger, #f0a08e);
   outline-offset: 2px;
@@ -1456,10 +1642,25 @@
   text-decoration: underline;
   text-underline-offset: 3px;
   cursor: pointer;
+  transition: color 150ms ease;
 }
 .service-admin-item__text-btn:hover { color: var(--text, #e8ebdd); }
+/* Every other custom interactive control on this page (the edit toggle, the
+   photo overlay buttons) gets its own explicit focus-visible ring in this
+   same outline: 2px solid / outline-offset pattern — this was the one gap,
+   falling back to the browser default outline instead. */
+.service-admin-item__text-btn:focus-visible {
+  outline: 2px solid var(--olive-light, #b3d15a);
+  outline-offset: 3px;
+}
 .service-admin-item__text-btn--danger { color: var(--danger-dim, #d98a76); }
 .service-admin-item__text-btn--danger:hover { color: var(--danger, #f0a08e); }
+/* Danger-colored ring for the danger-colored trigger, matching the sibling
+   photo-delete-btn's same choice for the same category of action on this
+   page, rather than the page's default olive-light. */
+.service-admin-item__text-btn--danger:focus-visible {
+  outline: 2px solid var(--danger, #f0a08e);
+}
 
 .service-admin-item__delete {
   grid-area: delete;
@@ -1478,7 +1679,7 @@
   color: var(--text, #e8ebdd);
   font-size: 0.88rem;
 }
-.service-admin-item__delete-confirm-actions {
+.service-admin-item__delete-confirm__actions {
   display: flex;
   align-items: center;
   gap: 14px;
@@ -1502,7 +1703,10 @@
   justify-content: center;
 }
 .service-admin-item__thumb span {
-  font-size: 0.56rem;
+  /* Matches .service-admin-item__photo-card-media span's empty-state size
+     (the larger 140px card) rather than its own arbitrary smaller value —
+     the same "No photo" label shouldn't be the smallest text on the page. */
+  font-size: 0.72rem;
   line-height: 1.2;
   color: var(--text-soft, #a3a992);
   text-align: center;
@@ -1808,13 +2012,6 @@
   .service-admin-item__actions { align-items: stretch; flex-direction: column; }
   .service-admin-category__create-actions .admin-btn,
   .service-admin-item__actions .admin-btn { width: 100%; }
-  /* The two-column photo/actions layout needs the width a wide screen has
-     to spare; below that, fall back to the original single stacked column. */
-  .service-admin-item__edit-body {
-    grid-template-areas: "fields" "photo" "actions" "feedback" "delete";
-    grid-template-columns: 1fr;
-    width: 100%;
-  }
 }
 
 .admin-flash {

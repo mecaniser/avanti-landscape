@@ -92,7 +92,7 @@ export default async function GalleryAdminPage() {
         {projects.length === 0 ? (
           <p className="subtitle" style={{ margin: 0 }}>No before/after projects yet.</p>
         ) : (
-          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+          <div className="ba-admin-list">
             {projects.map((proj, i) => {
               const del = deleteBeforeAfterProject.bind(null, proj.id);
               return (
