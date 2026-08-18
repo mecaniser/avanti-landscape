@@ -1742,6 +1742,27 @@
 }
 .blog-admin__actions-cell { width: 1%; white-space: nowrap; }
 .blog-admin__edit { padding: 7px 12px; font-size: .8rem; }
+.blog-admin__thumb-col { width: 1%; }
+/* Same 48px thumb as the services list: shows which posts already have a
+   cover image without opening each one to check. */
+.blog-admin__thumb {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--surface-line, #333825);
+  background: var(--bg-elev, #202415);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.blog-admin__thumb span {
+  font-size: 0.72rem;
+  line-height: 1.2;
+  text-align: center;
+  color: var(--text-soft, #a3a992);
+}
 
 /* Account separates public business settings from protected sign-in changes. */
 .account-settings { max-width: 980px; }
