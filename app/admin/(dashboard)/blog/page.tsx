@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { formatUpdatedAt, latestUpdatedAt } from "@/lib/format";
@@ -26,11 +27,22 @@ export default async function BlogAdminPage() {
           <div className="admin-table-scroll">
             <table className="admin-table">
               <thead>
-                <tr><th>Title</th><th>Tag</th><th>Status</th><th>Updated</th><th>Actions</th></tr>
+                <tr><th className="blog-admin__thumb-col"><span className="sr-only">Cover</span></th><th>Title</th><th>Tag</th><th>Status</th><th>Updated</th><th>Actions</th></tr>
               </thead>
               <tbody>
                 {posts.map((post) => (
                   <tr key={post.id}>
+                    <td>
+                      {/* Shows at a glance which posts already have a cover image,
+                          without opening each one to check. */}
+                      <div className="blog-admin__thumb" aria-hidden={!post.coverImage}>
+                        {post.coverImage ? (
+                          <Image src={post.coverImage} alt="" fill sizes="48px" style={{ objectFit: "cover" }} />
+                        ) : (
+                          <span>No photo</span>
+                        )}
+                      </div>
+                    </td>
                     <td>
                       <strong className="blog-admin__post-title">{post.title}</strong>
                       {post.excerpt && <p className="blog-admin__excerpt">{post.excerpt}</p>}
