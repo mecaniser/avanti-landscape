@@ -1,9 +1,29 @@
 import type { Metadata } from "next";
+import { Barlow_Condensed, Manrope } from "next/font/google";
 import SiteAnalytics from "@/components/SiteAnalytics";
 import JsonLd from "@/components/JsonLd";
 import { buildLocalBusinessSchema } from "@/lib/schema";
 import { OG_IMAGE, SITE_NAME, SITE_URL } from "@/lib/site";
 import "./globals.css";
+
+// Self-hosted via next/font instead of a <link> to fonts.googleapis.com: that
+// link was blocking first paint by ~800ms on every page (round trip to
+// Google's CSS endpoint, then another to gstatic for the font files). Fonts
+// exposed as CSS variables here and chained into --font-head/--font-body in
+// globals.css, so no other CSS had to change.
+const barlowCondensed = Barlow_Condensed({
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+  variable: "--font-head-nf",
+  display: "swap",
+});
+
+const manrope = Manrope({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-body-nf",
+  display: "swap",
+});
 
 const gaMeasurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 
@@ -47,17 +67,7 @@ export default async function RootLayout({
   const localBusiness = await buildLocalBusinessSchema();
 
   return (
-    <html lang="en">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        {/* Font files are served from gstatic, not googleapis: without this
-            the preconnect above saves almost nothing. */}
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
-      </head>
+    <html lang="en" className={`${barlowCondensed.variable} ${manrope.variable}`}>
       <body>
         {localBusiness && <JsonLd data={localBusiness} />}
         <template dangerouslySetInnerHTML={{ __html: "<!-- impeccable:home-property-plan|THESIS: A living property map turns four services into one accountable crew, refusing the generic service-card hero. OWN-WORLD: Field green, survey linen, graphite contours, lichen markers, stake orange. STORY: Discover the whole-property crew, choose a route, see real work, request a quote or call. FIRST VIEWPORT: Hero copy left; video property field and plotted markers right; equal actions below. FORM: Property Plan, approved comp home-property-plan-guided-route.png, seed 3c89f15e. FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, and DESIGN.md -->" }} />

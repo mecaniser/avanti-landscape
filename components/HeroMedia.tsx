@@ -64,6 +64,7 @@ export default function HeroMedia({ poster, video }: { poster: string; video: st
           aria-hidden="true"
           fill
           priority
+          fetchPriority="high"
           sizes="100vw"
         />
         {video && canPlayVideo && (
