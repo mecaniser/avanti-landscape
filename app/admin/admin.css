@@ -1450,8 +1450,19 @@
   border: 1px solid rgba(var(--danger-rgb, 224, 101, 78), 0.4);
   font-size: 1rem;
   line-height: 1;
+  overflow: hidden;
 }
 .service-admin-item__photo-delete-btn:hover { background: rgba(var(--danger-rgb, 224, 101, 78), 0.16); border-color: var(--danger-border, #e0654e); }
+/* SubmitButton's pending state is a 13px spinner plus an 8px margin plus the
+   pendingLabel text — sized for a normal button, not this 26px icon circle.
+   Together they're wider than the circle itself, and nothing here clips
+   them, so the spinner would visibly break out of its own circular shape
+   at the exact moment a user is watching for feedback. The icon-sized
+   circle only has room for one pending cue; drop the spinner graphic and
+   let the "…" pendingLabel alone signal pending, centered like the icon
+   it replaces. overflow: hidden above is the backstop if this is ever
+   reused with a longer pendingLabel. */
+.service-admin-item__photo-delete-btn .admin-spinner { display: none; }
 .service-admin-item__photo-delete-btn:focus-visible {
   outline: 2px solid var(--danger, #f0a08e);
   outline-offset: 2px;
@@ -1484,8 +1495,22 @@
   cursor: pointer;
 }
 .service-admin-item__text-btn:hover { color: var(--text, #e8ebdd); }
+/* Every other custom interactive control on this page (the edit toggle, the
+   photo overlay buttons) gets its own explicit focus-visible ring in this
+   same outline: 2px solid / outline-offset pattern — this was the one gap,
+   falling back to the browser default outline instead. */
+.service-admin-item__text-btn:focus-visible {
+  outline: 2px solid var(--olive-light, #b3d15a);
+  outline-offset: 3px;
+}
 .service-admin-item__text-btn--danger { color: var(--danger-dim, #d98a76); }
 .service-admin-item__text-btn--danger:hover { color: var(--danger, #f0a08e); }
+/* Danger-colored ring for the danger-colored trigger, matching the sibling
+   photo-delete-btn's same choice for the same category of action on this
+   page, rather than the page's default olive-light. */
+.service-admin-item__text-btn--danger:focus-visible {
+  outline: 2px solid var(--danger, #f0a08e);
+}
 
 .service-admin-item__delete {
   grid-area: delete;
