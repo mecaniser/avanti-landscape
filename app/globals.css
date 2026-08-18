@@ -1058,6 +1058,15 @@ p { color: var(--text-soft); }
 }
 .cta-band h2 { color: #241c04; margin-bottom: 6px; }
 .cta-band p { color: #3d3208; opacity: 0.9; }
+/* .cta-band p and .article p (globals.css, blog article body) are tied at
+   one class plus one element each, so whichever is declared later in the
+   file wins the cascade — .article p, since it comes after this block. That
+   silently overrides the dark CTA text with --text (#e8ebdd, meant for a
+   dark background) wherever a .cta-band sits inside .article, which is
+   exactly the blog post CTA: pale-on-cream, unreadable. This one rule out-
+   specifies it regardless of source order, rather than depending on this
+   block staying below .article p in the file. */
+.article .cta-band p { color: #3d3208; opacity: 0.9; }
 
 /* Why choose us */
 .stat-grid {
