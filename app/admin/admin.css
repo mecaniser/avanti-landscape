@@ -1214,72 +1214,20 @@
 }
 
 /* Services use the same read-first pattern as gallery content: compact records, forms on demand. */
-/* .service-admin-category__head is now the <h3> itself (see CategorySection
-   in ServiceForms.tsx) — margin: 0 keeps it from adding its own heading
-   spacing on top of the flex/button layout below. */
-.service-admin-category__head { margin: 0; padding-right: 160px; }
-.service-admin-category__head-btn {
+.service-admin-category__head {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 20px;
-  width: 100%;
   margin-bottom: 12px;
-  padding: 6px 8px;
-  margin-inline: -8px;
-  border: none;
-  border-radius: 8px;
-  background: transparent;
-  color: inherit;
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-  transition: background 150ms ease, transform 160ms cubic-bezier(0.23, 1, 0.32, 1);
+  padding-right: 160px;
 }
-.service-admin-category__head-btn:hover { background: rgba(139, 174, 60, 0.08); }
-.service-admin-category__head-btn:active { transform: scale(0.99); }
-.service-admin-category__head-btn:focus-visible {
-  outline: 2px solid var(--olive-light, #b3d15a);
-  outline-offset: 2px;
-}
-.service-admin-category__head-text { display: block; min-width: 0; }
-.service-admin-category__head-title {
-  display: block;
-  color: var(--heading, #f2f4e8);
-  font-family: var(--font-head), "Segoe UI", sans-serif;
-  font-size: 1.02rem;
-  font-weight: 600;
-}
-.service-admin-category__head-count {
-  display: block;
-  margin-top: 4px;
+.service-admin-category__head h3 { margin: 0; }
+.service-admin-category__head p {
+  margin: 4px 0 0;
   color: var(--text-soft, #a3a992);
   font-size: .85rem;
-  font-weight: 400;
 }
-.service-admin-category__chevron {
-  flex-shrink: 0;
-  display: flex;
-  color: var(--text-soft, #a3a992);
-  transition: transform 220ms cubic-bezier(0.23, 1, 0.32, 1);
-}
-.service-admin-category__chevron[data-open="true"] { transform: rotate(180deg); }
-
-/* The animate-to-auto-height trick: a single-row grid transitioning between
-   0fr and 1fr sizes against the content's real height with no JS
-   measurement, unlike <details> (used for Add service and Edit service
-   right beside this), which can't animate height at all on its own. The
-   inner wrapper's overflow: hidden clips content during the transition;
-   min-height: 0 overrides grid's default auto-sizing floor, which would
-   otherwise stop the row from ever reaching a true 0fr collapse. */
-.service-admin-category__collapse {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 240ms cubic-bezier(0.23, 1, 0.32, 1);
-}
-.service-admin-category__collapse[data-open="true"] { grid-template-rows: 1fr; }
-.service-admin-category__collapse-inner { overflow: hidden; min-height: 0; }
-
 .service-admin-category { position: relative; }
 .service-admin-category__create { margin: 0; }
 .service-admin-category__create > summary {
@@ -1314,14 +1262,39 @@
   gap: 10px;
   margin-top: 12px;
 }
-.service-admin-list { border-top: 1px solid var(--surface-line, #333825); }
-.service-admin-item { border-bottom: 1px solid var(--surface-line, #333825); }
-.service-admin-item:last-child { border-bottom: 0; }
+/* A grid, not a stacked list with dividers: .admin-main:has(.services-admin)
+   already removes this page's width cap, so on a real desktop monitor a
+   single column sat in a narrow strip while most of the screen went
+   unused. auto-fill/minmax goes to 1 column on a phone and 2-4 on a wide
+   desktop with no separate breakpoint, and nothing is ever hidden to get
+   there — every service in a category stays visible at every width. */
+.service-admin-list {
+  display: grid;
+  /* min(320px, 100%), not a bare 320px: a container narrower than the
+     stated minimum (a real case here — .admin-card's 24px horizontal
+     padding leaves well under 320px at a 375px viewport) can force the
+     track to overflow rather than shrink, a known gotcha of this pattern.
+     Clamping the minimum to the container's own width removes the
+     possibility entirely, with no media query needed either way. */
+  grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr));
+  gap: 14px;
+}
+.service-admin-item {
+  border: 1px solid var(--surface-line, #333825);
+  border-radius: 10px;
+  padding: 14px;
+  background: var(--bg-elev, #171a0f);
+}
+/* The edit panel needs ~640px, wider than one grid column. Rather than
+   fight the grid or duplicate the panel's width logic here, the card
+   itself spans every column the moment its own edit panel opens — :has()
+   is already an established technique in this file
+   (.admin-main:has(.services-admin) above), not a new dependency. */
+.service-admin-item:has(.service-admin-item__edit[open]) { grid-column: 1 / -1; }
 .service-admin-item__summary {
   display: flex;
   align-items: flex-start;
   gap: 24px;
-  padding: 16px 4px 0;
 }
 .service-admin-item__summary > div { min-width: 0; }
 .service-admin-item__summary > .service-admin-item__text { flex: 1; }
@@ -1338,7 +1311,9 @@
   font-size: .9rem;
   line-height: 1.5;
 }
-.service-admin-item__edit { display: block; padding: 8px 4px 16px; }
+/* Horizontal padding dropped to 0: the card itself now supplies it (14px),
+   where before the card had none and each inner element padded itself. */
+.service-admin-item__edit { display: block; padding: 8px 0 0; }
 .service-admin-item__edit summary {
   display: inline-flex;
   align-items: center;
@@ -1944,12 +1919,7 @@
   .blog-admin__excerpt { display: none; }
 }
 @media (max-width: 700px) {
-  /* .service-admin-category__head is an <h3> now, not the flex container
-     itself (that's .service-admin-category__head-btn below) — it no longer
-     needs flex-direction: column, and the chevron staying inline with the
-     title is the correct layout at any width, not a mobile exception. Only
-     the padding-right reduction (for the floating Add-service button) still
-     applies here. */
+  .service-admin-category__head,
   .service-admin-item__summary { flex-direction: column; gap: 8px; }
   .service-admin-category__head { padding-right: 132px; }
   .service-admin-category__create > summary { top: 18px; right: 18px; }
