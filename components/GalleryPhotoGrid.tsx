@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 import { useEffect, useRef, useState } from "react";
 
 type GalleryPhoto = {
@@ -70,7 +72,9 @@ export default function GalleryPhotoGrid({ images }: { images: GalleryPhoto[] })
               aria-label={`View ${description} larger`}
               onClick={() => setActiveIndex(index)}
             >
-              <img src={image.url} alt={description} loading="lazy" />
+              <Image src={image.url} alt={description} fill
+                sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 33vw"
+                style={{ objectFit: "cover" }} />
               <span className="gallery-item__shade" aria-hidden="true" />
               {image.caption && <span className="caption">{image.caption}</span>}
               <span className="gallery-item__view" aria-hidden="true"><ZoomIcon /> View photo</span>
