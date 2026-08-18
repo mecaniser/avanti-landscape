@@ -3,6 +3,7 @@ import type { ContentBlock } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { isCloudinaryConfigured } from "@/lib/cloudinary";
 import { parseAreaList } from "@/lib/content";
+import { formatUpdatedAt, latestUpdatedAt } from "@/lib/format";
 import SubmitButton from "../../SubmitButton";
 import { clearHeroVideo, clearHeroImage, disableHeroVideo, enableHeroVideo } from "../actions";
 import { ContentSectionForm, ContentTextForm, ServiceAreaForm } from "../ContentForms";
@@ -452,6 +453,11 @@ export default async function ContentEditorPage({
 }) {
   const { page } = await params;
   const allBlocks = await prisma.contentBlock.findMany({ where: { page }, orderBy: { key: "asc" } });
+  // Scoped to the selected tab, not the whole Page Content section: the tabs
+  // switch between genuinely different pages of content, so a single
+  // combined timestamp at the top would answer "when was something on the
+  // site last touched" rather than the more useful "when was *this* page."
+  const lastUpdated = latestUpdatedAt(allBlocks);
   const uploadsEnabled = isCloudinaryConfigured();
   const heroVideo = allBlocks.find((block) => block.key === "hero_video");
   const heroImage = allBlocks.find((block) => block.key === "hero_image");
@@ -484,6 +490,8 @@ export default async function ContentEditorPage({
           </Link>
         ))}
       </nav>
+
+      {lastUpdated && <p className="admin-last-updated">Last updated {formatUpdatedAt(lastUpdated)}</p>}
 
       {!uploadsEnabled && (
         <div className="admin-flash admin-flash--error">

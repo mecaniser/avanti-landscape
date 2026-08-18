@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import { isCloudinaryConfigured } from "@/lib/cloudinary";
+import { formatUpdatedAt, latestUpdatedAt } from "@/lib/format";
 import AdminUploadForm from "@/components/AdminUploadForm";
 import DetailsCloseButton from "@/components/DetailsCloseButton";
 import AdminDeleteConfirm from "@/components/AdminDeleteConfirm";
@@ -27,11 +28,16 @@ export default async function GalleryAdminPage() {
     prisma.beforeAfterProject.findMany({ orderBy: { sortOrder: "asc" } }),
   ]);
   const uploadsEnabled = isCloudinaryConfigured();
+  // One combined timestamp for the whole page: both lists render on this
+  // same Gallery screen, so "last updated" means whichever of them changed
+  // more recently, not two separate numbers the owner has to reconcile.
+  const lastUpdated = latestUpdatedAt([...images, ...projects]);
 
   return (
     <section className="gallery-admin">
       <h2>Gallery</h2>
       <p className="subtitle">Before &amp; after projects and the photo grid shown on the public Gallery page.</p>
+      {lastUpdated && <p className="admin-last-updated">Last updated {formatUpdatedAt(lastUpdated)}</p>}
 
       {!uploadsEnabled && (
         <div className="admin-flash admin-flash--error" style={{ marginBottom: 20 }}>
