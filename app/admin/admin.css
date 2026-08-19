@@ -2257,6 +2257,22 @@
   box-shadow: 0 10px 26px rgba(238, 185, 61, 0.22);
 }
 .admin-login-card .admin-btn:hover { background: #f7c754; }
+.admin-remember {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0 14px;
+  color: var(--text-soft, #a3a992);
+  font-size: .86rem;
+  cursor: pointer;
+  user-select: none;
+}
+.admin-remember input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--gold, #eeb93d);
+  cursor: pointer;
+}
 .admin-login-recovery { margin-top: 16px; text-align: center; }
 .admin-login-recovery > button,
 .admin-login-recovery > a {
