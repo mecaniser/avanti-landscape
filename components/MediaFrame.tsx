@@ -19,12 +19,24 @@ import { useState } from "react";
 export default function MediaFrame({
   className,
   children,
+  frameStyle,
   ...imageProps
-}: ImageProps & { className?: string; children?: React.ReactNode }) {
+}: ImageProps & {
+  className?: string;
+  children?: React.ReactNode;
+  /** Styles for the frame itself. `style` still goes to the image, since that
+   *  is where callers put object-fit. */
+  frameStyle?: React.CSSProperties;
+}) {
   const [settled, setSettled] = useState(false);
 
   return (
-    <div className={className} data-media-frame="" data-loaded={settled ? "" : undefined}>
+    <div
+      className={className}
+      style={frameStyle}
+      data-media-frame=""
+      data-loaded={settled ? "" : undefined}
+    >
       <Image {...imageProps} onLoad={() => setSettled(true)} onError={() => setSettled(true)} />
       {children}
     </div>
