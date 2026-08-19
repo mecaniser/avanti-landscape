@@ -88,11 +88,10 @@ export default function BeforeAfterSlider({
         src={afterSrc}
         alt={afterAlt}
         fill
-        // Eager, not `priority`: this only ever shows one slide of a
-        // carousel at a time, never the page's actual LCP element, but
-        // `priority` also injects a <link rel=preload> that competed with
-        // the real hero image for bandwidth on the pages that embed this.
-        loading="eager"
+        // Not `priority`/eager: this section sits below the hero, so this
+        // image should load the same way its "before" sibling already does
+        // — only as the user scrolls near it, not on initial page load.
+        loading="lazy"
         quality={60}
         onLoad={adoptRatio}
         sizes="(max-width: 800px) 100vw, 1180px"
