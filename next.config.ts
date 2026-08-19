@@ -52,6 +52,10 @@ const nextConfig: NextConfig = {
     // snaps back to 75 (via findClosestQuality) unless explicitly allowed
     // here. 60 is what the large photo components ask for.
     qualities: [60, 75],
+    // Next defaults to WebP only. These are large, detailed outdoor photos
+    // where AVIF lands ~25% smaller at the same quality; browsers that do
+    // not send an AVIF Accept header still fall through to WebP.
+    formats: ["image/avif", "image/webp"],
   },
   experimental: {
     serverActions: {
