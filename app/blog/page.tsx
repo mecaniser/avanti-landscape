@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Image from "next/image";
+import MediaFrame from "@/components/MediaFrame";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
@@ -44,20 +44,20 @@ export default async function BlogPage() {
             <div className="grid grid--3">
               {posts.map((post, index) => (
                 <div className="blog-card" key={post.id}>
-                  <div className="thumb">
-                    {post.coverImage ? (
-                      <Image src={post.coverImage} alt={post.title} fill
-                        quality={60}
-                        sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 33vw"
-                        style={{ objectFit: "cover" }}
-                        // The first card is the LCP element on this page; lazy-loading
-                        // it (Next's default for non-priority images) delays its own
-                        // paint instead of speeding up the page.
-                        {...(index === 0 ? { priority: true, fetchPriority: "high" as const } : {})} />
-                    ) : (
+                  {post.coverImage ? (
+                    <MediaFrame className="thumb" src={post.coverImage} alt={post.title} fill
+                      quality={60}
+                      sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 33vw"
+                      style={{ objectFit: "cover" }}
+                      // The first card is the LCP element on this page; lazy-loading
+                      // it (Next's default for non-priority images) delays its own
+                      // paint instead of speeding up the page.
+                      {...(index === 0 ? { priority: true, fetchPriority: "high" as const } : {})} />
+                  ) : (
+                    <div className="thumb">
                       <svg viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="250" fill="#8fae3c" /><g fill="#345126"><circle cx="60" cy="60" r="6" /><circle cx="90" cy="60" r="6" /><circle cx="120" cy="60" r="6" /><circle cx="60" cy="90" r="6" /><circle cx="90" cy="90" r="6" /><circle cx="120" cy="90" r="6" /><circle cx="200" cy="150" r="6" /><circle cx="230" cy="150" r="6" /><circle cx="260" cy="150" r="6" /><circle cx="200" cy="180" r="6" /><circle cx="230" cy="180" r="6" /><circle cx="260" cy="180" r="6" /></g></svg>
-                    )}
-                  </div>
+                    </div>
+                  )}
                   <div className="body">
                     {post.tag && <span className="tag">{post.tag}</span>}
                     <h3 style={{ marginTop: 8 }}>{post.title}</h3>

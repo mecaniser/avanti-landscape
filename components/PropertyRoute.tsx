@@ -65,9 +65,30 @@ function RouteIcon({ type }: { type: Route["marker"] }) {
 export default function PropertyRoute({ images }: { images?: Partial<Record<RouteKey, string>> }) {
   const [active, setActive] = useState<RouteKey>("lawn");
   const [entryState, setEntryState] = useState<"static" | "pending" | "revealed">("static");
+  const [imageLoading, setImageLoading] = useState(false);
+  // Which photos the browser has already fetched this session. Switching back
+  // to one of those is instant, so it should not flash a loading state.
+  const seenImages = useRef(new Set<string>());
   const sectionRef = useRef<HTMLElement>(null);
   const selected = routes.find((route) => route.id === active) ?? routes[0];
   const selectedImage = images?.[selected.id] ?? selected.image;
+
+  // Each route swaps in a different photo. Until it decodes the panel keeps
+  // showing the previous one, which read as the section being stale or broken
+  // for the second or two the fetch took. Hold a loading state across that gap
+  // so the swap is legible.
+  useEffect(() => {
+    if (seenImages.current.has(selectedImage)) {
+      setImageLoading(false);
+      return;
+    }
+    setImageLoading(true);
+  }, [selectedImage]);
+
+  function onImageSettled() {
+    seenImages.current.add(selectedImage);
+    setImageLoading(false);
+  }
 
   useEffect(() => {
     const syncFromHash = () => {
@@ -167,8 +188,19 @@ export default function PropertyRoute({ images }: { images?: Partial<Record<Rout
             <p>{selected.summary}</p>
             <a href={selected.href} className="route-link">Explore {selected.name}<span aria-hidden="true">→</span></a>
           </div>
-          <div className="route-image">
-            <Image src={selectedImage} alt={selected.alt} fill quality={60} sizes="(max-width: 980px) calc(100vw - 48px), 54vw" />
+          <div className="route-image" data-loading={imageLoading ? "" : undefined} aria-busy={imageLoading}>
+            <Image
+              src={selectedImage}
+              alt={selected.alt}
+              fill
+              quality={60}
+              sizes="(max-width: 980px) calc(100vw - 48px), 54vw"
+              onLoad={onImageSettled}
+              // A failed fetch must clear the state too, or the panel would sit
+              // under a loading treatment forever.
+              onError={onImageSettled}
+            />
+            <span className="route-image-progress" aria-hidden="true" />
           </div>
         </div>
       </div>

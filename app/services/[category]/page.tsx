@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Image from "next/image";
+import MediaFrame from "@/components/MediaFrame";
 import { notFound } from "next/navigation";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
@@ -107,16 +107,15 @@ export default async function ServiceCategoryPage({
               <div className="service-row">
                 {withPhotos.map((s) => (
                   <article className="service-card" key={s.id}>
-                    <div className="service-card__media">
-                      <Image
-                        src={s.image!}
-                        alt={`${s.name} by Avanti Landscaping in Waxhaw, NC`}
-                        fill
-                        quality={60}
-                        sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 33vw"
-                        style={{ objectFit: "cover" }}
-                      />
-                    </div>
+                    <MediaFrame
+                      className="service-card__media"
+                      src={s.image!}
+                      alt={`${s.name} by Avanti Landscaping in Waxhaw, NC`}
+                      fill
+                      quality={60}
+                      sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 33vw"
+                      style={{ objectFit: "cover" }}
+                    />
                     <div className="service-card__body">
                       <h3>{s.name}</h3>
                       <p>{s.description}</p>
@@ -151,16 +150,15 @@ export default async function ServiceCategoryPage({
             <div className="grid grid--3">
               {others.map((o) => (
                 <Link href={`/services/${o.slug}`} className="blog-card" key={o.slug} style={{ textDecoration: "none" }}>
-                  <div className="thumb" style={{ position: "relative" }}>
-                    <Image
-                      src={c[categoryImageKey(o.slug)] || o.image}
-                      alt={`${o.label} work by Avanti Landscaping`}
-                      fill
-                      quality={60}
-                      sizes="(max-width: 900px) 100vw, 33vw"
-                      style={{ objectFit: "cover" }}
-                    />
-                  </div>
+                  <MediaFrame
+                    className="thumb"
+                    style={{ objectFit: "cover" }}
+                    src={c[categoryImageKey(o.slug)] || o.image}
+                    alt={`${o.label} work by Avanti Landscaping`}
+                    fill
+                    quality={60}
+                    sizes="(max-width: 900px) 100vw, 33vw"
+                  />
                   <div style={{ padding: "18px 4px 4px" }}>
                     <h3 style={{ marginTop: 8 }}>{o.label}</h3>
                     <span className="card-link">Learn more →</span>

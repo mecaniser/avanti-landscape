@@ -31,7 +31,17 @@ function ArrowIcon({ direction }: { direction: "left" | "right" }) {
 export default function GalleryPhotoGrid({ images }: { images: GalleryPhoto[] }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const [loaded, setLoaded] = useState<ReadonlySet<string>>(() => new Set());
   const activePhoto = activeIndex === null ? null : images[activeIndex];
+
+  function markLoaded(id: string) {
+    setLoaded((current) => {
+      if (current.has(id)) return current;
+      const next = new Set(current);
+      next.add(id);
+      return next;
+    });
+  }
 
   function closeViewer() {
     dialogRef.current?.close();
@@ -71,11 +81,19 @@ export default function GalleryPhotoGrid({ images }: { images: GalleryPhoto[] })
               className="gallery-item"
               aria-label={`View ${description} larger`}
               onClick={() => setActiveIndex(index)}
+              // Tiles here are lazy-loaded well below the fold, so without a
+              // skeleton a scrolled-to row is a grid of empty boxes until each
+              // file lands. Shares the [data-media-frame] treatment used by
+              // MediaFrame on the blog and service cards.
+              data-media-frame=""
+              data-loaded={loaded.has(image.id) ? "" : undefined}
             >
               <Image src={image.url} alt={description} fill
                 quality={60}
                 sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 33vw"
-                style={{ objectFit: "cover" }} />
+                style={{ objectFit: "cover" }}
+                onLoad={() => markLoaded(image.id)}
+                onError={() => markLoaded(image.id)} />
               <span className="gallery-item__shade" aria-hidden="true" />
               {image.caption && <span className="caption">{image.caption}</span>}
               <span className="gallery-item__view" aria-hidden="true"><ZoomIcon /> View photo</span>

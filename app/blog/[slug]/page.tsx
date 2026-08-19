@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Image from "next/image";
+import MediaFrame from "@/components/MediaFrame";
 import { notFound } from "next/navigation";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
@@ -106,10 +106,8 @@ export default async function BlogPostPage({
             </div>
 
             {post.coverImage && (
-              <div className="thumb">
-                <Image src={post.coverImage} alt={post.title} fill priority fetchPriority="high" quality={60}
-                  sizes="(max-width: 800px) 100vw, 760px" style={{ objectFit: "cover" }} />
-              </div>
+              <MediaFrame className="thumb" src={post.coverImage} alt={post.title} fill priority fetchPriority="high" quality={60}
+                sizes="(max-width: 800px) 100vw, 760px" style={{ objectFit: "cover" }} />
             )}
 
             <div dangerouslySetInnerHTML={{ __html: post.body }} />
