@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { sendGAEvent } from "@next/third-parties/google";
+import { sendGAEvent } from "@/lib/analytics";
 import { formatUsPhone, isValidUsPhone } from "@/lib/phone";
 
 type Errors = Partial<Record<"name" | "phone" | "email" | "message", string>>;

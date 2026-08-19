@@ -23,7 +23,20 @@ export default function RouteContinuityTrace({ sectionRef, revealed }: RouteCont
     const heading = section?.querySelector<HTMLElement>("#property-route-heading");
     if (!section || !heroPlot || !heroLine || !heading) return;
 
+    // Coalesced to one layout read per frame for the same reason as
+    // WebsiteFlowTrace: the observers, resize, load, and fonts.ready all fire
+    // in quick succession during load, and each pass reads rects then sets
+    // state, forcing a synchronous layout.
+    let frame = 0;
     const sync = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        measure();
+      });
+    };
+
+    const measure = () => {
       const sectionBounds = section.getBoundingClientRect();
       const plotBounds = heroPlot.getBoundingClientRect();
       const headingBounds = heading.getBoundingClientRect();
@@ -59,6 +72,7 @@ export default function RouteContinuityTrace({ sectionRef, revealed }: RouteCont
     window.addEventListener("load", sync);
     document.fonts?.ready.then(sync).catch(() => undefined);
     return () => {
+      if (frame) cancelAnimationFrame(frame);
       observer.disconnect();
       window.removeEventListener("resize", sync);
       window.removeEventListener("load", sync);
