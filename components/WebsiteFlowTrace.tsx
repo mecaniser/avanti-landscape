@@ -25,7 +25,22 @@ export default function WebsiteFlowTrace() {
     const handle = document.querySelector<HTMLElement>(".results-section .ba-handle");
     if (!property || !results || !propertyHeading || !slider || !handle) return;
 
+    // Every trigger below (two observers, resize, load, fonts.ready) reads five
+    // rects and then sets state. Fired back to back during load — and once per
+    // pointermove while the comparison handle is dragged, via the style
+    // MutationObserver — that interleaves reads with React's writes and forces
+    // a synchronous layout each time. Coalescing to at most one read per frame
+    // keeps the geometry identical while collapsing that thrash.
+    let frame = 0;
     const sync = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        measure();
+      });
+    };
+
+    const measure = () => {
       const propertyBounds = property.getBoundingClientRect();
       const resultsBounds = results.getBoundingClientRect();
       const headingBounds = propertyHeading.getBoundingClientRect();
@@ -64,6 +79,7 @@ export default function WebsiteFlowTrace() {
     document.fonts?.ready.then(sync).catch(() => undefined);
 
     return () => {
+      if (frame) cancelAnimationFrame(frame);
       routeObserver.disconnect();
       resizeObserver.disconnect();
       styleObserver.disconnect();
