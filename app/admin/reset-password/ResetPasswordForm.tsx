@@ -20,11 +20,13 @@ export default function ResetPasswordForm({ token, valid }: { token: string; val
 
         {!valid && !state.ok ? (
           <>
-            <h2 style={{ marginBottom: 4 }}>This link has expired</h2>
+            <h2 style={{ marginBottom: 4 }}>This link is no longer valid</h2>
             <div className="admin-flash admin-flash--error" role="status" style={{ marginTop: 12 }}>
-              Reset links are only good for one hour and can be used once. Request a fresh one to continue.
+              Reset links work once and expire after an hour. If you already set a new password, sign in with it — otherwise request a fresh link.
             </div>
             <div className="admin-login-recovery">
+              <Link href="/admin/login">Go to sign in</Link>
+              <span aria-hidden="true" style={{ opacity: 0.4, padding: "0 8px" }}>·</span>
               <Link href="/admin/forgot-password">Send a new reset link</Link>
             </div>
           </>
