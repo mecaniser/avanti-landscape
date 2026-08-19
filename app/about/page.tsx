@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Image from "next/image";
+import MediaFrame from "@/components/MediaFrame";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
@@ -50,10 +50,16 @@ export default async function AboutPage() {
                 <Link href="/contact" className="btn btn--dark">Work With Us</Link>
               </div>
             </div>
-            <div className="card-photo" style={{ aspectRatio: "4/3.2", marginBottom: 0 }}>
-              <Image src={c.photo_image} alt="Avanti Landscaping crew member pruning shrubs beside a patio"
-                fill quality={60} sizes="(max-width: 900px) 100vw, 50vw" style={{ objectFit: "cover" }} />
-            </div>
+            <MediaFrame
+              className="card-photo"
+              frameStyle={{ aspectRatio: "4/3.2", marginBottom: 0 }}
+              src={c.photo_image}
+              alt="Avanti Landscaping crew member pruning shrubs beside a patio"
+              fill
+              quality={60}
+              sizes="(max-width: 900px) 100vw, 50vw"
+              style={{ objectFit: "cover" }}
+            />
           </div>
         </section>
 

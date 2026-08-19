@@ -376,6 +376,26 @@ p { color: var(--text-soft); }
   inset: 0;
   z-index: 0;
 }
+/* Fills the hero frame while the poster is still in flight. Applied to the
+   container, never to the image: the poster is the LCP element, so holding it
+   back to fade it in would delay LCP by the length of the transition. The
+   sweep is muted here because .hero-overlay sits above it, which is the right
+   weight for the one place on the site that also carries the headline. */
+.hero-media[data-poster-loading] {
+  background-color: #16200f;
+  background-image: linear-gradient(
+    100deg,
+    transparent 22%,
+    rgba(232, 235, 221, .06) 42%,
+    rgba(232, 235, 221, .06) 58%,
+    transparent 78%
+  );
+  background-size: 260% 100%;
+  animation: media-frame-sweep 1.25s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-media[data-poster-loading] { animation: none; }
+}
 .hero-media-img,
 .hero-video {
   position: absolute;

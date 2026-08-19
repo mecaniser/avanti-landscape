@@ -8,6 +8,7 @@ export default function HeroMedia({ poster, video }: { poster: string; video: st
   const [ended, setEnded] = useState(false);
   const [paused, setPaused] = useState(false);
   const [canPlayVideo, setCanPlayVideo] = useState(false);
+  const [posterSettled, setPosterSettled] = useState(false);
 
   // Start with the poster and only mount the video after hydration. This keeps
   // motion media off the network when the visitor requests reduced motion or
@@ -56,7 +57,13 @@ export default function HeroMedia({ poster, video }: { poster: string; video: st
 
   return (
     <>
-      <div className="hero-media">
+      {/* Deliberately NOT the [data-media-frame] skeleton used elsewhere: that
+          one holds the image at opacity 0 until it loads, and this poster is
+          the page's LCP element — withholding its paint would push LCP out by
+          the length of the fade. The placeholder here sits *behind* an image
+          that is always fully opaque, so it fills the empty frame without
+          delaying the metric. */}
+      <div className="hero-media" data-poster-loading={posterSettled ? undefined : ""}>
         <Image
           className="hero-media-img"
           src={poster}
@@ -65,6 +72,8 @@ export default function HeroMedia({ poster, video }: { poster: string; video: st
           fill
           priority
           fetchPriority="high"
+          onLoad={() => setPosterSettled(true)}
+          onError={() => setPosterSettled(true)}
           // This is the LCP element on every page that renders it, so its
           // byte weight matters more than most images on the site. 60 is
           // visually indistinguishable from the default 75 on a full-bleed
