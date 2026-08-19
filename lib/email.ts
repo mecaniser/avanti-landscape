@@ -165,6 +165,80 @@ export function renderLeadEmailHtml(lead: Lead) {
 </html>`;
 }
 
+function renderResetEmailHtml(resetUrl: string) {
+  const safeUrl = escapeHtml(resetUrl);
+  return `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="supported-color-schemes" content="dark">
+<title>Reset your password</title>
+</head>
+<body style="margin:0;padding:0;background:${COLORS.page};">
+<span style="display:none;max-height:0;overflow:hidden;opacity:0;">Reset your Avanti Landscaping admin password. This link expires in 1 hour.</span>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${COLORS.page};padding:24px 12px;">
+  <tr>
+    <td align="center">
+      <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:${COLORS.card};border:1px solid ${COLORS.line};border-radius:14px;overflow:hidden;">
+        <tr>
+          <td style="background:${COLORS.header};padding:22px 28px;border-bottom:2px solid ${COLORS.gold};">
+            <div style="font-family:${HEAD_FONT};font-size:19px;font-weight:700;color:${COLORS.heading};">Avanti Landscaping</div>
+            <div style="font-family:${HEAD_FONT};font-size:11px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:${COLORS.olive};margin-top:3px;">Control Board</div>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:28px 28px 8px;">
+            <div style="font-family:${HEAD_FONT};font-size:22px;font-weight:700;color:${COLORS.heading};">Reset your password</div>
+            <div style="font-family:${BODY_FONT};font-size:15px;line-height:1.6;color:${COLORS.text};margin-top:12px;">We received a request to reset the password for your Avanti Landscaping admin account. Choose a new password using the button below.</div>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:20px 28px 6px;">
+            <a href="${safeUrl}" style="display:inline-block;background:${COLORS.gold};color:#241c04;font-family:${HEAD_FONT};font-size:15px;font-weight:700;text-decoration:none;padding:14px 26px;border-radius:8px;">Reset Password</a>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:14px 28px 8px;">
+            <div style="font-family:${BODY_FONT};font-size:13px;color:${COLORS.soft};">This link expires in 1 hour. If the button doesn't work, copy and paste this link:</div>
+            <div style="font-family:${BODY_FONT};font-size:13px;color:${COLORS.olive};word-break:break-all;margin-top:6px;">${safeUrl}</div>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:16px 28px 24px;border-top:1px solid ${COLORS.line};margin-top:12px;">
+            <div style="font-family:${BODY_FONT};font-size:12px;color:${COLORS.soft};">If you didn't request a password reset, you can safely ignore this email — your password won't change.</div>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+</body>
+</html>`;
+}
+
+export async function sendPasswordResetEmail(to: string, resetUrl: string) {
+  const resend = getClient();
+  if (!resend) {
+    console.warn("[email] Password reset email skipped: Resend is not configured.");
+    return { skipped: true };
+  }
+
+  const { error } = await resend.emails.send({
+    from: process.env.LEAD_NOTIFICATION_FROM ?? "Avanti Landscaping Website <onboarding@resend.dev>",
+    to,
+    subject: "Reset your Avanti Landscaping password",
+    html: renderResetEmailHtml(resetUrl),
+    text: `Reset your Avanti Landscaping admin password using this link (expires in 1 hour):\n\n${resetUrl}\n\nIf you didn't request this, you can ignore this email.`,
+  });
+
+  if (error) {
+    throw new Error(`Resend rejected the password reset email (${error.name}): ${error.message}`);
+  }
+  return { skipped: false };
+}
+
 export async function sendLeadNotification(lead: Lead) {
   // LEAD_NOTIFICATION_EMAIL may hold a comma-separated list so the business and
   // the agency can both be notified on every lead.

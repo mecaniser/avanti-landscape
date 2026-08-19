@@ -8,10 +8,12 @@ datasource db {
 }
 
 model AdminUser {
-  id           String   @id @default(cuid())
-  email        String   @unique
-  passwordHash String
-  createdAt    DateTime @default(now())
+  id                  String    @id @default(cuid())
+  email               String    @unique
+  passwordHash        String
+  resetTokenHash      String?
+  resetTokenExpiresAt DateTime?
+  createdAt           DateTime  @default(now())
 }
 
 enum CustomerStatus {
@@ -30,6 +32,9 @@ model Customer {
   status      CustomerStatus @default(lead)
   notes       String?
   message     String?
+  /// Cloudinary URL of the property, optional — most leads arrive with no
+  /// photo at all, and the admin adds one later if it's useful context.
+  image       String?
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
 
