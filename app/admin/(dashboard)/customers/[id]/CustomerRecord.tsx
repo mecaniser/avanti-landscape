@@ -1,7 +1,10 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { CloseIcon, PlusIcon, ReplaceIcon } from "@/components/AdminIcons";
+import AdminUploadForm from "@/components/AdminUploadForm";
 import SubmitButton from "../../SubmitButton";
 import { formatUsPhone } from "@/lib/phone";
 
@@ -14,6 +17,7 @@ type Customer = {
   status: "lead" | "active" | "inactive";
   message: string | null;
   notes: string | null;
+  image: string | null;
 };
 
 type SaveState = "idle" | "saving" | "saved" | "error";
@@ -32,13 +36,17 @@ function Fact({ label, children }: { label: string; children: React.ReactNode })
 }
 
 export default function CustomerRecord({
+  id,
   customer,
   updateAction,
   deleteAction,
+  removeImageAction,
 }: {
+  id: string;
   customer: Customer;
   updateAction: (formData: FormData) => Promise<void>;
   deleteAction: () => Promise<void>;
+  removeImageAction: () => Promise<void>;
 }) {
   const router = useRouter();
   const [editing, setEditing] = useState(false);
@@ -83,6 +91,58 @@ export default function CustomerRecord({
 
   return (
     <section className="customer-record" aria-label={`${customer.name} customer record`}>
+      {/* A separate block above the view/edit toggle, not tied to either: the
+          photo saves itself the instant a file is picked, independently of
+          Save changes, so it should stay visible and usable in both modes
+          rather than disappearing behind the edit form — same reasoning as
+          the Services photo field. */}
+      <div className="customer-record__photo-field">
+        <span className="customer-record__photo-label">Property photo</span>
+        <div className="customer-record__photo-card">
+          <div className="customer-record__photo-card-media" aria-hidden={!customer.image}>
+            {customer.image ? (
+              <Image src={customer.image} alt={`Property photo for ${customer.name}`} fill sizes="140px" style={{ objectFit: "cover" }} />
+            ) : (
+              <span>No photo</span>
+            )}
+          </div>
+
+          <AdminUploadForm
+            operation="customer-image"
+            statusId={`customer-image-${id}`}
+            submitLabel={customer.image ? "Replace" : "Add photo"}
+            processingLabel="Saving…"
+            successLabel="Photo saved."
+            className="customer-record__photo-replace"
+            resetOnSuccess
+            hideDefaultButton
+          >
+            <input type="hidden" name="id" value={id} />
+            <label
+              htmlFor={`customer-image-file-${id}`}
+              className="customer-record__photo-replace-btn"
+              title={customer.image ? "Replace photo" : "Add photo"}
+            >
+              {customer.image ? <ReplaceIcon /> : <PlusIcon />}
+              <span className="sr-only">{customer.image ? `Replace property photo for ${customer.name}` : `Add property photo for ${customer.name}`}</span>
+            </label>
+            <input type="file" id={`customer-image-file-${id}`} name="file" accept="image/*" className="sr-only" required />
+          </AdminUploadForm>
+
+          {customer.image && (
+            <form action={removeImageAction} className="customer-record__photo-delete">
+              <SubmitButton className="customer-record__photo-delete-btn" title="Remove photo" pendingLabel="…">
+                <CloseIcon />
+                <span className="sr-only">Remove property photo for {customer.name}</span>
+              </SubmitButton>
+            </form>
+          )}
+        </div>
+        {!customer.image && (
+          <p className="customer-record__photo-hint">Add a photo of the property for quick visual reference.</p>
+        )}
+      </div>
+
       {!editing ? (
         <>
           <div className="customer-record__summary-head">

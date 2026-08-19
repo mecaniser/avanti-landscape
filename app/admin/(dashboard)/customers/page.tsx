@@ -1,4 +1,6 @@
+import Image from "next/image";
 import Link from "next/link";
+import { PlusIcon } from "@/components/AdminIcons";
 import { prisma } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
@@ -51,7 +53,26 @@ export default async function CustomersPage({
             <tbody>
               {customers.map((c) => (
                 <tr key={c.id}>
-                  <td><Link href={`/admin/customers/${c.id}`}>{c.name}</Link></td>
+                  <td>
+                    <Link href={`/admin/customers/${c.id}`} className="customers-table__name">
+                      {/* A small thumbnail beside the name, nested in this
+                          existing cell rather than a new column: the mobile
+                          stacked-card CSS maps columns by nth-child position,
+                          and a 7th column would renumber every one of them. */}
+                      {/* Even with no photo yet, an explicit placeholder (rather
+                          than nothing) is what tells the client this list has a
+                          photo feature at all — an empty slot reads as "there's
+                          nothing here," not "you could add something here." */}
+                      <span className="customers-table__thumb" aria-hidden="true">
+                        {c.image ? (
+                          <Image src={c.image} alt="" fill sizes="32px" style={{ objectFit: "cover" }} />
+                        ) : (
+                          <PlusIcon size={10} />
+                        )}
+                      </span>
+                      {c.name}
+                    </Link>
+                  </td>
                   <td>{c.phone || "-"}</td>
                   <td>{c.email || "-"}</td>
                   <td>{c.serviceType || "-"}</td>
