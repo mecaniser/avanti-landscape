@@ -2257,6 +2257,28 @@
   box-shadow: 0 10px 26px rgba(238, 185, 61, 0.22);
 }
 .admin-login-card .admin-btn:hover { background: #f7c754; }
+/* Scoped under .admin-form to beat `.admin-form label { display:block }` and
+   the full-width `.admin-form input` rule. */
+.admin-form label.admin-remember {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  margin: 2px 0 16px;
+  color: var(--text-soft, #a3a992);
+  font-size: .86rem;
+  font-weight: 500;
+  cursor: pointer;
+  user-select: none;
+}
+.admin-form label.admin-remember input {
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: var(--gold, #eeb93d);
+  cursor: pointer;
+}
 .admin-login-recovery { margin-top: 16px; text-align: center; }
 .admin-login-recovery > button,
 .admin-login-recovery > a {

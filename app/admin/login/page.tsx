@@ -21,6 +21,7 @@ export default function AdminLoginPage() {
     const res = await signIn("credentials", {
       email: form.get("email"),
       password: form.get("password"),
+      remember: form.get("remember") ? "true" : "false",
       redirect: false,
     });
 
@@ -45,6 +46,10 @@ export default function AdminLoginPage() {
           <label htmlFor="email">Email</label>
           <input type="email" id="email" name="email" required autoFocus />
           <PasswordField id="password" name="password" label="Password" autoComplete="current-password" required />
+          <label className="admin-remember">
+            <input type="checkbox" name="remember" defaultChecked />
+            <span>Remember me for 30 days</span>
+          </label>
           {error && <p style={{ color: "#f0a08e", marginBottom: 12, fontSize: "0.88rem" }}>{error}</p>}
           <button type="submit" className="admin-btn" style={{ width: "100%" }} disabled={loading}>
             {loading ? "Signing in…" : "Sign In"}
