@@ -811,8 +811,66 @@ p { color: var(--text-soft); }
 .route-link:hover span { transform: translateX(5px); }
 .route-image { position: relative; min-height: 720px; overflow: hidden; background: #263526; }
 .route-image::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(16, 28, 21, .28), transparent 52%); pointer-events: none; }
-.route-image img { object-fit: cover; object-position: center; transition: transform 600ms var(--ease-out); }
+.route-image img { object-fit: cover; object-position: center; transition: transform 600ms var(--ease-out), opacity 220ms ease-out, filter 220ms ease-out; }
 .route-detail:hover .route-image img { transform: scale(1.035); }
+
+/* Switching routes swaps the photo, and the outgoing one stays on screen until
+   the new file decodes. Dim it and run a determinate-looking bar so that gap
+   reads as "loading" rather than "nothing happened". */
+.route-image[data-loading] img { opacity: .45; filter: saturate(.6); }
+.route-image-progress {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  z-index: 2;
+  opacity: 0;
+  transform-origin: 0 50%;
+  background: linear-gradient(90deg, var(--route-orange), var(--olive-light));
+  transition: opacity 160ms ease-out;
+  pointer-events: none;
+}
+.route-image[data-loading] .route-image-progress {
+  opacity: 1;
+  animation: route-image-progress 900ms cubic-bezier(.25, .8, .35, 1) infinite;
+}
+@keyframes route-image-progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .route-image[data-loading] .route-image-progress { animation: none; transform: scaleX(1); }
+}
+
+/* Skeleton for lazy-loaded photography (blog cards, gallery tiles, service
+   cards). Without it a scrolled-to image is just an empty box while the file
+   is in flight, which reads as broken rather than loading. The sweep is
+   confined to the not-yet-loaded state so nothing keeps animating behind a
+   photo that has already painted. */
+[data-media-frame]:not([data-loaded]) {
+  background-color: var(--bg-elev-2);
+  background-image: linear-gradient(
+    100deg,
+    transparent 20%,
+    rgba(232, 235, 221, .07) 40%,
+    rgba(232, 235, 221, .07) 60%,
+    transparent 80%
+  );
+  background-size: 260% 100%;
+  animation: media-frame-sweep 1.25s ease-in-out infinite;
+}
+[data-media-frame] img {
+  opacity: 0;
+  transition: opacity 260ms ease-out;
+}
+[data-media-frame][data-loaded] img { opacity: 1; }
+@keyframes media-frame-sweep {
+  from { background-position: 160% 0; }
+  to { background-position: -60% 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-media-frame]:not([data-loaded]) { animation: none; }
+  [data-media-frame] img { transition: none; }
+}
 
 .results-section {
   position: relative;
