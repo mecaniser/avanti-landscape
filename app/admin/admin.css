@@ -312,6 +312,24 @@
   .admin-drawer-signout button:active { transform: scale(0.98); }
 }
 
+.admin-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 14px;
+  font-family: var(--font-head), "Segoe UI", sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-soft, #a3a992);
+  text-decoration: none;
+  transition: color 150ms ease;
+}
+.admin-back-link:hover { color: var(--olive-light, #b3d15a); }
+.admin-back-link:focus-visible {
+  outline: 2px solid var(--olive-light, #b3d15a);
+  outline-offset: 3px;
+}
+
 .admin-main h2 {
   color: var(--heading, #f2f4e8);
   margin-bottom: 6px;
@@ -709,6 +727,151 @@
 .customer-record {
   margin-top: 28px;
   border-top: 1px solid var(--surface-line, #333825);
+}
+
+/* Same fixed-card-with-corner-overlay pattern proven on the Services photo
+   field, sized and styled identically (140px card, 26px circular controls)
+   so this reads as one system rather than a second, slightly different one. */
+.customer-record__photo-field {
+  padding: 20px 0;
+  border-bottom: 1px solid var(--surface-line, #333825);
+}
+.customer-record__photo-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--text, #e8ebdd);
+  font-family: var(--font-head), "Segoe UI", sans-serif;
+}
+.customer-record__photo-card {
+  position: relative;
+  width: 140px;
+  height: 140px;
+}
+.customer-record__photo-card-media {
+  position: absolute;
+  inset: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--surface-line, #333825);
+  background: var(--bg-elev, #202415);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.customer-record__photo-card-media span {
+  font-size: 0.72rem;
+  color: var(--text-soft, #a3a992);
+}
+.customer-record__photo-replace {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  max-width: calc(100% - 12px);
+}
+.customer-record__photo-replace-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--bg, #12140b);
+  color: var(--olive-light, #b3d15a);
+  border: 1px solid var(--surface-line, #333825);
+  transition: background 150ms ease, border-color 150ms ease, transform 160ms cubic-bezier(0.23, 1, 0.32, 1);
+  cursor: pointer;
+}
+.customer-record__photo-replace-btn:hover { background: var(--bg-elev-2, #16190f); border-color: var(--olive, #8fae3c); }
+.customer-record__photo-replace-btn:active { transform: scale(0.92); }
+.customer-record__photo-replace:focus-within .customer-record__photo-replace-btn {
+  outline: 2px solid var(--olive-light, #b3d15a);
+  outline-offset: 2px;
+}
+.customer-record__photo-replace-btn::after {
+  content: "";
+  position: absolute;
+  inset: -9px;
+}
+.customer-record__photo-replace .admin-upload-status:empty {
+  padding: 0;
+  min-height: 0;
+  background: transparent;
+}
+.customer-record__photo-replace .admin-upload-status {
+  margin-top: 0;
+  min-height: 0;
+  max-width: 128px;
+  padding: 3px 7px;
+  border-radius: 6px;
+  background: var(--bg, #12140b);
+  font-size: 0.72rem;
+}
+.customer-record__photo-replace .admin-upload-progress { width: 100%; }
+.customer-record__photo-delete {
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+}
+.customer-record__photo-delete-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--bg, #12140b);
+  color: var(--danger, #f0a08e);
+  border: 1px solid rgba(var(--danger-rgb, 224, 101, 78), 0.4);
+  overflow: hidden;
+  transition: background 150ms ease, border-color 150ms ease, transform 160ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+.customer-record__photo-delete-btn:hover { background: rgba(var(--danger-rgb, 224, 101, 78), 0.16); border-color: var(--danger-border, #e0654e); }
+.customer-record__photo-delete-btn:active { transform: scale(0.92); }
+.customer-record__photo-delete-btn .admin-spinner { display: none; }
+.customer-record__photo-delete-btn:focus-visible {
+  outline: 2px solid var(--danger, #f0a08e);
+  outline-offset: 2px;
+}
+.customer-record__photo-delete-btn::after {
+  content: "";
+  position: absolute;
+  inset: -9px;
+}
+.customer-record__photo-hint {
+  margin: 10px 0 0;
+  font-size: 0.82rem;
+  color: var(--text-soft, #a3a992);
+}
+
+/* List-page thumbnail: nested inside the existing Name cell (see page.tsx
+   comment) rather than a new column. 24px keeps it well clear of the row's
+   line-height so it doesn't force taller rows across the whole table. */
+.customers-table__name {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.customers-table__thumb {
+  position: relative;
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
+  border-radius: 5px;
+  overflow: hidden;
+  background: var(--bg-elev, #202415);
+  border: 1px solid var(--surface-line, #333825);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-soft, #a3a992);
 }
 .customer-record__summary-head {
   display: flex;

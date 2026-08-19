@@ -39,6 +39,12 @@ export async function createCustomer(formData: FormData) {
   redirect(`/admin/customers/${customer.id}`);
 }
 
+export async function removeCustomerImage(id: string) {
+  await prisma.customer.update({ where: { id }, data: { image: null } });
+  revalidatePath("/admin/customers");
+  revalidatePath(`/admin/customers/${id}`);
+}
+
 export async function deleteCustomer(id: string) {
   await prisma.customer.delete({ where: { id } });
   revalidatePath("/admin/customers");

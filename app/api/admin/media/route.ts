@@ -158,6 +158,18 @@ async function updateServiceImage(formData: FormData) {
   refreshServices();
 }
 
+async function updateCustomerImage(formData: FormData) {
+  requireCloudinary();
+  const id = getRequiredText(formData, "id");
+  const customer = await prisma.customer.findUnique({ where: { id } });
+  if (!customer) throw new UploadError("That customer no longer exists.");
+  const file = getFile(formData, "file", true, "image")!;
+  const url = await storeImage(file, "avanti/customers");
+  await prisma.customer.update({ where: { id }, data: { image: url } });
+  revalidatePath("/admin/customers");
+  revalidatePath(`/admin/customers/${id}`);
+}
+
 function refreshServices() {
   revalidateTag(TAGS.services, "max");
   revalidatePath("/admin/services");
@@ -300,6 +312,7 @@ export async function POST(request: Request) {
       case "before-after-update": await updateBeforeAfterProject(formData); break;
       case "content-image": await updateContentImage(formData); break;
       case "service-image": await updateServiceImage(formData); break;
+      case "customer-image": await updateCustomerImage(formData); break;
       case "hero-video": await uploadHeroVideo(formData); break;
       case "hero-image": await uploadHeroImage(formData); break;
       case "route-image": await uploadRouteImage(formData); break;

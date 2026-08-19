@@ -1,7 +1,9 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ArrowLeftIcon } from "@/components/AdminIcons";
 import { prisma } from "@/lib/db";
 import { formatUpdatedAt } from "@/lib/format";
-import { updateCustomer, deleteCustomer } from "../actions";
+import { updateCustomer, deleteCustomer, removeCustomerImage } from "../actions";
 import CustomerRecord from "./CustomerRecord";
 
 export const dynamic = "force-dynamic";
@@ -22,12 +24,21 @@ export default async function CustomerDetailPage({
 
   return (
     <>
+      {/* The sidebar nav (with its own "Customers" link) hides behind a
+          hamburger menu below the 899px breakpoint, so on a phone or tablet
+          this is the only way back to the list without opening that menu
+          first. */}
+      <Link href="/admin/customers" className="admin-back-link">
+        <ArrowLeftIcon />
+        Customers
+      </Link>
       <h2>{customer.name}</h2>
       <p className="subtitle">
         Added {customer.createdAt.toLocaleDateString()}
         {wasEdited && <> · Last updated {formatUpdatedAt(customer.updatedAt)}</>}
       </p>
       <CustomerRecord
+        id={id}
         customer={{
           name: customer.name,
           phone: customer.phone,
@@ -37,9 +48,11 @@ export default async function CustomerDetailPage({
           status: customer.status,
           message: customer.message,
           notes: customer.notes,
+          image: customer.image,
         }}
         updateAction={updateCustomer.bind(null, id)}
         deleteAction={deleteCustomer.bind(null, id)}
+        removeImageAction={removeCustomerImage.bind(null, id)}
       />
     </>
   );
