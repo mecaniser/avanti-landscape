@@ -48,6 +48,10 @@ const nextConfig: NextConfig = {
         pathname: "/**",
       },
     ],
+    // Next defaults this to [75] only — any other `quality` prop silently
+    // snaps back to 75 (via findClosestQuality) unless explicitly allowed
+    // here. 60 is what the large photo components ask for.
+    qualities: [60, 75],
   },
   experimental: {
     serverActions: {

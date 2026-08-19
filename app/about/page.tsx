@@ -52,7 +52,7 @@ export default async function AboutPage() {
             </div>
             <div className="card-photo" style={{ aspectRatio: "4/3.2", marginBottom: 0 }}>
               <Image src={c.photo_image} alt="Avanti Landscaping crew member pruning shrubs beside a patio"
-                fill sizes="(max-width: 900px) 100vw, 50vw" style={{ objectFit: "cover" }} />
+                fill quality={60} sizes="(max-width: 900px) 100vw, 50vw" style={{ objectFit: "cover" }} />
             </div>
           </div>
         </section>

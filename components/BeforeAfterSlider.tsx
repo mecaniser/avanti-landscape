@@ -93,6 +93,7 @@ export default function BeforeAfterSlider({
         // `priority` also injects a <link rel=preload> that competed with
         // the real hero image for bandwidth on the pages that embed this.
         loading="eager"
+        quality={60}
         onLoad={adoptRatio}
         sizes="(max-width: 800px) 100vw, 1180px"
       />
@@ -101,6 +102,7 @@ export default function BeforeAfterSlider({
         src={beforeSrc}
         alt={beforeAlt}
         fill
+        quality={60}
         sizes="(max-width: 800px) 100vw, 1180px"
       />
       <span className="ba-tag ba-tag--before" ref={beforeTagRef} data-hidden={!showBefore} aria-hidden={!showBefore}>

@@ -47,6 +47,7 @@ export default async function BlogPage() {
                   <div className="thumb">
                     {post.coverImage ? (
                       <Image src={post.coverImage} alt={post.title} fill
+                        quality={60}
                         sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 33vw"
                         style={{ objectFit: "cover" }}
                         // The first card is the LCP element on this page; lazy-loading

@@ -73,6 +73,7 @@ export default function GalleryPhotoGrid({ images }: { images: GalleryPhoto[] })
               onClick={() => setActiveIndex(index)}
             >
               <Image src={image.url} alt={description} fill
+                quality={60}
                 sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 33vw"
                 style={{ objectFit: "cover" }} />
               <span className="gallery-item__shade" aria-hidden="true" />

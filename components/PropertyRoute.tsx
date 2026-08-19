@@ -168,7 +168,7 @@ export default function PropertyRoute({ images }: { images?: Partial<Record<Rout
             <a href={selected.href} className="route-link">Explore {selected.name}<span aria-hidden="true">→</span></a>
           </div>
           <div className="route-image">
-            <Image src={selectedImage} alt={selected.alt} fill sizes="(max-width: 980px) calc(100vw - 48px), 54vw" />
+            <Image src={selectedImage} alt={selected.alt} fill quality={60} sizes="(max-width: 980px) calc(100vw - 48px), 54vw" />
           </div>
         </div>
       </div>

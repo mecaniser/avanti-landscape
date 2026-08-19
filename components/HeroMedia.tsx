@@ -65,6 +65,11 @@ export default function HeroMedia({ poster, video }: { poster: string; video: st
           fill
           priority
           fetchPriority="high"
+          // This is the LCP element on every page that renders it, so its
+          // byte weight matters more than most images on the site. 60 is
+          // visually indistinguishable from the default 75 on a full-bleed
+          // photo background but meaningfully smaller to download.
+          quality={60}
           sizes="100vw"
         />
         {video && canPlayVideo && (
