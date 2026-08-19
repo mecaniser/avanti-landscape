@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import PasswordField from "@/components/PasswordField";
@@ -10,7 +11,6 @@ export default function AdminLoginPage() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [showRecoveryStub, setShowRecoveryStub] = useState(false);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -51,12 +51,7 @@ export default function AdminLoginPage() {
           </button>
         </form>
         <div className="admin-login-recovery">
-          <button type="button" onClick={() => setShowRecoveryStub((current) => !current)} aria-expanded={showRecoveryStub}>
-            Forgot password?
-          </button>
-          {showRecoveryStub && (
-            <p role="status">Password recovery will be enabled with the planned WorkOS staff-access setup. For now, contact the site administrator to regain access.</p>
-          )}
+          <Link href="/admin/forgot-password">Forgot password?</Link>
         </div>
       </div>
     </div>

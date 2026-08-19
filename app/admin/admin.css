@@ -2095,7 +2095,8 @@
 }
 .admin-login-card .admin-btn:hover { background: #f7c754; }
 .admin-login-recovery { margin-top: 16px; text-align: center; }
-.admin-login-recovery > button {
+.admin-login-recovery > button,
+.admin-login-recovery > a {
   border: 0;
   background: transparent;
   color: var(--olive-light, #b3d15a);
