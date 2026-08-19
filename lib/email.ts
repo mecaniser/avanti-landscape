@@ -166,10 +166,15 @@ export function renderLeadEmailHtml(lead: Lead) {
 }
 
 export async function sendLeadNotification(lead: Lead) {
-  const to = process.env.LEAD_NOTIFICATION_EMAIL;
+  // LEAD_NOTIFICATION_EMAIL may hold a comma-separated list so the business and
+  // the agency can both be notified on every lead.
+  const to = (process.env.LEAD_NOTIFICATION_EMAIL ?? "")
+    .split(",")
+    .map((address) => address.trim())
+    .filter(Boolean);
   const resend = getClient();
 
-  if (!resend || !to) {
+  if (!resend || to.length === 0) {
     // The lead is persisted by the contact route. Do not write customer PII
     // to provider logs when notification delivery is intentionally disabled.
     console.warn("[email] Lead notification skipped: Resend is not configured.");
