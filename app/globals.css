@@ -872,6 +872,24 @@ p { color: var(--text-soft); }
   [data-media-frame] img { transition: none; }
 }
 
+/* The before/after frame is a comparison, so it only makes sense once both
+   photos are present. Until then the divider and its labels would sit over an
+   empty box advertising a drag that reveals nothing, so hold them back and
+   leave just the skeleton. Pointer handling is disabled in the component for
+   the same reason. */
+.ba-slider:not([data-loaded]) { cursor: default; }
+.ba-slider:not([data-loaded]) .ba-tag,
+.ba-slider:not([data-loaded]) .ba-handle {
+  opacity: 0;
+  pointer-events: none;
+}
+.ba-slider .ba-tag,
+.ba-slider .ba-handle { transition: opacity 240ms ease-out; }
+@media (prefers-reduced-motion: reduce) {
+  .ba-slider .ba-tag,
+  .ba-slider .ba-handle { transition: none; }
+}
+
 .results-section {
   position: relative;
   background: #0d1912;
