@@ -17,6 +17,13 @@ export default function BeforeAfterSlider({
   const sliderRef = useRef<HTMLDivElement>(null);
   const [pos, setPos] = useState(50);
   const [ratio, setRatio] = useState<number | null>(null);
+  // Both halves have to be present before the comparison means anything —
+  // showing the divider over one loaded photo and one empty box invites a drag
+  // that reveals nothing. BeforeAfterCarousel remounts this via `key` when the
+  // project changes, so these reset for each project on their own.
+  const [afterSettled, setAfterSettled] = useState(false);
+  const [beforeSettled, setBeforeSettled] = useState(false);
+  const loaded = afterSettled && beforeSettled;
   const dragging = useRef(false);
   const beforeTagRef = useRef<HTMLSpanElement>(null);
   const afterTagRef = useRef<HTMLSpanElement>(null);
@@ -56,6 +63,7 @@ export default function BeforeAfterSlider({
   function adoptRatio(event: { currentTarget: HTMLImageElement }) {
     const { naturalWidth, naturalHeight } = event.currentTarget;
     if (naturalWidth > 0 && naturalHeight > 0) setRatio(naturalWidth / naturalHeight);
+    setAfterSettled(true);
   }
 
   function setPosFromClientX(clientX: number) {
@@ -68,11 +76,15 @@ export default function BeforeAfterSlider({
     <div
       ref={sliderRef}
       className="ba-slider"
+      data-media-frame=""
+      data-loaded={loaded ? "" : undefined}
+      aria-busy={!loaded}
       style={{
         ["--pos" as string]: `${pos}%`,
         ...(ratio ? { ["--ba-ar" as string]: ratio.toFixed(4) } : {}),
       }}
       onPointerDown={(event) => {
+        if (!loaded) return;
         dragging.current = true;
         event.currentTarget.setPointerCapture(event.pointerId);
         setPosFromClientX(event.clientX);
@@ -94,6 +106,7 @@ export default function BeforeAfterSlider({
         loading="lazy"
         quality={60}
         onLoad={adoptRatio}
+        onError={() => setAfterSettled(true)}
         sizes="(max-width: 800px) 100vw, 1180px"
       />
       <Image
@@ -102,6 +115,10 @@ export default function BeforeAfterSlider({
         alt={beforeAlt}
         fill
         quality={60}
+        onLoad={() => setBeforeSettled(true)}
+        // Settle on failure too, or one broken photo would leave the frame
+        // stuck under a skeleton with the divider permanently disabled.
+        onError={() => setBeforeSettled(true)}
         sizes="(max-width: 800px) 100vw, 1180px"
       />
       <span className="ba-tag ba-tag--before" ref={beforeTagRef} data-hidden={!showBefore} aria-hidden={!showBefore}>
