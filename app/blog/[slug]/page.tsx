@@ -107,7 +107,7 @@ export default async function BlogPostPage({
 
             {post.coverImage && (
               <div className="thumb">
-                <Image src={post.coverImage} alt={post.title} fill priority fetchPriority="high"
+                <Image src={post.coverImage} alt={post.title} fill priority fetchPriority="high" quality={60}
                   sizes="(max-width: 800px) 100vw, 760px" style={{ objectFit: "cover" }} />
               </div>
             )}

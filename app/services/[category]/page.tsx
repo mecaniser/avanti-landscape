@@ -112,6 +112,7 @@ export default async function ServiceCategoryPage({
                         src={s.image!}
                         alt={`${s.name} by Avanti Landscaping in Waxhaw, NC`}
                         fill
+                        quality={60}
                         sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 33vw"
                         style={{ objectFit: "cover" }}
                       />
@@ -155,6 +156,7 @@ export default async function ServiceCategoryPage({
                       src={c[categoryImageKey(o.slug)] || o.image}
                       alt={`${o.label} work by Avanti Landscaping`}
                       fill
+                      quality={60}
                       sizes="(max-width: 900px) 100vw, 33vw"
                       style={{ objectFit: "cover" }}
                     />

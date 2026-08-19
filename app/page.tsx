@@ -124,6 +124,7 @@ export default async function HomePage() {
                 src={c.about_teaser_image}
                 alt="Avanti Landscaping team member trimming shrubs at a client property"
                 fill
+                quality={60}
                 sizes="(max-width: 980px) calc(100vw - 48px), 565px"
               />
             </div>
