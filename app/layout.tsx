@@ -29,7 +29,7 @@ const gaMeasurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 
 const DEFAULT_TITLE = "Avanti Landscaping | Lawn Care & Landscaping in Waxhaw, NC";
 const DEFAULT_DESCRIPTION =
-  "Avanti Landscaping provides lawn care, landscaping, hardscaping, and property maintenance in Waxhaw, Marvin, Weddington, Matthews, and nearby NC/SC communities. Call 980-328-7141 for a free quote.";
+  "Waxhaw landscaping, lawn care, hardscaping, and property maintenance from a local, owner-involved crew. Call 980-328-7141 for a free quote.";
 
 export const metadata: Metadata = {
   // Required for Next to emit absolute canonical and Open Graph URLs.

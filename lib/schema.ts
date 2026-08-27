@@ -1,5 +1,6 @@
 import { getGlobalContent, parseAreaList } from "@/lib/content";
 import { absoluteUrl, LEGAL_NAME, SITE_NAME, SITE_URL } from "@/lib/site";
+import { GOOGLE_MAPS_URL } from "@/lib/google-reviews";
 
 const STATE_CODE: Record<string, string> = {
   "North Carolina": "NC",
@@ -51,6 +52,7 @@ export async function buildLocalBusinessSchema() {
     name: SITE_NAME,
     legalName: LEGAL_NAME,
     url: absoluteUrl("/"),
+    hasMap: GOOGLE_MAPS_URL,
     telephone,
     email,
     image: absoluteUrl("/assets/img/hero-mulch-wide.jpg"),

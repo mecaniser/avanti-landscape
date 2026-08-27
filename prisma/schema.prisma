@@ -87,16 +87,19 @@ model GalleryImage {
 }
 
 model BlogPost {
-  id          String    @id @default(cuid())
-  slug        String    @unique
-  title       String
-  excerpt     String?
-  tag         String?
-  body        String    @db.Text
-  coverImage  String?
-  publishedAt DateTime?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id                 String    @id @default(cuid())
+  slug               String    @unique
+  title              String
+  excerpt            String?
+  tag                String?
+  body               String    @db.Text
+  coverImage         String?
+  primaryServiceSlug String?
+  publishedAt        DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  @@index([primaryServiceSlug])
 }
 
 model BeforeAfterProject {

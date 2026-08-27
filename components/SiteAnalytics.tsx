@@ -2,7 +2,9 @@
 
 import Script from "next/script";
 import { usePathname } from "next/navigation";
+import { useEffect } from "react";
 import { DATA_LAYER } from "@/lib/analytics";
+import { sendGAEvent } from "@/lib/analytics";
 
 /**
  * GA4, loaded on idle rather than during page load.
@@ -27,6 +29,35 @@ import { DATA_LAYER } from "@/lib/analytics";
  */
 export default function SiteAnalytics({ measurementId }: { measurementId: string }) {
   const pathname = usePathname();
+
+  useEffect(() => {
+    const trackContactClick = (event: MouseEvent) => {
+      const link = (event.target as Element | null)?.closest<HTMLAnchorElement>("a[href]");
+      if (!link) return;
+
+      const href = link.getAttribute("href") ?? "";
+      const eventName = href.startsWith("tel:")
+        ? "click_to_call"
+        : href.startsWith("sms:")
+          ? "click_to_text"
+          : null;
+      if (!eventName) return;
+
+      const linkLocation = link.dataset.analyticsLocation
+        ?? (link.closest("header") ? "header"
+          : link.closest("footer") ? "footer"
+            : link.closest("nav") ? "navigation"
+              : "main_content");
+
+      sendGAEvent("event", eventName, {
+        page_path: pathname,
+        link_location: linkLocation,
+      });
+    };
+
+    document.addEventListener("click", trackContactClick);
+    return () => document.removeEventListener("click", trackContactClick);
+  }, [pathname]);
 
   if (pathname.startsWith("/admin")) return null;
 

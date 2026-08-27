@@ -9,9 +9,9 @@ import { absoluteUrl, pageMetadata } from "@/lib/site";
 import { getPublishedPosts } from "@/lib/queries";
 
 export const metadata: Metadata = pageMetadata({
-  title: "Lawn & Landscape Tips for Waxhaw-Area Yards",
+  title: "Waxhaw Lawn & Landscaping Tips",
   description:
-    "Seasonal lawn and landscape advice from the Avanti Landscaping crew, written for Waxhaw-area yards: tall fescue, core aeration, spring and fall cleanups, and more.",
+    "Read practical lawn and landscaping guidance from the Avanti crew for Waxhaw-area yards, including grass care, materials, maintenance, and planting.",
   path: "/blog",
   image: absoluteUrl("/assets/img/blog-lawn-wide.jpg"),
 });
@@ -62,7 +62,7 @@ export default async function BlogPage() {
                     {post.tag && <span className="tag">{post.tag}</span>}
                     <h3 style={{ marginTop: 8 }}>{post.title}</h3>
                     {post.excerpt && <p>{post.excerpt}</p>}
-                    <Link href={`/blog/${post.slug}`} className="card-link" style={{ marginTop: 12, display: "inline-block" }}>Read More →</Link>
+                    <Link href={`/blog/${post.slug}`} className="card-link" style={{ marginTop: 12, display: "inline-block" }}>Read {post.title} →</Link>
                   </div>
                 </div>
               ))}

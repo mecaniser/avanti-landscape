@@ -11,7 +11,7 @@ import { absoluteUrl, pageMetadata } from "@/lib/site";
 export const metadata: Metadata = pageMetadata({
   title: "About Our Waxhaw Landscaping Crew",
   description:
-    "Avanti Landscaping is a locally owned, owner-involved crew serving Waxhaw, NC and nearby communities. One accountable team for lawn care, landscaping, hardscaping, and maintenance.",
+    "Meet Avanti Landscaping, a locally owned, owner-involved crew serving Waxhaw and nearby communities with lawn care, landscaping, and maintenance.",
   path: "/about",
   image: absoluteUrl("/assets/img/about-crew.jpg"),
 });

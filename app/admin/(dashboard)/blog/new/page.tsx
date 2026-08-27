@@ -1,6 +1,7 @@
 import Link from "next/link";
 import AdminUploadForm from "@/components/AdminUploadForm";
 import BlogBodyEditor from "@/components/BlogBodyEditor";
+import { SERVICE_CATEGORIES } from "@/lib/services";
 
 export default function NewBlogPostPage() {
   return (
@@ -18,6 +19,14 @@ export default function NewBlogPostPage() {
 
           <label htmlFor="tag">Tag</label>
           <input type="text" id="tag" name="tag" placeholder="e.g. LAWN CARE" />
+
+          <label htmlFor="primaryServiceSlug">Related Service</label>
+          <select id="primaryServiceSlug" name="primaryServiceSlug" defaultValue="">
+            <option value="">Choose when relevant</option>
+            {SERVICE_CATEGORIES.map((category) => (
+              <option key={category.slug} value={category.slug}>{category.label}</option>
+            ))}
+          </select>
 
           <label htmlFor="excerpt">Excerpt</label>
           <textarea id="excerpt" name="excerpt" rows={2} />

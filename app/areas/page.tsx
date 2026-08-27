@@ -8,9 +8,9 @@ import { buildBreadcrumbSchema } from "@/lib/schema";
 import { pageMetadata } from "@/lib/site";
 
 export const metadata: Metadata = pageMetadata({
-  title: "Service Areas in Waxhaw, Marvin, Weddington & Nearby NC/SC",
+  title: "Areas We Serve Near Waxhaw, NC",
   description:
-    "Avanti Landscaping serves Waxhaw, Marvin, Weddington, Matthews, and nearby North and South Carolina communities. Not sure if we reach your street? Ask about your address.",
+    "See the Waxhaw-area communities served by Avanti Landscaping across nearby North and South Carolina. Contact the team to confirm service for your address.",
   path: "/areas",
 });
 

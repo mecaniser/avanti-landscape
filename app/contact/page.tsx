@@ -9,9 +9,9 @@ import { buildBreadcrumbSchema } from "@/lib/schema";
 import { pageMetadata } from "@/lib/site";
 
 export const metadata: Metadata = pageMetadata({
-  title: "Get a Free Landscaping Quote in Waxhaw, NC",
+  title: "Landscaping Quote in Waxhaw, NC",
   description:
-    "Request a free, no-pressure quote from Avanti Landscaping. Call or text 980-328-7141, or send us a message. Serving Waxhaw, Marvin, Weddington, Matthews, and nearby communities.",
+    "Request a free landscaping quote from Avanti. Call or text 980-328-7141, or send project details through the website to start the conversation.",
   path: "/contact",
 });
 

@@ -8,7 +8,7 @@ import JsonLd from "@/components/JsonLd";
 import { buildBreadcrumbSchema } from "@/lib/schema";
 import { absoluteUrl, pageMetadata, SITE_URL } from "@/lib/site";
 import { getServiceCategory, SERVICE_CATEGORIES, categoryImageKey } from "@/lib/services";
-import { getServicesByCategory } from "@/lib/queries";
+import { getPublishedPostsByService, getServicesByCategory } from "@/lib/queries";
 import { getContent } from "@/lib/content";
 
 export const dynamic = "force-dynamic";
@@ -42,9 +42,10 @@ export default async function ServiceCategoryPage({
   const cat = getServiceCategory(category);
   if (!cat) notFound();
 
-  const [services, c] = await Promise.all([
+  const [services, c, guides] = await Promise.all([
     getServicesByCategory(cat.slug),
     getContent("services"),
+    getPublishedPostsByService(cat.slug),
   ]);
   const withPhotos = services.filter((s) => s.image);
   const textOnly = services.filter((s) => !s.image);
@@ -140,6 +141,42 @@ export default async function ServiceCategoryPage({
             </div>
           </div>
         </section>
+
+        <section className="section section--tight service-planning">
+          <div className="container service-planning-grid">
+            <div>
+              <span className="eyebrow">Before you request a quote</span>
+              <h2>Help us understand your property</h2>
+              <p>A useful first conversation starts with the conditions you see and the result you want.</p>
+            </div>
+            <ul className="service-planning-list">
+              {cat.planningPoints.map((point) => <li key={point}>{point}</li>)}
+            </ul>
+          </div>
+        </section>
+
+        {guides.length > 0 && (
+          <section className="section section--tight section--cream">
+            <div className="container">
+              <div className="section-head">
+                <h2>{cat.label} guides</h2>
+                <p>Use these local articles to prepare questions and compare the options already covered by Avanti.</p>
+              </div>
+              <div className="grid grid--3">
+                {guides.map((guide) => (
+                  <article className="blog-card" key={guide.id}>
+                    <div className="body">
+                      {guide.tag && <span className="tag">{guide.tag}</span>}
+                      <h3>{guide.title}</h3>
+                      {guide.excerpt && <p>{guide.excerpt}</p>}
+                      <Link href={`/blog/${guide.slug}`} className="card-link">Read {guide.title} →</Link>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
 
         <section className="section section--tight section--cream">
           <div className="container">
