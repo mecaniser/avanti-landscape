@@ -3,10 +3,8 @@ import MediaFrame from "@/components/MediaFrame";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import DeferredBeforeAfterCarousel from "@/components/DeferredBeforeAfterCarousel";
-import HeroEntrance from "@/components/HeroEntrance";
 import HeroMedia from "@/components/HeroMedia";
 import HeroServiceRoute from "@/components/HeroServiceRoute";
-import StaggeredText from "@/components/StaggeredText";
 import DeferredPropertyRoute from "@/components/DeferredPropertyRoute";
 import GoogleReviews from "@/components/GoogleReviews";
 import { getContent, getGlobalContent, parseAreaList } from "@/lib/content";
@@ -44,24 +42,22 @@ export default async function HomePage() {
         <section className="hero hero--property-plan">
           <HeroMedia poster={heroPoster} video={heroVideo} />
           <div className="container">
-            <HeroEntrance>
-              <div className="hero-copy">
-                <StaggeredText as="h1" text={"One crew.\nYour whole property."} direction="top" delay={70} duration={0.6} />
-                <p>Lawn care, landscaping, hardscaping, and maintenance for homes and businesses across the Waxhaw area.</p>
-                <div className="hero-actions">
-                  <Link href="/contact" className="btn btn--primary">Get a Free Quote</Link>
-                  <a href={`tel:${phoneTel}`} className="btn btn--outline">Call {phone}</a>
-                  <a href={`sms:${phoneTel}`} className="hero-text-link">Text us</a>
-                </div>
-                <div className="hero-owner-proof">
-                  <span aria-hidden="true">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="3" /><path d="M5 21c.7-4 3.1-6 7-6s6.3 2 7 6M3 5.5h3M18 5.5h3" /></svg>
-                  </span>
-                  <strong>100% owner-involved crews</strong>
-                </div>
+            <div className="hero-copy">
+              <h1>One crew.<br />Your whole property.</h1>
+              <p>Lawn care, landscaping, hardscaping, and maintenance for homes and businesses across the Waxhaw area.</p>
+              <div className="hero-actions">
+                <Link href="/contact" className="btn btn--primary">Get a Free Quote</Link>
+                <a href={`tel:${phoneTel}`} className="btn btn--outline">Call {phone}</a>
+                <a href={`sms:${phoneTel}`} className="hero-text-link">Text us</a>
               </div>
-              <HeroServiceRoute />
-            </HeroEntrance>
+              <div className="hero-owner-proof">
+                <span aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="3" /><path d="M5 21c.7-4 3.1-6 7-6s6.3 2 7 6M3 5.5h3M18 5.5h3" /></svg>
+                </span>
+                <strong>100% owner-involved crews</strong>
+              </div>
+            </div>
+            <HeroServiceRoute />
           </div>
         </section>
 
