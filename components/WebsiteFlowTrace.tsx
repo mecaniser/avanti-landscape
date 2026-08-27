@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
 type TraceGeometry = {
   path: string;
@@ -16,6 +17,9 @@ type TraceGeometry = {
 export default function WebsiteFlowTrace() {
   const [geometry, setGeometry] = useState<TraceGeometry | null>(null);
   const [revealed, setRevealed] = useState(false);
+  const host = typeof document === "undefined"
+    ? null
+    : document.querySelector<HTMLElement>(".results-section");
 
   useEffect(() => {
     const property = document.querySelector<HTMLElement>("#property-route");
@@ -88,9 +92,9 @@ export default function WebsiteFlowTrace() {
     };
   }, []);
 
-  if (!geometry) return null;
+  if (!geometry || !host) return null;
 
-  return (
+  return createPortal(
     <svg
       className="website-flow-trace"
       viewBox={`0 0 ${geometry.width} ${geometry.height}`}
@@ -99,6 +103,7 @@ export default function WebsiteFlowTrace() {
       data-revealed={revealed || undefined}
     >
       <path d={geometry.path} pathLength="1" />
-    </svg>
+    </svg>,
+    host
   );
 }
