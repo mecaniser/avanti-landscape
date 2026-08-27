@@ -13,7 +13,7 @@ import "./globals.css";
 // globals.css, so no other CSS had to change.
 const barlowCondensed = Barlow_Condensed({
   subsets: ["latin"],
-  weight: ["500", "600", "700"],
+  weight: ["600", "700"],
   variable: "--font-head-nf",
   display: "swap",
 });
@@ -23,6 +23,7 @@ const manrope = Manrope({
   weight: ["400", "500", "600", "700"],
   variable: "--font-body-nf",
   display: "swap",
+  preload: false,
 });
 
 const gaMeasurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
