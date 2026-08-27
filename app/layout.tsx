@@ -27,7 +27,7 @@ const manrope = Manrope({
 
 const gaMeasurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 
-const DEFAULT_TITLE = "Avanti Landscaping | Lawn Care & Landscaping in Waxhaw, NC";
+const DEFAULT_TITLE = "Avanti Landscaping | Landscaping in Waxhaw, NC";
 const DEFAULT_DESCRIPTION =
   "Waxhaw landscaping, lawn care, hardscaping, and property maintenance from a local, owner-involved crew. Call 980-328-7141 for a free quote.";
 
