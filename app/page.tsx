@@ -2,13 +2,12 @@ import Link from "next/link";
 import MediaFrame from "@/components/MediaFrame";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
-import BeforeAfterCarousel from "@/components/BeforeAfterCarousel";
+import DeferredBeforeAfterCarousel from "@/components/DeferredBeforeAfterCarousel";
 import HeroEntrance from "@/components/HeroEntrance";
 import HeroMedia from "@/components/HeroMedia";
 import HeroServiceRoute from "@/components/HeroServiceRoute";
 import StaggeredText from "@/components/StaggeredText";
-import PropertyRoute from "@/components/PropertyRoute";
-import WebsiteFlowTrace from "@/components/WebsiteFlowTrace";
+import DeferredPropertyRoute from "@/components/DeferredPropertyRoute";
 import GoogleReviews from "@/components/GoogleReviews";
 import { getContent, getGlobalContent, parseAreaList } from "@/lib/content";
 import { getBeforeAfterProjects } from "@/lib/queries";
@@ -66,7 +65,7 @@ export default async function HomePage() {
           </div>
         </section>
 
-        <PropertyRoute images={routeImages} />
+        <DeferredPropertyRoute images={routeImages} />
 
         {projects.length > 0 && (
         <section className="section results-section" id="results-section">
@@ -78,9 +77,8 @@ export default async function HomePage() {
               </div>
               <Link href="/gallery" className="route-link">View the gallery<span aria-hidden="true">→</span></Link>
             </div>
-            <BeforeAfterCarousel projects={projects} />
+            <DeferredBeforeAfterCarousel projects={projects} />
           </div>
-          <WebsiteFlowTrace />
         </section>
         )}
 

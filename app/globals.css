@@ -749,7 +749,8 @@ p { color: var(--text-soft); }
 }
 .route-intro > p { max-width: 36ch; margin-top: 22px; color: rgba(232, 235, 221, .76); }
 .route-tabs { display: grid; margin-top: 35px; border-top: 1px solid rgba(232, 227, 213, .18); }
-.route-tabs button {
+.route-tabs button,
+.route-tabs .deferred-route-tab {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -769,7 +770,8 @@ p { color: var(--text-soft); }
   cursor: pointer;
   transition: color 160ms ease, background 160ms ease, transform 160ms var(--ease-out);
 }
-.route-tabs button:hover, .route-tabs button.is-active { color: #fffdf7; background: rgba(183, 199, 139, .07); transform: translateX(10px); }
+.route-tabs button:hover, .route-tabs button.is-active,
+.route-tabs .deferred-route-tab:hover, .route-tabs .deferred-route-tab.is-active { color: #fffdf7; background: rgba(183, 199, 139, .07); transform: translateX(10px); }
 .route-tabs button:active { transform: scale(.99); }
 .route-tab-icon {
   display: grid;
@@ -1996,7 +1998,7 @@ p { color: var(--text-soft); }
   .property-route { padding-block: 78px; }
   .route-intro h2 { font-size: clamp(3.2rem, 15vw, 4.2rem); }
   .route-tabs { margin-top: 26px; }
-  .route-tabs button { font-size: 1.08rem; }
+  .route-tabs button, .route-tabs .deferred-route-tab { font-size: 1.08rem; }
   .service-planning-grid { grid-template-columns: 1fr; gap: 28px; }
   .route-detail { min-height: 0; grid-template-columns: 1fr; margin-top: 8px; }
   .route-detail-copy { min-height: 260px; }
