@@ -72,6 +72,7 @@ export default function HeroMedia({ poster, video }: { poster: string; video: st
           fill
           priority
           fetchPriority="high"
+          decoding="sync"
           onLoad={() => setPosterSettled(true)}
           onError={() => setPosterSettled(true)}
           // This is the LCP element on every page that renders it, so its
