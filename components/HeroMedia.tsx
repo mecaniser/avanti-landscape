@@ -9,6 +9,7 @@ export default function HeroMedia({ poster, video }: { poster: string; video: st
   const [paused, setPaused] = useState(false);
   const [canPlayVideo, setCanPlayVideo] = useState(false);
   const [posterSettled, setPosterSettled] = useState(false);
+  const [videoReady, setVideoReady] = useState(false);
 
   // Start with the poster and only mount the video after hydration. This keeps
   // motion media off the network when the visitor requests reduced motion or
@@ -33,8 +34,31 @@ export default function HeroMedia({ poster, video }: { poster: string; video: st
   }, []);
 
   useEffect(() => {
-    if (canPlayVideo && ref.current) ref.current.muted = true;
-  }, [canPlayVideo]);
+    if (!canPlayVideo || !posterSettled) return;
+
+    let timer = 0;
+    const revealVideo = () => {
+      setVideoReady(true);
+      window.clearTimeout(timer);
+      window.removeEventListener("pointerdown", revealVideo);
+      window.removeEventListener("keydown", revealVideo);
+      window.removeEventListener("scroll", revealVideo);
+    };
+    timer = window.setTimeout(revealVideo, 6_000);
+    window.addEventListener("pointerdown", revealVideo, { once: true, passive: true });
+    window.addEventListener("keydown", revealVideo, { once: true });
+    window.addEventListener("scroll", revealVideo, { once: true, passive: true });
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener("pointerdown", revealVideo);
+      window.removeEventListener("keydown", revealVideo);
+      window.removeEventListener("scroll", revealVideo);
+    };
+  }, [canPlayVideo, posterSettled]);
+
+  useEffect(() => {
+    if (videoReady && ref.current) ref.current.muted = true;
+  }, [videoReady]);
 
   function togglePlayback() {
     const v = ref.current;
@@ -82,7 +106,7 @@ export default function HeroMedia({ poster, video }: { poster: string; video: st
           quality={45}
           sizes="100vw"
         />
-        {video && canPlayVideo && (
+        {video && canPlayVideo && videoReady && (
           <video
             ref={ref}
             className="hero-video"
@@ -103,7 +127,7 @@ export default function HeroMedia({ poster, video }: { poster: string; video: st
 
       </div>
 
-      {video && canPlayVideo && (
+      {video && canPlayVideo && videoReady && (
         <div className="hero-controls" role="group" aria-label="Background video controls">
           {ended ? (
             <button type="button" className="hero-control" onClick={replay} aria-label="Replay video">
