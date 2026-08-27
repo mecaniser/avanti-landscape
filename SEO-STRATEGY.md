@@ -2,7 +2,7 @@
 
 Prepared: August 19, 2026
 
-Reconciled: August 26, 2026
+Reconciled: August 27, 2026
 
 Primary market: Waxhaw, North Carolina and nearby southern Charlotte communities
 
@@ -103,7 +103,7 @@ Case studies should become the primary proof asset. A strong case study document
 
 ## Measurement
 
-Establish the starting values in Google Search Console, Google Business Profile, and GA4 before claiming growth. The Places API check completed August 26, 2026 verified a 5.0 rating from 49 reviews; PR #26 adds the live on-site display, but that integration remains pending until merged, deployed, and checked on the production URL.
+Establish the starting values in Google Search Console, Google Business Profile, and GA4 before claiming growth. The Places API check completed August 26, 2026 verified a 5.0 rating from 49 reviews. On August 27, PR #26 and its Railway build correction in PR #27 were verified live: the homepage displayed the 5.0/49 rating summary and three Google-supplied written review cards, while `/privacy` and `/terms` returned `200`.
 
 Track:
 

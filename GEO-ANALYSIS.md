@@ -2,7 +2,7 @@
 
 **Original audit:** August 18, 2026
 
-**Reconciled:** August 26, 2026
+**Reconciled:** August 27, 2026
 
 **Site:** https://www.avantilandscapingnc.com/
 
@@ -84,7 +84,7 @@ Use question headings when they match genuine customer language, but do not mech
 
 ## Brand, reviews, and project proof
 
-The August 26 Places API check verified Avanti Landscaping LLC at 5.0 from 49 reviews. PR #26 adds a policy-aware homepage display with Google attribution, reviewer/source links, fallbacks, and public Privacy/Terms pages. It is **pending**, not live, until merge, Railway deployment, and production verification are complete.
+The August 26 Places API check verified Avanti Landscaping LLC at 5.0 from 49 reviews. The policy-aware homepage display shipped August 27 through PR #26 and the Railway build correction in PR #27. Production verification confirmed Google attribution, reviewer/source links, the 5.0/49 summary, three written review cards, and public Privacy/Terms pages. This closes the on-site review-display task; managed-profile response behavior and review velocity still require GBP evidence.
 
 Use the reviews as third-party validation, while case studies carry first-party project proof. Each case study should connect:
 
@@ -133,7 +133,7 @@ No backlink count, domain-authority target, toxicity conclusion, or disavow acti
 | 2 | Publish four evidence-backed child services | Each passes the page-readiness gate and has original proof |
 | 3 | Publish four structured project case studies | Approved facts, original media, service/location links |
 | 4 | Launch one evidence-rich Waxhaw page | Distinct local proof and useful service relationships |
-| 5 | Verify review integration from PR #26 | Live data, attribution/source links, fallbacks, privacy/terms, server-only key |
+| 5 | Maintain the verified Google review integration | Monitor live data, attribution/source links, fallback behavior, privacy/terms, and server-only key handling |
 | 6 | Decide crawler policy intentionally | Written owner decision plus live robots and Cloudflare-log verification |
 | 7 | Test actual AI visibility | Dated queries, geography/account context, citations, and limitations recorded |
 
@@ -142,5 +142,5 @@ No backlink count, domain-authority target, toxicity conclusion, or disavow acti
 - No authenticated GSC, GA4, GBP Insights, Bing Webmaster, backlink, or DataForSEO dataset was used.
 - Platform scores are directional planning estimates.
 - AI answer tests are not stable ranking measurements and can vary by user, location, model, and date.
-- The live homepage did not yet contain the PR #26 reviews section when checked August 26.
+- Production review-display verification was completed August 27; managed GBP Insights, response behavior, and review-velocity evidence remain unavailable.
 - Provider-policy claims above use official OpenAI and Google documentation; recheck them before future crawler-policy changes.

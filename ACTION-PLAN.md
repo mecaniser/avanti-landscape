@@ -2,7 +2,7 @@
 
 - **Source audit:** [`FULL-AUDIT-REPORT.md`](FULL-AUDIT-REPORT.md)
 - **Prepared:** 2026-08-19
-- **Reconciled:** 2026-08-26
+- **Reconciled:** 2026-08-27
 - **Current score:** 62/100
 - **Release principle:** verify every change on the live candidate; do not treat a code commit as proof that Cloudflare, Google, or indexed snippets changed.
 
@@ -31,10 +31,10 @@ No Critical defect was reproduced in this audit.
 
 ## Current delivery status
 
-| Track | Status on August 26, 2026 | Next proof required |
+| Track | Status on August 27, 2026 | Next proof required |
 |---|---|---|
 | Crawl/index foundation | Verified in the August 19 audit | Recheck the exact live release after each deployment |
-| Google review integration | **Pending in [PR #26](https://github.com/mecaniser/avanti-landscape/pull/26)**; Places API check verified 5.0 from 49 reviews | Merge, Railway deploy success, live homepage review cards/links, Privacy/Terms URLs, and no exposed API key |
+| Google review integration | **Verified live.** [PR #26](https://github.com/mecaniser/avanti-landscape/pull/26) and build correction [PR #27](https://github.com/mecaniser/avanti-landscape/pull/27) are merged; Railway deployment `aded189c-f9fe-4528-bc6c-7cfd96dc6bf3` succeeded from SHA `653333354859b661239913621d43a4d9a9f47278`; production rendered the 5.0/49 summary and three written cards, and `/privacy` plus `/terms` returned `200` | Monitor API failures and Google attribution/link integrity; establish managed GBP review-velocity and response baseline |
 | SEO planning package | **Complete on `codex/seo-planning`** | Review/approve priorities, owners, and capacity before implementation |
 | GSC/GA4/GBP baselines | Not established in this evidence set | Dated exports or screenshots from the correct managed accounts |
 | Phase-1 engineering fixes | Not started by this planning branch | Separate scoped implementation PRs with candidate and live verification |

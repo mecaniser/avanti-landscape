@@ -14,10 +14,10 @@ The site is not suffering from an indexing emergency. The largest losses are dow
 
 The automated baseline scored the site `61/100` but incorrectly classified it as a publisher and marked non-blocking recommendations as Critical. This report corrects the business type and applies the skill’s stated severity rules. **No Critical issue was confirmed.**
 
-### Post-audit status — August 26, 2026
+### Post-audit status — August 27, 2026
 
 - A Places API check verified the correct Avanti Landscaping LLC profile at 5.0 from 49 reviews.
-- [PR #26](https://github.com/mecaniser/avanti-landscape/pull/26) contains the isolated Google Reviews homepage integration plus Privacy/Terms support. It is pending merge, deployment, and live verification; this report does not treat it as production-complete.
+- [PR #26](https://github.com/mecaniser/avanti-landscape/pull/26) shipped the isolated Google Reviews homepage integration plus Privacy/Terms support. [PR #27](https://github.com/mecaniser/avanti-landscape/pull/27) corrected Railway build-time database access. Railway deployment `aded189c-f9fe-4528-bc6c-7cfd96dc6bf3` succeeded from exact main SHA `653333354859b661239913621d43a4d9a9f47278`; production returned `200` for `/`, `/privacy`, and `/terms`, and the homepage rendered the 5.0/49 rating summary plus three written Google review cards.
 - `GEO-ANALYSIS.md` was reconciled to official OpenAI and Google crawler guidance. GPTBot and OAI-SearchBot are separate controls, and Google-Extended does not control Google Search inclusion or ranking.
 - The 62/100 audit baseline remains unchanged until the live site is recrawled and rescored with the same methodology.
 
@@ -41,7 +41,7 @@ Backlink health is **not scored** because only basic Common Crawl discovery was 
 1. **Mobile LCP measured 5.33 seconds.** A real Chrome Lighthouse mobile run scored 75, with the homepage hero as the LCP element. About 75% of its LCP time was render delay. Desktop scored 96 with a 1.36-second LCP, so the problem is mobile-specific.
 2. **Two blog URLs serve unrelated replacement topics.** `/blog/spring-vs-fall-cleanup` now serves “Rock vs. Mulch,” and `/blog/core-aeration` now serves “Sod vs. Seed.” Their titles, H1s, schema, and canonicals describe the new articles, but the stale slugs send contradictory relevance signals.
 3. **Commercial pages are materially underdeveloped.** Main-content counts were roughly 180–214 words on the four service pages and about 78 words on `/areas`. They list offerings but provide little process, suitability, local-climate knowledge, project evidence, timelines, or objection handling.
-4. **Local trust and entity proof are weak.** A public Google Maps profile resolves with a matching site and phone and shows a 5.0 rating, but review count/recency and owner-response behavior were not visible in the limited public view. The site does not visibly feature permissioned reviews, named credentials, or detailed case studies. Search results also contain many unrelated Canadian “Avanti Landscaping” entities.
+4. **Local trust and entity proof were weak at audit time.** A public Google Maps profile resolved with a matching site and phone and showed a 5.0 rating, but review count/recency and owner-response behavior were not visible in the limited public view. The August 27 release now displays Google-supplied review proof with attribution; named credentials, detailed case studies, managed-profile response behavior, and stronger differentiation from unrelated Canadian “Avanti Landscaping” entities remain open.
 5. **Search snippets are broadly overlong.** Fourteen of 16 unique page titles exceed the audit guideline of 60 characters, and nine meta descriptions exceed 160 characters. A search result for the contact page also still displayed an old incorrect number, `(980) 338-7141`, even though live HTML and schema correctly show `(980) 328-7141`.
 
 ## Top five quick wins
