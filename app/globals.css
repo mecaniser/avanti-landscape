@@ -481,6 +481,11 @@ p { color: var(--text-soft); }
 }
 .hero--property-plan .btn--outline:hover { background: rgba(232, 227, 213, .14); border-color: #fffdf7; }
 .hero-text-link {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  padding-inline: 8px;
   align-self: center;
   color: #fffdf7;
   font-family: var(--font-head);
@@ -601,6 +606,8 @@ p { color: var(--text-soft); }
   letter-spacing: .035em;
   text-transform: uppercase;
   transition: transform 220ms var(--ease-out), color 180ms ease;
+  min-height: 44px;
+  padding-block: 3px;
 }
 .plot-marker::before {
   content: "";
@@ -853,6 +860,40 @@ p { color: var(--text-soft); }
   opacity: 1;
   animation: route-image-progress 900ms cubic-bezier(.25, .8, .35, 1) infinite;
 }
+
+.service-planning { background: #fffdf7; }
+.service-planning-grid {
+  display: grid;
+  grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr);
+  gap: clamp(34px, 7vw, 100px);
+  align-items: start;
+}
+.service-planning-grid h2 { margin-top: 10px; }
+.service-planning-grid p { max-width: 44ch; margin-top: 14px; }
+.service-planning-list { display: grid; gap: 0; list-style: none; }
+.service-planning-list li {
+  position: relative;
+  padding: 19px 0 19px 34px;
+  border-top: 1px solid var(--surface-line);
+}
+.service-planning-list li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: var(--olive);
+  font-weight: 800;
+}
+.article-related {
+  margin-top: 42px;
+  padding: 28px;
+  border: 1px solid var(--surface-line);
+  border-radius: var(--radius);
+  background: var(--cream);
+}
+.article-related h2 { font-size: clamp(1.8rem, 4vw, 2.5rem); }
+.article-related p { margin-top: 12px; }
+.article-related a { color: var(--olive); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+.article-related ul { display: grid; gap: 10px; margin: 18px 0 0 20px; }
 @keyframes route-image-progress {
   from { transform: scaleX(0); }
   to { transform: scaleX(1); }
@@ -1956,6 +1997,7 @@ p { color: var(--text-soft); }
   .route-intro h2 { font-size: clamp(3.2rem, 15vw, 4.2rem); }
   .route-tabs { margin-top: 26px; }
   .route-tabs button { font-size: 1.08rem; }
+  .service-planning-grid { grid-template-columns: 1fr; gap: 28px; }
   .route-detail { min-height: 0; grid-template-columns: 1fr; margin-top: 8px; }
   .route-detail-copy { min-height: 260px; }
   .route-image { min-height: 390px; }

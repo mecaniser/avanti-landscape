@@ -177,42 +177,35 @@ async function main() {
   // --- Blog posts ---
   const posts = [
     {
-      slug: "core-aeration",
-      title: "5 Signs Your Lawn Needs Core Aeration",
-      excerpt: "Compacted soil is a common, often invisible reason lawns struggle. Here are 5 signs your lawn needs core aeration.",
+      slug: "sod-vs-seed-waxhaw-nc",
+      title: "Sod vs. Seed for a Waxhaw Lawn",
+      excerpt: "Compare sod and seed for a Waxhaw-area lawn, including establishment speed, preparation, watering, and site conditions.",
       coverImage: null,
-      tag: "LAWN CARE",
-      body: `<p>Compacted soil is one of the most common, and least obvious, reasons a lawn struggles, even with regular watering and fertilizing. Aeration relieves that compaction so water, air, and nutrients can actually reach the roots. Here's how to tell if your lawn needs it.</p>
-<h2>1. Water Pools Instead of Soaking In</h2>
-<p>If rain or sprinkler water sits on the surface instead of absorbing, compacted soil is likely blocking it from reaching the roots.</p>
-<h2>2. The Lawn Feels Hard Underfoot</h2>
-<p>Walk across your yard. If it feels more like a parking lot than a cushion, compaction is limiting root growth.</p>
-<h2>3. Heavy Foot or Vehicle Traffic</h2>
-<p>Play areas, dog runs, and spots where mowers or cars regularly pass compact faster than the rest of the yard.</p>
-<h2>4. Thinning Grass Despite Regular Care</h2>
-<p>If you're fertilizing and watering on schedule but the lawn still looks thin, compacted soil may be the real culprit.</p>
-<h2>5. Visible Thatch Buildup</h2>
-<p>A thick spongy layer of dead grass and roots at the soil surface often pairs with compaction and blocks new growth.</p>
-<p>Core aeration is typically done once or twice a year and pairs well with overseeding for the best results. If any of this sounds familiar, we're happy to take a look at your lawn.</p>`,
+      tag: "LANDSCAPING",
+      primaryServiceSlug: "landscaping",
+      body: `<p>Sod creates an established surface quickly, while seed develops over time. The useful choice depends on the condition of the soil, the area to cover, the watering available during establishment, and how soon the lawn needs to be usable.</p>
+<h2>Start with the Site</h2>
+<p>Both options depend on preparation. Grade, drainage, soil condition, sunlight, and access should be reviewed before choosing the lawn material.</p>
+<h2>When Sod May Fit</h2>
+<p>Sod may suit a property that needs immediate coverage and can support the watering and preparation required during establishment.</p>
+<h2>When Seed May Fit</h2>
+<p>Seed can suit a property where a longer establishment period is acceptable and the selected grass matches the site's light and seasonal conditions.</p>
+<p>Share the area, current conditions, and timing you have in mind so the options can be discussed for your property.</p>`,
     },
     {
-      slug: "spring-vs-fall-cleanup",
-      title: "Spring vs. Fall Cleanup: What Your Yard Actually Needs",
-      excerpt: "Spring and fall yard cleanups serve different purposes. Here's what to prioritize in each season.",
+      slug: "rock-vs-mulch-north-carolina",
+      title: "Rock vs. Mulch for North Carolina Landscape Beds",
+      excerpt: "Compare rock and mulch for landscape beds, including appearance, maintenance, drainage, and the surrounding planting plan.",
       coverImage: "/assets/img/gallery-mulch-bed.jpg",
-      tag: "MAINTENANCE",
-      body: `<p>It's tempting to treat spring cleanup and fall cleanup as the same job on a different date. They're not. Each season sets your lawn up for what comes next, and skipping the wrong one can undo months of good care.</p>
-<h2>Spring Cleanup: Waking the Lawn Up</h2>
-<p>Spring is about clearing winter debris, cutting back dead growth, and getting ahead of early weeds before they take hold. It's also the right time for a first application of fertilizer and a close look at any bare or thin patches from winter.</p>
-<h2>Fall Cleanup: Setting Up for Winter</h2>
-<p>Fall cleanup is more about protection. Removing leaves before they smother the grass, aerating and overseeding while soil temperatures are ideal, and clearing beds so pests and disease have nowhere to hide over winter.</p>
-<h2>Why Both Matter</h2>
-<ul>
-<li>Skipping spring cleanup lets weeds get a head start you'll fight all summer.</li>
-<li>Skipping fall cleanup leaves your lawn more vulnerable to disease and winter damage.</li>
-<li>Doing both on schedule means less reactive work, and cost, the rest of the year.</li>
-</ul>
-<p>If your yard hasn't had a proper cleanup in a while, an overgrown yard cleanup can reset things before you get back on a regular schedule.</p>`,
+      tag: "LANDSCAPING",
+      primaryServiceSlug: "landscaping",
+      body: `<p>Rock and mulch can both finish a landscape bed, but they create different maintenance, planting, and drainage considerations. Choose them as part of the whole bed rather than by color alone.</p>
+<h2>Consider the Planting Plan</h2>
+<p>Existing plants, future additions, sunlight, and the way the bed will be maintained all affect which surface is easier to live with.</p>
+<h2>Consider Water Movement</h2>
+<p>Bed shape, grade, downspouts, and surrounding hard surfaces matter. A surface material should not be used to hide a drainage issue that needs separate attention.</p>
+<h2>Consider Ongoing Maintenance</h2>
+<p>Ask how debris, weeds, edging, and future planting changes will be handled. The right choice is the one that fits the property and the level of upkeep expected.</p>`,
     },
     {
       slug: "tall-fescue-waxhaw",
@@ -220,6 +213,7 @@ async function main() {
       excerpt: "Waxhaw sits in a tricky transition climate zone. Here's why tall fescue tends to be the safer lawn choice.",
       coverImage: "/assets/img/blog-lawn-wide.jpg",
       tag: "LAWN CARE",
+      primaryServiceSlug: "lawn-care",
       body: `<p>Waxhaw sits in what's known as the "transition zone". It is too hot in summer for cool-season grasses to thrive everywhere, but too cold in winter for warm-season grasses to stay green year-round. That in-between climate is exactly why tall fescue tends to be the safer, more forgiving choice for most yards here.</p>
 <h2>It Handles Our Swings Better</h2>
 <p>Tall fescue has a deep root system that helps it tolerate both summer heat and occasional winter cold better than many alternatives suited to more extreme climates.</p>
@@ -244,6 +238,7 @@ async function main() {
         title: post.title,
         excerpt: post.excerpt,
         tag: post.tag,
+        primaryServiceSlug: post.primaryServiceSlug,
         body: post.body,
         coverImage: post.coverImage,
       },
@@ -252,6 +247,7 @@ async function main() {
         title: post.title,
         excerpt: post.excerpt,
         tag: post.tag,
+        primaryServiceSlug: post.primaryServiceSlug,
         body: post.body,
         coverImage: post.coverImage,
         publishedAt: new Date("2026-07-01T12:00:00Z"),

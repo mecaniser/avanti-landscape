@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { TAGS } from "@/lib/content";
-import { SERVICE_CATEGORIES, categoryImageKey } from "@/lib/services";
+import { SERVICE_CATEGORIES, categoryImageKey, isServiceCategorySlug } from "@/lib/services";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
 import { isCloudinaryConfigured, uploadImageBuffer, uploadVideoBuffer } from "@/lib/cloudinary";
@@ -19,6 +19,14 @@ function getRequiredText(formData: FormData, name: string) {
 
 function getOptionalText(formData: FormData, name: string) {
   return String(formData.get(name) ?? "").trim() || null;
+}
+
+function getPrimaryServiceSlug(formData: FormData) {
+  const value = getOptionalText(formData, "primaryServiceSlug");
+  if (value && !isServiceCategorySlug(value)) {
+    throw new UploadError("Choose a valid related service.");
+  }
+  return value;
 }
 
 function getFile(formData: FormData, name: string, required: boolean, kind: "image" | "video") {
@@ -258,6 +266,7 @@ async function createBlogPost(formData: FormData) {
       title: getRequiredText(formData, "title"),
       excerpt: getOptionalText(formData, "excerpt"),
       tag: getOptionalText(formData, "tag"),
+      primaryServiceSlug: getPrimaryServiceSlug(formData),
       body: getRequiredText(formData, "body"),
       coverImage,
       publishedAt: formData.get("publish") === "on" ? new Date() : null,
@@ -282,6 +291,7 @@ async function updateBlogPost(formData: FormData) {
       title: getRequiredText(formData, "title"),
       excerpt: getOptionalText(formData, "excerpt"),
       tag: getOptionalText(formData, "tag"),
+      primaryServiceSlug: getPrimaryServiceSlug(formData),
       body: getRequiredText(formData, "body"),
       coverImage,
       publishedAt: formData.get("publish") === "on" ? existing.publishedAt ?? new Date() : null,

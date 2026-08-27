@@ -73,6 +73,53 @@ export const getPublishedPosts = cache(async () => {
   return posts.map(reviveBlogPostDates);
 });
 
+export const getPublishedPostsByService = cache(async (primaryServiceSlug: string) => {
+  const posts = await unstable_cache(
+    (primaryServiceSlug: string) =>
+      prisma.blogPost.findMany({
+        where: { publishedAt: { not: null }, primaryServiceSlug },
+        orderBy: { publishedAt: "desc" },
+        take: 3,
+      }),
+    ["published-posts-by-service"],
+    { tags: [TAGS.blog], revalidate: CACHE_TTL_SECONDS }
+  )(primaryServiceSlug);
+  return posts.map(reviveBlogPostDates);
+});
+
+export const getRelatedPosts = cache(async (
+  postId: string,
+  primaryServiceSlug: string | null
+) => {
+  const posts = await unstable_cache(
+    async (postId: string, primaryServiceSlug: string | null) => {
+      const sameService = await prisma.blogPost.findMany({
+        where: {
+          id: { not: postId },
+          publishedAt: { not: null },
+          ...(primaryServiceSlug ? { primaryServiceSlug } : {}),
+        },
+        orderBy: { publishedAt: "desc" },
+        take: 3,
+      });
+      if (sameService.length === 3) return sameService;
+
+      const fallback = await prisma.blogPost.findMany({
+        where: {
+          id: { notIn: [postId, ...sameService.map((post) => post.id)] },
+          publishedAt: { not: null },
+        },
+        orderBy: { publishedAt: "desc" },
+        take: 3 - sameService.length,
+      });
+      return [...sameService, ...fallback];
+    },
+    ["related-posts"],
+    { tags: [TAGS.blog], revalidate: CACHE_TTL_SECONDS }
+  )(postId, primaryServiceSlug);
+  return posts.map(reviveBlogPostDates);
+});
+
 /**
  * Blog post routes read the same row twice, once in generateMetadata and once
  * in the page body. The React `cache` wrapper collapses that into one query

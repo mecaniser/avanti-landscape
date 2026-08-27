@@ -102,7 +102,7 @@ Critical dependencies:
 
 1. Owner-approved facts and project evidence precede new service or location pages.
 2. Redirect and measurement work precede conclusions about content performance.
-3. PR #26 must be merged, deployed, and verified before the Google Reviews display is marked live.
+3. The Google Reviews display is live; keep its data, attribution, source links, and legal-page behavior in regression coverage.
 4. Search Console, GA4, or GBP actions require the correct managed account and explicit provider authorization.
 
 ## Page readiness gate

@@ -7,7 +7,8 @@ import SiteFooter from "@/components/SiteFooter";
 import JsonLd from "@/components/JsonLd";
 import { buildBreadcrumbSchema } from "@/lib/schema";
 import { absoluteImage, absoluteUrl, SITE_NAME, SITE_URL } from "@/lib/site";
-import { getPostBySlug } from "@/lib/queries";
+import { getPostBySlug, getRelatedPosts } from "@/lib/queries";
+import { getServiceCategory } from "@/lib/services";
 
 export const dynamic = "force-dynamic";
 
@@ -58,6 +59,10 @@ export default async function BlogPostPage({
   const { slug } = await params;
   const post = await getPostBySlug(slug);
   if (!post || !post.publishedAt) notFound();
+  const [relatedPosts, primaryService] = await Promise.all([
+    getRelatedPosts(post.id, post.primaryServiceSlug),
+    Promise.resolve(post.primaryServiceSlug ? getServiceCategory(post.primaryServiceSlug) : undefined),
+  ]);
 
   const articleSchema = {
     "@context": "https://schema.org",
@@ -73,7 +78,10 @@ export default async function BlogPostPage({
     publisher: { "@id": `${SITE_URL}/#business` },
   };
 
-  const dateLabel = post.publishedAt.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+  const dateFormat = { month: "long", day: "numeric", year: "numeric" } as const;
+  const publishedLabel = post.publishedAt.toLocaleDateString("en-US", dateFormat);
+  const updatedLabel = post.updatedAt.toLocaleDateString("en-US", dateFormat);
+  const showUpdated = post.updatedAt.toDateString() !== post.publishedAt.toDateString();
 
   return (
     <>
@@ -102,7 +110,10 @@ export default async function BlogPostPage({
             <div className="article-meta">
               {post.tag && <span className="tag" style={{ color: "var(--olive)", fontWeight: 700 }}>{post.tag}</span>}
               <span>·</span>
-              <span>{dateLabel}</span>
+              <span>By Avanti Landscaping crew</span>
+              <span>·</span>
+              <span>Published {publishedLabel}</span>
+              {showUpdated && <><span>·</span><span>Updated {updatedLabel}</span></>}
             </div>
 
             {post.coverImage && (
@@ -111,6 +122,24 @@ export default async function BlogPostPage({
             )}
 
             <div dangerouslySetInnerHTML={{ __html: post.body }} />
+
+            {(primaryService || relatedPosts.length > 0) && (
+              <aside className="article-related" aria-labelledby="article-related-heading">
+                <h2 id="article-related-heading">Continue planning your property</h2>
+                {primaryService && (
+                  <p>
+                    Related service: <Link href={`/services/${primaryService.slug}`}>{primaryService.label} in Waxhaw, NC</Link>
+                  </p>
+                )}
+                {relatedPosts.length > 0 && (
+                  <ul>
+                    {relatedPosts.map((related) => (
+                      <li key={related.id}><Link href={`/blog/${related.slug}`}>{related.title}</Link></li>
+                    ))}
+                  </ul>
+                )}
+              </aside>
+            )}
 
             <div className="cta-band" style={{ marginTop: 40, background: "var(--cream)" }}>
               <div>

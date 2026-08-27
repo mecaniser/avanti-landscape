@@ -17,6 +17,7 @@
 | [`CONTENT-CALENDAR.md`](CONTENT-CALENDAR.md) | Twelve editorial pieces plus four separate case-study targets |
 | [`IMPLEMENTATION-ROADMAP.md`](IMPLEMENTATION-ROADMAP.md) | Owners, dependencies, phases, and completion evidence |
 | [`GEO-ANALYSIS.md`](GEO-ANALYSIS.md) | Reconciled AI-search/crawler strategy and verification limits |
+| [`CLIENT-SEO-TASKS.md`](CLIENT-SEO-TASKS.md) | Owner approvals, project evidence, and managed-account actions that the development/SEO team cannot complete alone |
 
 Use this action plan as the execution index. When documents differ, the later reconciled statement and the stricter evidence gate control.
 

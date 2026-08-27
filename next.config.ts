@@ -17,6 +17,21 @@ const nextConfig: NextConfig = {
   // Do not advertise the framework and version.
   poweredByHeader: false,
 
+  async redirects() {
+    return [
+      {
+        source: "/blog/spring-vs-fall-cleanup",
+        destination: "/blog/rock-vs-mulch-north-carolina",
+        permanent: true,
+      },
+      {
+        source: "/blog/core-aeration",
+        destination: "/blog/sod-vs-seed-waxhaw-nc",
+        permanent: true,
+      },
+    ];
+  },
+
   async headers() {
     return [
       {
@@ -51,7 +66,7 @@ const nextConfig: NextConfig = {
     // Next defaults this to [75] only — any other `quality` prop silently
     // snaps back to 75 (via findClosestQuality) unless explicitly allowed
     // here. 60 is what the large photo components ask for.
-    qualities: [60, 75],
+    qualities: [45, 60, 75],
     // Next defaults to WebP only. These are large, detailed outdoor photos
     // where AVIF lands ~25% smaller at the same quality; browsers that do
     // not send an AVIF Accept header still fall through to WebP.

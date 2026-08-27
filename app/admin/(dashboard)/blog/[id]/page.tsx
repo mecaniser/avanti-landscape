@@ -1,10 +1,12 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { prisma } from "@/lib/db";
 import { deleteBlogPost } from "../actions";
 import AdminUploadForm from "@/components/AdminUploadForm";
 import BlogBodyEditor from "@/components/BlogBodyEditor";
 import AdminDeleteConfirm from "@/components/AdminDeleteConfirm";
+import { SERVICE_CATEGORIES } from "@/lib/services";
 
 export const dynamic = "force-dynamic";
 
@@ -33,13 +35,23 @@ export default async function EditBlogPostPage({
           <label htmlFor="tag">Tag</label>
           <input type="text" id="tag" name="tag" defaultValue={post.tag ?? ""} />
 
+          <label htmlFor="primaryServiceSlug">Related Service</label>
+          <select id="primaryServiceSlug" name="primaryServiceSlug" defaultValue={post.primaryServiceSlug ?? ""}>
+            <option value="">Choose when relevant</option>
+            {SERVICE_CATEGORIES.map((category) => (
+              <option key={category.slug} value={category.slug}>{category.label}</option>
+            ))}
+          </select>
+
           <label htmlFor="excerpt">Excerpt</label>
           <textarea id="excerpt" name="excerpt" rows={2} defaultValue={post.excerpt ?? ""} />
 
           {post.coverImage && (
-            <img
+            <Image
               src={post.coverImage}
               alt={post.title}
+              width={200}
+              height={130}
               style={{ width: 200, height: 130, objectFit: "cover", borderRadius: 8, marginBottom: 12, border: "1px solid #e3e0d3" }}
             />
           )}

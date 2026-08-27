@@ -5,6 +5,16 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { TAGS } from "@/lib/content";
 import { uploadImageBuffer, isCloudinaryConfigured } from "@/lib/cloudinary";
+import { isServiceCategorySlug } from "@/lib/services";
+
+function primaryServiceSlug(formData: FormData) {
+  const value = String(formData.get("primaryServiceSlug") || "").trim();
+  if (!value) return null;
+  if (!isServiceCategorySlug(value)) {
+    throw new Error("Choose a valid related service.");
+  }
+  return value;
+}
 
 function refresh(slug?: string) {
   // Tag invalidation clears the cached query in lib/queries.ts; the path
@@ -38,6 +48,7 @@ export async function createBlogPost(formData: FormData) {
       title: String(formData.get("title") || ""),
       excerpt: String(formData.get("excerpt") || "") || null,
       tag: String(formData.get("tag") || "") || null,
+      primaryServiceSlug: primaryServiceSlug(formData),
       body: String(formData.get("body") || ""),
       coverImage,
       publishedAt: publish ? new Date() : null,
@@ -59,6 +70,7 @@ export async function updateBlogPost(id: string, formData: FormData) {
       title: String(formData.get("title") || ""),
       excerpt: String(formData.get("excerpt") || "") || null,
       tag: String(formData.get("tag") || "") || null,
+      primaryServiceSlug: primaryServiceSlug(formData),
       body: String(formData.get("body") || ""),
       coverImage,
       publishedAt: publish ? existing?.publishedAt ?? new Date() : null,

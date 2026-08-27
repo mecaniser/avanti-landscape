@@ -75,10 +75,10 @@ export default function HeroMedia({ poster, video }: { poster: string; video: st
           onLoad={() => setPosterSettled(true)}
           onError={() => setPosterSettled(true)}
           // This is the LCP element on every page that renders it, so its
-          // byte weight matters more than most images on the site. 60 is
+          // byte weight matters more than most images on the site. 45 is
           // visually indistinguishable from the default 75 on a full-bleed
           // photo background but meaningfully smaller to download.
-          quality={60}
+          quality={45}
           sizes="100vw"
         />
         {video && canPlayVideo && (

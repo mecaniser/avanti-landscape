@@ -10,9 +10,9 @@ import { SERVICE_CATEGORIES } from "@/lib/services";
 import { getServices } from "@/lib/queries";
 
 export const metadata: Metadata = pageMetadata({
-  title: "Lawn Care, Landscaping & Hardscaping Services",
+  title: "Landscaping Services in Waxhaw, NC",
   description:
-    "Lawn care, landscaping, hardscaping, and property maintenance for homes and businesses in Waxhaw, NC. Mowing, sod, mulch, drainage, planting, and seasonal cleanups. Free quotes.",
+    "Explore lawn care, landscaping, hardscaping, and property maintenance for Waxhaw-area homes and businesses. Find the right service and request a free quote.",
   path: "/services",
   image: absoluteUrl("/assets/img/card-landscaping.jpg"),
 });

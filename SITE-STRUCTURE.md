@@ -56,7 +56,7 @@ The paver-patio and retaining-wall nodes below are proposed opportunities. They 
 
 Marvin and Weddington should remain proposed, not launched, until the demand and evidence gate is met. The same rule applies to future service children such as landscape lighting, plantings, rock installation, fire pits, walkways, and outdoor steps.
 
-The Google Reviews integration in PR #26 is intentionally a homepage proof section, not a thin standalone `/reviews` page. Create a dedicated reviews page only if it can add useful categorization, project context, and original first-party explanation beyond reproducing Google content.
+The live Google Reviews integration is intentionally a homepage proof section, not a thin standalone `/reviews` page. Create a dedicated reviews page only if it can add useful categorization, project context, and original first-party explanation beyond reproducing Google content.
 
 ## Page roles
 

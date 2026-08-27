@@ -11,9 +11,9 @@ import { absoluteUrl, pageMetadata } from "@/lib/site";
 import { getBeforeAfterProjects, getGalleryImages } from "@/lib/queries";
 
 export const metadata: Metadata = pageMetadata({
-  title: "Project Gallery: Before & After Landscaping Work",
+  title: "Landscaping Project Gallery",
   description:
-    "Real before-and-after photos of lawn care, sod installation, mulch beds, drainage, and planting projects completed by Avanti Landscaping around Waxhaw, NC.",
+    "View real Avanti Landscaping project photos, including lawn care, sod, mulch beds, drainage, planting, and before-and-after work around Waxhaw, NC.",
   path: "/gallery",
   image: absoluteUrl("/assets/img/project-sod-installation.jpg"),
 });
