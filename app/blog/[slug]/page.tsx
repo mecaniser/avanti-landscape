@@ -12,6 +12,19 @@ import { getServiceCategory } from "@/lib/services";
 
 export const dynamic = "force-dynamic";
 
+const BLOG_METADATA_TITLES: Record<string, string> = {
+  "full-service-lawn-maintenance-waxhaw-nc": "Full-Service Lawn Maintenance in Waxhaw",
+  "low-maintenance-landscaping-ideas-waxhaw-nc": "Low-Maintenance Landscaping in Waxhaw",
+  "sod-vs-seed-waxhaw-nc": "Sod vs. Seed for Waxhaw Lawns",
+  "tall-fescue-waxhaw": "Tall Fescue Aeration in North Carolina",
+  "rock-vs-mulch-north-carolina": "Rock vs. Mulch in North Carolina",
+};
+
+const BLOG_METADATA_DESCRIPTIONS: Record<string, string> = {
+  "rock-vs-mulch-north-carolina":
+    "Compare rock and mulch for North Carolina landscape beds, including appearance, maintenance, drainage, and how each fits the overall planting plan.",
+};
+
 export async function generateMetadata({
   params,
 }: {
@@ -26,17 +39,19 @@ export async function generateMetadata({
     return { title: "Post Not Found", robots: { index: false, follow: false } };
   }
 
-  const description =
-    post.excerpt ?? `Lawn and landscape advice from the Avanti Landscaping crew in Waxhaw, NC.`;
+  const metadataTitle = BLOG_METADATA_TITLES[post.slug] ?? post.title;
+  const description = BLOG_METADATA_DESCRIPTIONS[post.slug]
+    ?? post.excerpt
+    ?? `Lawn and landscape advice from the Avanti Landscaping crew in Waxhaw, NC.`;
 
   return {
-    title: post.title,
+    title: metadataTitle,
     description,
     alternates: { canonical: `/blog/${post.slug}` },
     openGraph: {
       type: "article",
       url: `/blog/${post.slug}`,
-      title: `${post.title} | ${SITE_NAME}`,
+      title: `${metadataTitle} | ${SITE_NAME}`,
       description,
       publishedTime: post.publishedAt.toISOString(),
       modifiedTime: post.updatedAt.toISOString(),
@@ -44,7 +59,7 @@ export async function generateMetadata({
     },
     twitter: {
       card: "summary_large_image",
-      title: `${post.title} | ${SITE_NAME}`,
+      title: `${metadataTitle} | ${SITE_NAME}`,
       description,
       images: [absoluteImage(post.coverImage)],
     },
