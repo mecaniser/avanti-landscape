@@ -9,6 +9,7 @@ import HeroServiceRoute from "@/components/HeroServiceRoute";
 import StaggeredText from "@/components/StaggeredText";
 import PropertyRoute from "@/components/PropertyRoute";
 import WebsiteFlowTrace from "@/components/WebsiteFlowTrace";
+import GoogleReviews from "@/components/GoogleReviews";
 import { getContent, getGlobalContent, parseAreaList } from "@/lib/content";
 import { getBeforeAfterProjects } from "@/lib/queries";
 
@@ -82,6 +83,8 @@ export default async function HomePage() {
           <WebsiteFlowTrace />
         </section>
         )}
+
+        <GoogleReviews />
 
         <section className="section field-proof">
           <div className="container">
