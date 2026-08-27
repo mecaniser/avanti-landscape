@@ -10,6 +10,8 @@ export const metadata: Metadata = pageMetadata({
   path: "/privacy",
 });
 
+export const dynamic = "force-dynamic";
+
 export default function PrivacyPage() {
   return (
     <>
